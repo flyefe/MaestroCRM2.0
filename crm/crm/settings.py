@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "core",
     "users",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,27 @@ DATABASES = {
     }
 }
 
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'bkdgwqmy_djangocrm',           # Database name
+#         'USER': 'bkdgwqmy_root',           # Database username
+#         'PASSWORD': 'Maestro@12',   # Database password
+#         'HOST': 'localhost',                    # Or '127.0.0.1' for local
+#         'PORT': '3306',                         # Default MySQL port
+#         'OPTIONS': {
+#             'ssl': {
+#                 'ca': None,
+#                 'cert': None,
+#                 'key': None,
+#                 'verify_server_cert': False,
+#                 'allow_native_password': True,
+#             },
+#         }
+#     } 
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
