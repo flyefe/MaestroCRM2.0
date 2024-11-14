@@ -150,3 +150,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = '/accounts/login/'  # Redirect to /accounts/login/ when login is required
 LOGIN_REDIRECT_URL = '/'  # Redirect to home page or another page after successful login
+
+# settings.py
+USE_TZ = True
+TIME_ZONE = 'Etc/GMT-1'  # or 'Etc/GMT-1' for GMT+1 without DST
