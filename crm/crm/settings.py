@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "contacts",
     "django_extensions",
     "settings",
+    "segments",
     "users",
 ]
 
