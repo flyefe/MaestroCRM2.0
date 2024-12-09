@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django_select2',
+    "dashboard",
     "core",
     "contacts",
     "django_extensions",
