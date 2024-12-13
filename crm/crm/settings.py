@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "dashboard",
     "core",
     "contacts",
+    "clientportal",
     "django_extensions",
     "settings",
     "segments",
