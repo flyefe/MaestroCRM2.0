@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
 
-from decouple import config
+
 # import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -96,24 +96,7 @@ WSGI_APPLICATION = "crm.wsgi.application"
 
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'defaultdb',
-#         'USER': 'avnadmin',
-#         'PASSWORD': 'REDACTED',  # Replace with your actual password
-#         'HOST': 'maestrocrm-victorefe5-bf7a.e.aivencloud.com',
-#         'PORT': '22304',
-#         'OPTIONS': {
-#             'sslmode': 'verify-ca',
-#             'sslrootcert': str(BASE_DIR / 'certs' / 'ca.pem')  # Path to your downloaded CA certificate
-#         },
-#     }
-# }
 
-
-from decouple import config
-from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
