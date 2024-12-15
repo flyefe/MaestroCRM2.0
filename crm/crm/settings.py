@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+# import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -84,37 +87,51 @@ WSGI_APPLICATION = "crm.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'bkdgwqmy_djangocrm',           # Database name
-#         'USER': 'bkdgwqmy_root',           # Database username
-#         'PASSWORD': 'Maestro@12',   # Database password
-#         'HOST': 'localhost',                    # Or '127.0.0.1' for local
-#         'PORT': '3306',                         # Default MySQL port
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'defaultdb',
+#         'USER': 'avnadmin',
+#         'PASSWORD': 'REDACTED',  # Replace with your actual password
+#         'HOST': 'maestrocrm-victorefe5-bf7a.e.aivencloud.com',
+#         'PORT': '22304',
 #         'OPTIONS': {
-#             'ssl': {
-#                 'ca': None,
-#                 'cert': None,
-#                 'key': None,
-#                 'verify_server_cert': False,
-#                 'allow_native_password': True,
-#             },
-#         }
-#     } 
+#             'sslmode': 'verify-ca',
+#             'sslrootcert': str(BASE_DIR / 'certs' / 'ca.pem')  # Path to your downloaded CA certificate
+#         },
+#     }
 # }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+from decouple import config
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT'),
+        'OPTIONS': {
+            'sslmode': config('DATABASE_SSLMODE'),
+            'sslrootcert': str(BASE_DIR / config('DATABASE_SSLROOTCERT')),
+        },
+    }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
