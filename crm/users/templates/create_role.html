@@ -1,0 +1,57 @@
+<!-- create_role.html -->
+{% extends 'core/base.html' %}
+
+{% block title %}MaestroCRM - Create New Role{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-2xl px-8 py-6 mt-4 bg-white rounded-lg shadow-lg">        
+        <h1 class="text-xl font-semibold text-gray-500">Roles</h1>
+        <div class="overflow-x-auto mt-4">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Role Name</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">User Count</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for group in groups %}
+                    <tr>
+                        <td class="px-4 py-2">{{ group.name }}</td>
+                        <td class="px-4 py-2">
+                            <a href="{% url 'users_in_group' group.id %}"
+                                class="text-gray-600 hover:text-gray-800">{{group.user_set.count}}</a>
+                        </td>
+                        <td class="px-4 py-2">
+                            <a href="{% url 'edit_group' group.id %}" class="text-gray-600 hover:text-gray-800">Edit</a>
+                            <a href="{% url 'delete_group' group.id %}" onclick="return confirmDelete();"
+                                class="text-red-600 hover:text-red-800 ml-2">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-6">
+
+        <h2 class="text-2xl font-semibold text-center text-gray-500">Create New Role</h2>
+        <form method="POST" class="space-y-6 mt-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"
+                class="w-full py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg focus:outline-none focus:ring focus:ring-gray-300">
+                Create Role
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this role?");
+    }
+</script>
+{% endblock %}

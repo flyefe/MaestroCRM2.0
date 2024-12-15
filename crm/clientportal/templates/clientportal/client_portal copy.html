@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+{% block title %}Client Portal{% endblock %}
+
+{% block content %}
+<div class="flex">
+    <!-- Sidebar -->
+    <div class="w-1/4 bg-gray-200 p-4 min-h-screen">
+        <h2 class="text-lg font-bold mb-4">Dashboard</h2>
+        <ul class="space-y-2">
+            <li><a href="#profile" class="block p-2 bg-gray-300 rounded">Edit Profile</a></li>
+            <li><a href="#messages" class="block p-2 bg-gray-300 rounded">Messages</a></li>
+            <li><a href="#invoices" class="block p-2 bg-gray-300 rounded">Invoices</a></li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="w-3/4 p-6">
+        <!-- Edit Profile -->
+        <div id="profile">
+            <h3 class="text-2xl font-bold mb-4">Edit Profile</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ profile_form.as_p }}
+                <button type="submit" name="update_profile"
+                    class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+            </form>
+        </div>
+
+        <hr class="my-6">
+
+        <!-- Messages -->
+        <div id="messages">
+            <h3 class="text-2xl font-bold mb-4">Messages</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ message_form.as_p }}
+                <button type="submit" name="send_message" class="bg-green-500 text-white px-4 py-2 rounded">Send
+                    Message</button>
+            </form>
+
+            <h4 class="text-xl font-semibold mt-6">Inbox</h4>
+            <ul class="space-y-2">
+                {% if user_messages %}
+                    {% for message in user_messages %}
+                    <li class="p-2 border-b">
+                        <strong>{{ message.subject }}</strong> from {{ message.sender }}<br>
+                        {{ message.body }} - <small>{{ message.created_at }}</small>
+                    </li>
+                    {% empty %}
+                    <li>No messages yet.</li>
+                    {% endfor %}
+                {% else %}
+                    <span>No Message Model Passed</span>
+                {% endif %}
+            </ul>
+        </div>
+
+        <hr class="my-6">
+
+        <!-- Invoices -->
+        <div id="invoices">
+            <h3 class="text-2xl font-bold">Invoices</h3>
+            <p class="text-gray-500">Coming Soon...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

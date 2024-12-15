@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="max-w-full mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Add New Segment</h2>
+
+    <!-- Segment Creation form -->
+    <form method="post" id="segment-form" class="p-10">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+    
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+    
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+    
+        <div id="conditions-container" class="mb-4">
+            <!-- Placeholder for dynamic conditions -->
+        </div>
+    
+        <button type="button" id="add-condition-btn" class="btn btn-primary mb-4">
+            Add Condition
+        </button>
+    
+        <input type="hidden" name="conditions" id="conditions-field" value="[]">
+    
+    
+        <div class="form-group hidden">
+            {{ form.status_value }}
+    
+            {{ form.tag_value }}
+        </div>
+    
+        <button type="submit" class="btn btn-success">Save Segment</button>
+    </form>
+</div>
+
+    <script>
+        // Grab references to the main elements in the DOM.
+            const addConditionBtn = document.getElementById('add-condition-btn'); // The button to add new condition rows.
+            const conditionsContainer = document.getElementById('conditions-container'); // The container where all condition rows are added.
+            const conditionsField = document.getElementById('conditions-field'); // The hidden input field to store serialized condition data.
+
+            // Extract options from fields with `status_value` and `tag_value` names, turning them into arrays of objects.
+            const statusOptions = Array.from(document.querySelectorAll('[name="status_value"] option')).map(option => ({
+                value: option.value, // The value of each <option>.
+                text: option.text,   // The displayed text of each <option>.
+            }));
+            const tagOptions = Array.from(document.querySelectorAll('[name="tag_value"] option')).map(option => ({
+                value: option.value,
+                text: option.text,
+            }));
+
+            // Add event listener to the "Add Condition" button.
+            addConditionBtn.addEventListener('click', () => {
+                // Create a new condition row element.
+                const conditionRow = document.createElement('div');
+                conditionRow.className = 'condition-row mb-3';
+
+                // Populate the condition row with default dropdowns and a remove button.
+                conditionRow.innerHTML = `
+            <select class="condition-logic form-control mb-2">
+                <option value=" "> </option> <!-- Empty option for initial state -->
+                <option value="and">AND</option>
+                <option value="or">OR</option>
+            </select>
+            <select class="condition-type form-control mb-2">
+                <option value=" "> </option> <!-- Empty option for initial state -->
+                <option value="status">Status</option>
+                <option value="tag">Tag</option>
+            </select>
+            <select class="condition-operation form-control mb-2">
+                <option value="=">is</option>
+                <option value="!=">is not</option>
+            </select>
+            <select class="condition-value form-control mb-2">
+                <!-- Options will be dynamically populated -->
+            </select>
+            <button type="button" class="remove-condition-btn btn btn-danger">Remove</button>
+        `;
+
+                // Get references to dropdowns inside the new condition row.
+                const typeSelect = conditionRow.querySelector('.condition-type'); // Dropdown to select "status" or "tag".
+                const valueSelect = conditionRow.querySelector('.condition-value'); // Dropdown for values, dynamically populated.
+
+                // Function to populate value dropdown options dynamically based on selected type.
+                const populateValueOptions = () => {
+                    const selectedType = typeSelect.value; // Get the selected type ("status" or "tag").
+                    const options = selectedType === 'status' ? statusOptions : tagOptions; // Choose options based on type.
+
+                    // valueSelect.innerHTML = ''; // Clear existing options.
+                    valueSelect.innerHTML = '<option value=" "> </option>'; // Add an empty option first.
+
+                    // Populate new options based on the selected type.
+                    options.forEach(option => {
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.text;
+                        valueSelect.appendChild(opt);
+                    });
+                };
+
+                populateValueOptions(); // Populate value dropdown with the default selected type (initial state).
+
+                // Update the value options dynamically when the type changes.
+                typeSelect.addEventListener('change', populateValueOptions);
+
+                // Add a click event listener to the "Remove" button to delete the condition row.
+                conditionRow.querySelector('.remove-condition-btn').addEventListener('click', () => {
+                    conditionRow.remove(); // Remove the condition row from the container.
+                    updateConditionsField(); // Update the serialized data in the hidden field.
+                });
+
+                // Append the newly created condition row to the container.
+                conditionsContainer.appendChild(conditionRow);
+            });
+
+            // Function to serialize all condition rows into JSON and store it in the hidden input field.
+            function updateConditionsField() {
+                const conditions = Array.from(conditionsContainer.querySelectorAll('.condition-row')).map(row => ({
+                    logic: row.querySelector('.condition-logic').value, // Get the selected logic (AND/OR).
+                    type: row.querySelector('.condition-type').value,  // Get the selected type (status/tag).
+                    operation: row.querySelector('.condition-operation').value, // Get the operation (is/is not).
+                    value: row.querySelector('.condition-value').value, // Get the selected value.
+                }));
+
+                conditionsField.value = JSON.stringify(conditions); // Store the conditions as a JSON string in the hidden field.
+            }
+
+            // Add an event listener to update the hidden field before the form is submitted.
+            document.getElementById('segment-form').addEventListener('submit', (e) => {
+                updateConditionsField(); // Ensure the conditions are serialized before submission.
+            });
+
+    </script> 
+{% endblock %}

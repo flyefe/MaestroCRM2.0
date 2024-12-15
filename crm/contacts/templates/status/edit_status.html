@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit Status{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Edit Status</h2>
+
+    <!-- Form for editing the status -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="id_name" class="block text-gray-700 font-bold mb-2">
+                    Status Name
+                </label>
+                {{ form.name }} <!-- The name field rendered -->
+            </div>
+
+            <!-- Submit and cancel buttons -->
+            <div class="flex items-center justify-between mt-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Save Changes
+                </button>
+                <a href="{% url 'status_list' %}" class="text-gray-600 hover:text-gray-800">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

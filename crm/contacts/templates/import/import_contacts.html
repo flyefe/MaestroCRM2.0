@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Import Contacts{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl font-bold mb-6 text-center">Import Contacts</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label for="file" class="block text-sm font-medium mb-2">Choose CSV file to upload:</label>
+        <input type="file" name="file" accept=".csv" class="border border-gray-300 rounded py-2 px-3 w-full">
+    </div>
+    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+        Upload CSV
+    </button>
+</form>
+
+{% if messages %}
+<div class="mt-4">
+    {% for message in messages %}
+        <div class="text-red-600">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="max-w-full mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Edit {{ segment.name }} Segment</h2>
+    <form method="post" id="segment-form" class="p-10">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <div id="conditions-container" class="mb-4">
+            <!-- JavaScript will populate this -->
+        </div>
+
+        <button type="button" id="add-condition-btn" class="btn btn-primary mb-4">Add Condition</button>
+
+        <input type="hidden" name="conditions" id="conditions-field" value="{{ form.conditions.value|default:'[]' }}">
+
+        <div class="form-group hidden">
+            {{ form.status_value }}
+            {{ form.tag_value }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Segment</button>
+    </form>
+</div>
+
+<script>
+    // Wait until the DOM is fully loaded before executing the script
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the "Add Condition" button and the container for the conditions
+        const addConditionBtn = document.getElementById('add-condition-btn');
+        const conditionsContainer = document.getElementById('conditions-container');
+        const conditionsField = document.getElementById('conditions-field'); // Hidden field to store the serialized conditions
+
+        // Extract all options for the "status" dropdown as an array of objects with `value` and `text` properties
+        const statusOptions = Array.from(document.querySelectorAll('[name="status_value"] option')).map(option => ({
+            value: option.value,
+            text: option.text,
+        }));
+
+        // Extract all options for the "tag" dropdown as an array of objects with `value` and `text` properties
+        const tagOptions = Array.from(document.querySelectorAll('[name="tag_value"] option')).map(option => ({
+            value: option.value,
+            text: option.text,
+        }));
+
+        // Parse and load any existing conditions from the hidden input field into the UI
+        const existingConditions = JSON.parse(conditionsField.value || '[]');
+        existingConditions.forEach(createConditionRow); // Create a row for each existing condition
+
+        // Add a new condition row when the "Add Condition" button is clicked
+        addConditionBtn.addEventListener('click', () => createConditionRow());
+
+        /**
+         * Function to create a new condition row in the UI.
+         * @param {Object} condition - Existing condition data to pre-fill the row, if any.
+         */
+        function createConditionRow(condition = {}) {
+            // Create a container div for the condition row and add a class for styling
+            const row = document.createElement('div');
+            row.className = 'condition-row mb-3';
+
+            // Add the HTML structure for the condition row
+            row.innerHTML = `
+                <select class="condition-logic form-control mb-2">
+                    <option value="and">AND</option>
+                    <option value="or">OR</option>
+                </select>
+                <select class="condition-type form-control mb-2">
+                    <option value="status">Status</option>
+                    <option value="tag">Tag</option>
+                </select>
+                <select class="condition-operation form-control mb-2">
+                    <option value="=">is</option>
+                    <option value="!=">is not</option>
+                </select>
+                <select class="condition-value form-control mb-2">
+                    <!-- Dynamic Options -->
+                </select>
+                <button type="button" class="remove-condition-btn btn btn-danger">Remove</button>
+            `;
+
+            // Get references to the dropdowns and inputs in the new row
+            const typeSelect = row.querySelector('.condition-type');
+            const valueSelect = row.querySelector('.condition-value');
+            const logicSelect = row.querySelector('.condition-logic');
+            const operationSelect = row.querySelector('.condition-operation');
+
+            // Set initial values for the dropdowns from the `condition` object or default values
+            typeSelect.value = condition.type || 'status';
+            logicSelect.value = condition.logic || 'and';
+            operationSelect.value = condition.operation || '=';
+
+            /**
+             * Function to populate the values dropdown based on the selected condition type (status or tag).
+             */
+            const populateValues = () => {
+                // Determine the options based on the selected type (status or tag)
+                const options = typeSelect.value === 'status' ? statusOptions : tagOptions;
+
+                // Populate the "value" dropdown with the corresponding options
+                valueSelect.innerHTML = options.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
+
+                // Set the selected value in the dropdown, if provided in the condition
+                valueSelect.value = condition.value || '';
+            };
+
+            // Populate the values dropdown initially based on the selected type
+            populateValues();
+
+            // Re-populate the values dropdown when the type is changed
+            typeSelect.addEventListener('change', populateValues);
+
+            // Add an event listener to remove the condition row when the "Remove" button is clicked
+            row.querySelector('.remove-condition-btn').addEventListener('click', () => {
+                row.remove(); // Remove the row from the DOM
+                updateConditionsField(); // Update the serialized conditions in the hidden field
+            });
+
+            // Append the newly created row to the conditions container
+            conditionsContainer.appendChild(row);
+        }
+
+        /**
+         * Function to update the serialized conditions in the hidden input field.
+         * This gathers all current condition rows and stores their data in JSON format.
+         */
+        function updateConditionsField() {
+            // Map over each row in the conditions container and extract the condition data
+            const conditions = Array.from(conditionsContainer.children).map(row => ({
+                logic: row.querySelector('.condition-logic').value,
+                type: row.querySelector('.condition-type').value,
+                operation: row.querySelector('.condition-operation').value,
+                value: row.querySelector('.condition-value').value,
+            }));
+
+            // Serialize the conditions array as a JSON string and update the hidden input field
+            conditionsField.value = JSON.stringify(conditions);
+        }
+
+        // Ensure the conditions are serialized before the form is submitted
+        document.getElementById('segment-form').addEventListener('submit', () => updateConditionsField());
+    });
+</script>
+
+{% endblock %}

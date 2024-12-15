@@ -1,0 +1,39 @@
+register.html
+{% extends 'core/base.html' %}
+
+{% block title %}MaestroCRM - Register{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md px-8 py-6 mt-4 bg-white rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold text-center text-gray-500">Create Your Account</h2>
+        <p class="text-center text-gray-600 mb-4">Join MaestroCRM today</p>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"
+                class="w-full py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg focus:outline-none focus:ring focus:ring-gray-300">
+                Register
+            </button>
+        </form>
+
+        {% if form.errors %}
+        <div class="mt-4 p-4 bg-red-100 text-red-600 rounded-md">
+            <ul class="space-y-1">
+                {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="mt-6 text-center">
+            <a href="{% url 'login' %}" class="text-gray-500 hover:text-gray-700 text-sm">Already have an account? Log
+                in here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

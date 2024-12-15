@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+
+<h3>Existing Statuses</h3>
+<ul>
+    {% for status in statuses %}
+    <li>
+        {{ status.name }}
+        <a href="{% url 'update_status' status.id %}">Edit</a>
+        <a href="{% url 'delete_status' status.id %}">Delete</a>
+    </li>
+    {% empty %}
+    <li>No statuses available.</li>
+    {% endfor %}
+</ul>
+
+<h2>{{ is_update|default:'Create New' }} Status</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

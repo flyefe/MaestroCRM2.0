@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Contact{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-6">Add Contact</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p|safe }} <!-- Render the form with Tailwind styles -->
+
+        <button type="submit"
+            class="mt-4 w-full py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300">Save
+            Contact</button>
+    </form>
+    <a href="{% url 'contact_list' %}" class="mt-4 block text-center text-gray-600 hover:underline">Back to Contact
+        List</a>
+</div>
+{% endblock %}

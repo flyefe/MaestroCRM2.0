@@ -1,0 +1,382 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Contact List{% endblock %}
+
+{% block content %}
+<div class="p-2 w-full mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Contact List</h2>
+
+    <div class="bg-gray-100 rounded-lg shadow-md p-4 mb-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-2">
+            <form>
+                <!-- Bulk Actions -->
+                <div class="w-full md:w-auto flex items-center space-x-2">
+                    <select name="action" class="px-4 py-2 border border-gray-300 rounded">
+                        <option value="">Select</option>
+                        <option value="update_status">Update Status</option>
+                        <option value="add_tags">Add Tags</option>
+                        <option value="remove_tag">Remove Tags</option>
+                        <option value="delete">Delete</option>
+                        <option value="assign_staff">Assign Staff</option>
+                        <option value="update_traffic">Add Traffic</option>
+                        <option value="update_services">Services</option>
+                    </select>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        Apply
+                    </button>
+                    <div class="text-sm text-gray-600">Contacts: <span class="bg-white p-1 rounded-xl">
+                        {{contacts.paginator.count}}</span>
+                    </div>
+                </div>
+            </form>
+            
+
+            <!-- Filters -->
+            <form action="{% url 'filter_contact' %}" class="flex justify-end flex-wrap gap-4 mb-4 w-full md:w-auto flex items-center space-x-2">
+                {{ filter_form.as_p }}
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Filter</button>
+                <a href="{% url 'contact_list' %}" class="text-sm text-gray-500 hover:text-blue-500">Clear Filters</a>
+            </form>
+        </div>
+
+        <!-- Search and Add Contact -->
+        <div class="flex items-center justify-between mt-4">
+            <form method="get" action="{% url 'search_contact' %}" class="flex items-center space-x-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+                {{ search_form.as_p|safe }}
+            </form>
+            <a href="{% url 'add_contact' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Add New
+                Contact</a>
+        </div>
+    </div>
+
+    <!-- Contact Table -->
+    <div class="overflow-x-auto shadow-lg rounded-lg mt-4">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead class="bg-gray-200 text-sm font-semibold text-left">
+                <tr>
+                    <th class="px-4 py-3 w-40">ID</th>
+                    <th class="px-4 py-3 w-12">
+                        <input id="select-all" type="checkbox" class="rounded border-gray-300">
+                    </th>
+                    <th class="px-4 py-3 w-40">Added On</th>
+                    <th class="px-4 py-3 w-60">Full Name</th>
+                    <th class="px-4 py-3 w-40">Email</th>
+                    <th class="px-4 py-3 w-40">Phone Number</th>
+                    <th class="px-4 py-3 w-40">Date Of Birth</th>
+                    <th class="px-4 py-3 w-40">Service</th>
+                    <th class="px-4 py-3 w-60">Traffic Source</th>
+                    <th class="px-4 py-3 w-40">Status</th>
+                    <th class="px-4 py-3 w-40">Tags</th>
+                    <th class="px-4 py-3 w-60">Assigned Staff</th>
+                    <th class="px-4 py-3 w-40">Last Update</th>
+                    <th class="px-4 py-3 w-40">Feedback</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm">
+                {% for contact in contacts %}
+                <tr class="hover:bg-gray-50 transition duration-200">
+                    <td class="border px-4 py-2">{{ contact.id }}</td>
+                    <td class="border px-4 py-2">
+                        <input type="checkbox" name="selected_contacts" value="{{ contact.id }}"
+                            class="rounded border-gray-300">
+                    </td>
+                    <td class="border px-4 py-2">{{ contact.created_at|date:"d/m/Y" }}<br>
+                        <span class="text-gray-400 text-xs">by {{ contact.created_by.get_full_name }}</span>
+                    </td>
+                    <td class="border px-4 py-2">
+                        <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.last_name }}</a>
+                    </td>
+                    <td class="border px-4 py-2">{{ contact.user.email }}</td>
+                    <td class="border px-4 py-2">{{ contact.phone_number }}</td>
+                    <td class="border px-4 py-2">{{ contact.date_of_birth|date:"d/m/Y"|default:'None' }}</td>
+                    <td class="border px-4 py-2">{{ contact.services }}</td>
+                    <td class="border px-4 py-2">
+                        {% if contact.traffic_source %}
+                        <a href="{% url 'contacts_by_traffic_source' contact.traffic_source.id %}"
+                            class="text-blue-600 hover:underline">{{ contact.traffic_source.name }}</a>
+                        {% else %}
+                        <span class="text-xs">No Source</span>
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">
+                        {% if contact.status %}
+                        <a href="{% url 'contacts_by_status' contact.status.id %}"
+                            class="text-blue-600 hover:underline">{{ contact.status }}</a>
+                        {% else %}
+                        <span>None</span>
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2 text-blue-500">
+                        {% for tag in contact.tags.all %}
+                        <a href="{% url 'contacts_by_tag' tag.id %}" class="hover:underline block">{{ tag.name }}</a>
+                        {% empty %}
+                        <span>No Tags</span>
+                        {% endfor %}
+                    </td>
+                    <td class="border px-4 py-2">
+                        {% if contact.assigned_staff %}
+                        <a href="{% url 'contacts_by_assigned_staff' contact.assigned_staff.id %}"
+                            class="text-blue-600 hover:underline">{{ contact.assigned_staff.get_full_name }}</a>
+                        {% else %}
+                        <span class="text-xs">Not Assigned</span>
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">{{ contact.modified_at|date:"d/m/Y" }}<br>
+                        <span class="text-blue-400 text-xs">by {{ contact.updated_by.get_full_name }}</span>
+                    </td>
+                    <td class="border px-4 py-2">{{ contact.recent_feedback_log_title }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="14" class="py-4 text-center">No contacts found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="bg-gray-200 px-4 py-2 flex justify-between items-center">
+            <span>Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}</span>
+            <div>
+                {% if contacts.has_previous %}
+                <a href="?page={{ contacts.previous_page_number }}{% if query %}&query={{ query }}{% endif %}"
+                    class="text-gray-600 hover:text-blue-600 hover:underline">Previous</a>
+                {% endif %}
+                {% if contacts.has_next %}
+                <a href="?page={{ contacts.next_page_number }}{% if query %}&query={{ query }}{% endif %}"
+                    class="text-gray-600 hover:text-blue-600 hover:underline ml-4">Next</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals and JavaScript would go here, but they have not been altered as they were not part of the visual presentation change -->
+</div>
+
+<!-- Modals -->
+<div id="modal-container" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <!-- Update Status Modal -->
+    <div id="update-status-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Update Status</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="update_status">
+            <input type="hidden" name="selected_contacts" id="status-selected-contacts">
+            <label for="status" class="block text-sm font-medium mb-2">Select Status:</label>
+            {{ form.status|safe }} <!-- Using form_as_p to render the form -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Update Tag Modal -->
+    <div id="add-tags-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Add Tags</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="add_tags">
+            <input type="hidden" name="selected_contacts" id="tags-selected-contacts">
+
+            <label for="status" class="block text-sm font-medium mb-2">Select tags:</label>
+            {{ form.tags|safe }} <!-- Using form_as_p to render the form -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Remove Tag Modal -->
+    <div id="remove-tags-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Remove Tags</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="remove_tags">
+            <input type="hidden" name="selected_contacts" id="remove-tags-selected-contacts">
+
+            <label for="tags" class="block text-sm font-medium mb-2">Select tags :</label>
+            {{ form.tags|safe }} <!-- Using form_as_p to render the form -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Delete Contact Modal -->
+    <div id="delete-contacts-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4 text-red-600">Delete Contacts</h3>
+        <p class="mb-4">Are you sure you want to delete the selected contacts? This action cannot be undone.</p>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="delete">
+            <input type="hidden" name="selected_contacts" id="delete-selected-contacts">
+
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
+                    Delete
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Assign Staff Modal -->
+
+    <div id="assign-staff-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Assign Staff</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="assign_staff">
+            <input type="hidden" name="selected_contacts" id="assign-staff-selected-contacts">
+            <label for="assigned_staff" class="block text-sm font-medium mb-2">Select Staff:</label>
+            {{ form.assigned_staff|safe }} <!-- Ensure this renders correctly -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Assign
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Traffic Source Modal -->
+
+    <div id="traffic-source-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Update Traffic Source</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="traffic_source">
+            <input type="hidden" name="selected_contacts" id="traffic-source-selected-contacts">
+            <label for="traffic_source" class="block text-sm font-medium mb-2">Select Traffic Source:</label>
+            {{ form.traffic_source|safe }} <!-- Ensure this renders correctly -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Service Modal -->
+
+    <div id="services-source-modal" class="bg-white rounded-lg shadow-lg w-3/4 max-w-lg p-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Update Service</h3>
+        <form method="POST" action="{% url 'contacts_bulk_action' %}">
+            {% csrf_token %}
+            <!-- Hidden input for selected contacts -->
+            <input type="hidden" name="action_type" value="services">
+            <input type="hidden" name="selected_contacts" id="services-selected-contacts">
+            <label for="services" class="block text-sm font-medium mb-2">Select Service:</label>
+            {{ form.services|safe }} <!-- Ensure this renders correctly -->
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- Javascript -->
+<script>
+    const modalContainer = document.getElementById('modal-container');
+
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+        modalContainer.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        modalContainer.classList.add('hidden');
+        document.querySelectorAll('#modal-container > div').forEach(modal => modal.classList.add('hidden'));
+    }
+
+    // Attach event listeners to your form actions
+    const actionSelect = document.querySelector('select[name="action"]');
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const action = actionSelect.value;
+        const selectedContacts = Array.from(document.querySelectorAll('input[name="selected_contacts"]:checked')).map(checkbox => checkbox.value);
+        if (selectedContacts.length === 0) {
+            alert('No contacts selected.');
+            return;
+        }
+        document.querySelectorAll('[id$="-selected-contacts"]').forEach(input => input.value = selectedContacts.join(','));
+
+        switch (action) {
+            case 'update_status':
+                openModal('update-status-modal');
+                break;
+            case 'add_tags':
+                openModal('add-tags-modal');
+                break;
+            case 'remove_tag':
+                openModal('remove-tags-modal');
+                break;
+            case 'delete':
+                openModal('delete-contacts-modal');
+                break;
+            case 'assign_staff':
+                openModal('assign-staff-modal');
+                break;
+            case 'update_traffic':
+                openModal('traffic-source-modal');
+                break;
+            case 'update_services':
+                openModal('services-source-modal');
+                break;
+            default:
+                alert('Invalid action selected.');
+        }
+    });
+
+    document.getElementById("select-all").addEventListener("change", function () {
+        const checkboxes = document.querySelectorAll('input[name="selected_contacts"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+{% endblock %}

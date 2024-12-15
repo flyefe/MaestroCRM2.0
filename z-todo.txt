@@ -1,0 +1,155 @@
+CRM/                      # Project Root
+│
+├── CRM/                 # Project Settings
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py          # Project URL configurations
+│   ├── wsgi.py
+│   └── asgi.py
+│
+├── core/                # Core app for home and non-secured pages
+│   ├── migrations/
+│   ├── templates/
+│   │   └── core/
+│   │       └── home.html
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py          # URL configurations for core app
+│   └── views.py
+│
+├── user/                # User management app for staff
+│   ├── migrations/
+│   ├── templates/
+│   │   └── user/
+│   │       ├── user_list.html
+│   │       ├── edit_user.html
+│   │       └── register.html
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py         # Forms for user registration, editing, etc.
+│   ├── models.py        # User models if extending default User model
+│   ├── tests.py
+│   ├── urls.py          # URL configurations for user app
+│   └── views.py
+│
+├── contacts/            # Contacts management app
+│   ├── migrations/
+│   ├── templates/
+│   │   └── contacts/
+│   │       ├── contact_list.html
+│   │       ├── edit_contact.html
+│   │       └── add_contact.html
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py         # Forms for contact management
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py          # URL configurations for contacts app
+│   └── views.py
+│
+├── dashboard/           # Dashboard functionality app
+│   ├── migrations/
+│   ├── templates/
+│   │   └── dashboard/
+│   │       └── dashboard.html
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py          # URL configurations for dashboard app
+│   └── views.py
+│
+└── client_portal/       # Client portal app
+    ├── migrations/
+    ├── templates/
+    │   └── client_portal/
+    │       ├── client_dashboard.html
+    │       └── login.html
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── forms.py         # Forms for client login, etc.
+    ├── models.py        # Models for client data if needed
+    ├── tests.py
+    ├── urls.py          # URL configurations for client portal app
+    └── views.py
+
+
+-DONE Make it possible for users to register
+-DONE Make form to add/create roles/groups
+-DONE Make it possible to edit/Update groups
+-DONE Make it possible to delet group
+-DONE Make it possible to edit users roles
+- DONE make it possible to delete user
+
+
+-DONE Create status Table (new group)
+    -DONE Make it possible to know number of persons in status
+
+-DONE Make it possible to add Contact by
+    -DONE Create Contact model with option to become a user later
+    -DONE Create Contact form
+    -DONE make contact form create user
+- DONE Make it Possible to view contact list
+-DONE Make it possible to view contact profile
+-DONE Make it possible to edit/update contact detail
+-DONE Make it possible to delete contact
+- Make it possible to for staff and admin users to add comments/logactivities on contact
+    -DONE Make log form with various activities
+        -DONE Call, Email, Note, etc
+    - Done Make it possible to Edit and Delete Comment
+- DONE Make Tagging Possible
+- Distingush backend staff users from clients portal
+    -Decide on all pages that will be only accessed by staff users
+    - Create cllient portal, only accessible by clients (front end)
+    - Make Login possible but only staffs cans see backend and clients can only see client portal
+
+    
+- Make Segmentation/categorization possible
+    -DONE Create a new app == segement
+    -Create segment
+        -Make it possible to create Segmentation
+        -Make it possible to list segments
+        -Make it possible to see all contacts in a segments
+        -Make it possible to update and delete segments
+    -DONE Make it possible to create tags in 
+        -Make it possible to List all tags
+        -Make it possible to see all contact in a tag
+        -Make it possible to Update and delete tags
+    -DONE make it possible to create status
+    -DONE Make it possible to create services, traffic sourse, all in settings
+    -DONE Make create/update form have multiple select for tags
+    -DONE Make create/update form have options to add contact to tag by typing
+    -DONE Make it possible to remove contact from tag in update section
+- Make it possible to import data with mapping
+- Make it possible to add additional field
+- Deploy app to cloud for usage
+
+
+
+
+
+Project
+-Make Login page for all; Login leads to
+    -Client Dashboard if Client
+        -Shows 3 vertical tabes
+            -Dashboad: showing Welcome to Dashboard
+            -Your Details: Showing Customers Details
+            -And Logout
+    -Admin Dashboard of staff showing:
+        -Total Number of Contacts
+        -Add customer
+        -View All contact
+
+How to 
+1.Make User groups (admin, staff, Contact)
+2. Make Front end Login
+
+
+

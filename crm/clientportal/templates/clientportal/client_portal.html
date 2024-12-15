@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% block title %}Client Portal{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/4 bg-gray-200 p-4 overflow-y-auto">
+        <h2 class="text-lg font-bold mb-4">Dashboard</h2>
+        <ul class="space-y-2">
+            <li><a href="#" data-target="profile" class="block p-2 bg-gray-300 rounded hover:bg-gray-400">Edit
+                    Profile</a></li>
+            <li><a href="#" data-target="messages" class="block p-2 bg-gray-300 rounded hover:bg-gray-400">Messages</a>
+            </li>
+            <li><a href="#" data-target="invoices" class="block p-2 bg-gray-300 rounded hover:bg-gray-400">Invoices</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="w-3/4 p-6 overflow-y-auto">
+        <!-- All content divs are hidden by default -->
+        <div id="profile" class="content-section hidden">
+            <h3 class="text-2xl font-bold mb-4">Edit Profile</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ profile_form.as_p }}
+                <button type="submit" name="update_profile"
+                    class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+            </form>
+        </div>
+
+        <div id="messages" class="content-section hidden">
+            <h3 class="text-2xl font-bold mb-4">Messages</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ message_form.as_p }}
+                <button type="submit" name="send_message" class="bg-green-500 text-white px-4 py-2 rounded">Send
+                    Message</button>
+            </form>
+
+            <h4 class="text-xl font-semibold mt-6">Inbox</h4>
+            <ul class="space-y-2">
+                <span>Testing</span>
+            </ul>
+        </div>
+
+        <div id="invoices" class="content-section hidden">
+            <h3 class="text-2xl font-bold">Invoices</h3>
+            <p class="text-gray-500">Coming Soon...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Function to hide all content sections
+        function hideAllSections() {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+        }
+
+        // Function to show a specific section
+        function showSection(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.classList.remove('hidden');
+            }
+        }
+
+        // Event listener for sidebar links
+        document.querySelectorAll('[data-target]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                const targetId = this.getAttribute('data-target');
+                hideAllSections();
+                showSection(targetId);
+            });
+        });
+
+        // Show the first section by default when the page loads
+        showSection('profile');
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Contact{% endblock %}
+
+{% block content %}
+<div class="max-w-full mx-auto mt-10 shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-6">Add Contact</h2>
+
+    <!-- Consolidated Form -->
+    <form method="post" class="w-full">
+        {% csrf_token %}
+
+        <div class="flex md:flex-row justify-between">
+
+            <!-- Left Section: Contact Details -->
+            <div class="basis-4/5 p-2 mb-4 px-4">
+                <div id="left-toggle" class="shadow-md bg-white-300 border-1 border-gray-100">
+                    <button type="button"
+                        class="w-full flex justify-between items-center border-2 border-gray-200 py-2 px-4 font-semibold mb-4 toggle-button">
+                        Contact Details
+                        <span class="toggle-icon">-</span>
+                    </button>
+                    <div class="toggle-content pr-2 pl-2">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                {{ form.status|safe }}
+                            </div>
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700">First  Name</label>
+                                {{ form.first_name|safe }}
+                            </div>
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                {{ form.last_name|safe }}
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                {{ form.email|safe }}
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                {{ form.phone_number|safe }}
+                            </div>
+                            <div>
+                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700">DOB</label>
+                                {{ form.date_of_birth|safe }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section: Toggles -->
+            <div class="basis-1/5 p-2 bg-white">
+
+                <!-- Save Button -->
+                <div class="mt-4">
+                    <button type="submit"
+                        class="w-full py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300">
+                        Save Contact
+                    </button>
+                </div>
+
+                <!-- Add Tag Toggle -->
+                <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                    <button type="button"
+                        class="w-full flex justify-between items-center py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg toggle-button">
+                        Add Tags
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden">
+                        <label for="tags" class="block text-sm font-medium text-gray-700">Add Tags</label>
+                        {{ form.tag|safe }}
+
+                        <label for="tags" class="block text-sm font-medium text-gray-700">Select Tags</label>
+                        {{ form.tags|safe }}
+                    </div>
+                    
+                    
+                </div>
+
+                <!-- Assign Staff Toggle -->
+                <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                    <button type="button"
+                        class="w-full flex justify-between items-center py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg toggle-button">
+                        Assign Staff
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden">
+                        <label for="assigned_to" class="block text-sm font-medium text-gray-700">Assigned To</label>
+                        {{ form.assigned_staff|safe }}
+                    </div>
+                </div>
+
+                <!-- Traffic Source Toggle -->
+                <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                    <button type="button"
+                        class="w-full flex justify-between items-center py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg toggle-button">
+                        Traffic Source
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden">
+                        <label for="traffic_source" class="block text-sm font-medium text-gray-700">Traffic
+                            Source</label>
+                        {{ form.traffic_source|safe }}
+                    </div>
+                </div>
+
+                <!-- Services Toggle -->
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <button type="button"
+                        class="w-full flex justify-between items-center py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg toggle-button">
+                        Services
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden">
+                        <label for="services" class="block text-sm font-medium text-gray-700">Services</label>
+                        {{ form.services|safe }}
+                    </div>
+                </div>
+
+                <!-- Referred by -->
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <button type="button"
+                        class="w-full flex justify-between items-center py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg toggle-button">
+                        Referred By
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden">
+                        <label for="services" class="block text-sm font-medium text-gray-700">Referred By</label>
+                        {{ form.referred_by|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('.toggle-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.toggle-icon');
+
+            // Toggle visibility
+            content.classList.toggle('hidden');
+
+            // Update icon
+            if (content.classList.contains('hidden')) {
+                icon.textContent = '+';
+            } else {
+                icon.textContent = '-';
+            }
+        });
+    });
+</script>
+{% endblock %}

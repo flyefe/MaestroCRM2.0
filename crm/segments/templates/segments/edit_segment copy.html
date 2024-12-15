@@ -1,0 +1,119 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="max-w-full mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Edit {{ segment.name }} Segment</h2>
+    <form method="post" id="segment-form" class="p-10">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <div id="conditions-container" class="mb-4">
+            <!-- JavaScript will populate this -->
+        </div>
+
+        <button type="button" id="add-condition-btn" class="btn btn-primary mb-4">Add Condition</button>
+
+        <input type="hidden" name="conditions" id="conditions-field" value="{{ form.conditions.value|default:'[]' }}">
+
+        <div class="form-group hidden">
+            {{ form.status_value }}
+            {{ form.tag_value }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Segment</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addConditionBtn = document.getElementById('add-condition-btn');
+        const conditionsContainer = document.getElementById('conditions-container');
+        const conditionsField = document.getElementById('conditions-field');
+
+        const statusOptions = Array.from(document.querySelectorAll('[name="status_value"] option')).map(option => ({
+            value: option.value,
+            text: option.text,
+        }));
+        const tagOptions = Array.from(document.querySelectorAll('[name="tag_value"] option')).map(option => ({
+            value: option.value,
+            text: option.text,
+        }));
+
+        // Load existing conditions
+        const existingConditions = JSON.parse(conditionsField.value || '[]');
+        existingConditions.forEach(createConditionRow);
+
+        addConditionBtn.addEventListener('click', () => createConditionRow());
+
+        function createConditionRow(condition = {}) {
+            const row = document.createElement('div');
+            row.className = 'condition-row mb-3';
+
+            row.innerHTML = `
+                <select class="condition-logic form-control mb-2">
+                    <option value="and">AND</option>
+                    <option value="or">OR</option>
+                </select>
+                <select class="condition-type form-control mb-2">
+                    <option value="status">Status</option>
+                    <option value="tag">Tag</option>
+                </select>
+                <select class="condition-operation form-control mb-2">
+                    <option value="=">=</option>
+                    <option value="!=">!=</option>
+                </select>
+                <select class="condition-value form-control mb-2">
+                    <!-- Dynamic Options -->
+                </select>
+                <button type="button" class="remove-condition-btn btn btn-danger">Remove</button>
+            `;
+
+            const typeSelect = row.querySelector('.condition-type');
+            const valueSelect = row.querySelector('.condition-value');
+            const logicSelect = row.querySelector('.condition-logic');
+            const operationSelect = row.querySelector('.condition-operation');
+
+            typeSelect.value = condition.type || 'status';
+            logicSelect.value = condition.logic || 'and';
+            operationSelect.value = condition.operation || '=';
+
+            const populateValues = () => {
+                const options = typeSelect.value === 'status' ? statusOptions : tagOptions;
+                valueSelect.innerHTML = options.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
+                valueSelect.value = condition.value || '';
+            };
+
+            populateValues();
+            typeSelect.addEventListener('change', populateValues);
+
+            row.querySelector('.remove-condition-btn').addEventListener('click', () => {
+                row.remove();
+                updateConditionsField();
+            });
+
+            conditionsContainer.appendChild(row);
+        }
+
+        function updateConditionsField() {
+            const conditions = Array.from(conditionsContainer.children).map(row => ({
+                logic: row.querySelector('.condition-logic').value,
+                type: row.querySelector('.condition-type').value,
+                operation: row.querySelector('.condition-operation').value,
+                value: row.querySelector('.condition-value').value,
+            }));
+            conditionsField.value = JSON.stringify(conditions);
+        }
+
+        document.getElementById('segment-form').addEventListener('submit', () => updateConditionsField());
+    });
+</script>
+{% endblock %}

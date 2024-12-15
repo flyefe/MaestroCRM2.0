@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Contacts Filtered by {{ filter_type|title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">
+        Contacts Filtered by {{ filter_type|title }}: "{{ filter_object.name }}"
+    </h2>
+
+    <div class="overflow-x-auto rounded-lg shadow-lg">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead class="bg-gray-600 text-white">
+                <tr>
+                    <th class="py-3 px-4 text-left text-sm font-semibold">Name</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold">Email</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold">Status</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold">Tags</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold">Assigned Staff</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr class="hover:bg-gray-100 transition duration-200">
+                    <td class="py-2 px-4 border-b border-gray-200">
+                        <a href="{% url 'contact_detail' contact.id %}" class="text-gray-600 hover:underline">
+                            {{ contact.user.first_name }} {{ contact.user.last_name }}
+                        </a>
+                    </td>
+                    <td class="py-2 px-4 border-b border-gray-200">{{ contact.user.email }}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">
+                        {% if contact.status %}
+                        <a href="{% url 'filter_contacts' 'status' contact.status.id %}"
+                            class="text-gray-600 hover:underline">
+                            {{ contact.status.name }}
+                        </a>
+                        {% else %}
+                        <span>No Status</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4 border-b border-gray-200 text-blue-500">
+                        {% for tag in contact.tags.all %}
+                        <a href="{% url 'filter_contacts' 'tag' tag.id %}" class="text-gray-600 hover:underline">
+                            {{ tag.name }}
+                        </a>
+                        {% empty %}
+                        <span>No Tags</span>
+                        {% endfor %}
+                    </td>
+                    <td class="py-2 px-4 border-b border-gray-200">
+                        {% if contact.assigned_staff %}
+                        <a href="{% url 'filter_contacts' 'assigned_staff' contact.assigned_staff.id %}"
+                            class="text-gray-600 hover:underline">
+                            {{ contact.assigned_staff }}
+                        </a>
+                        {% else %}
+                        <span>Not Assigned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="py-4 text-center">No contacts found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="bg-gray-600 py-2 px-4 border-b border-gray-200">
+            <span>Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}</span>
+            {% if contacts.has_previous %}
+            <a href="?page={{ contacts.previous_page_number }}" class="text-gray-300 hover:underline">Previous</a>
+            {% endif %}
+            {% if contacts.has_next %}
+            <a href="?page={{ contacts.next_page_number }}" class="text-gray-300 hover:underline">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Map CSV Fields{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl font-bold mb-6 text-center">Map CSV Fields to Contact Model</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="space-y-4">
+        {% for field in form %}
+        <div class="mb-4">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+        Save Mappings
+    </button>
+</form>
+
+{% if messages %}
+<div class="mt-4">
+    {% for message in messages %}
+    <div class="text-red-600">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

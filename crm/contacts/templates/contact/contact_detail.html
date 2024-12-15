@@ -1,0 +1,197 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Contact Profile{% endblock %}
+
+{% block content %}
+
+<div class="container mx-auto mt-8">
+    <!-- Client Bio Section -->
+    <div id="bioSection" class="bg-gray-600 text-white rounded-t-lg shadow-lg overflow-hidden mb-4">
+        <div class="p-6 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img src="https://via.placeholder.com/100" alt="Contact Photo"
+                    class="rounded-full border-4 border-white">
+                <div>
+                    <h2 class="text-3xl font-bold">{{ contact.user.first_name }} {{ contact.user.last_name }}</h2>
+                    <p class="text-gray-200 font-medium">{{ contact.status }}</p>
+                </div>
+            </div>
+            <button id="toggleBio"
+                class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Recent Feedback</button>
+        </div>
+        <div id="bioContent" class="p-4 hidden">
+            <h3 class="font-semibold mb-2">Recent Activity</h3>
+            {% for activity in recent_activities %}
+            <p class="text-sm text-gray-200">
+                <span class="font-semibold">{{ activity.created_by.get_full_name }}</span>
+                <span class="italic">{{ activity.log_description }}</span>
+                <span class="text-xs text-gray-300">{{ activity.created_at|date:"Y-m-d h:i a" }}</span>
+            </p>
+            {% empty %}
+            <p class="text-sm text-gray-200">No recent activities found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Client Details Section -->
+    <div id="detailsSection" class="bg-gray-100 rounded-lg shadow-lg mb-4 overflow-hidden">
+        <div class="px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-700">About {{contact.user.first_name}} </h2>
+            <button id="toggleDetails"
+                class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Contact
+                Details</button>
+        </div>
+        <div id="detailsContent" class="px-6 pb-6">
+            <table class="min-w-full divide-y divide-gray-300">
+                <tbody>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">First Name</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.first_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Middle Name</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.middle_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Last Name</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Email</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phone Number</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Birthday</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.date_of_birth }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Address</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ contact.address.first_line }}, {{ contact.address.second_line }}<br>
+                            {{ contact.address.city }}, {{ contact.address.country }} - {{ contact.address.postal_code}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tags</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {% if contact.tags.all %}
+                            {{ contact.tags.all|join:", " }}
+                            {% else %}
+                            None
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Assigned Staff</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{contact.assigned_staff.get_full_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Traffic Source</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.trafick_source }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Service</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.services }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Open Date</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.open_date|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Close Date</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.close_date|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Logs Control Section -->
+    <div id="logsSection" class="bg-gray-100 rounded-b-lg shadow-lg overflow-hidden">
+        <div class="px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-700">Activity Logs</h2>
+            <button id="toggleLogs"
+                class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Activity
+                Logs</button>
+        </div>
+        <div id="logsContent" class="px-6 pb-6 hidden">
+            <ul class="space-y-4">
+                {% for log in logs %}
+                <li class="bg-white p-4 rounded-md shadow-sm">
+                    <p class="font-normal text-black"><strong>Type: {{ log.log_type }}</strong></p>
+                    <p>
+                        By <span class="font-semibold">{{ log.created_by.get_full_name }}</span> @
+                        <span class="text-gray-500 text-xs">{{ log.created_at|date:"Y-m-d h:i a" }}</span>
+                    </p>
+                    <p class="font-normal text-black"><strong>{{ log.log_title }}</strong> <br>
+                        {{ log.log_description }}
+                    </p>
+                    <div class="mt-2">
+                        <a href="{% url 'update_log' log.id %}"
+                            class="bg-gray-500 text-white py-1 px-2 rounded hover:bg-gray-600 transition duration-300">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a onclick="return confirmDelete();" href="{% url 'delete_log' log.id %}"
+                            class="ml-2 bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 transition duration-300">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="text-gray-500">No logs found.</li>
+                {% endfor %}
+            </ul>
+            <form action="" method="post" class="mt-6">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit"
+                    class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition duration-300">Add
+                    Log</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-6 flex justify-between">
+        <a href="{% url 'update_contact' contact.id %}"
+            class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-6 rounded transition duration-300">Edit</a>
+        <form action="{% url 'delete_contact' contact.id %}" method="POST" class="inline">
+            {% csrf_token %}
+            <button onclick="return confirmDelete();" type="submit"
+                class="bg-red-500 hover:bg-red-600 text-white py-2 px-6 rounded transition duration-300">Delete</button>
+        </form>
+    </div>
+
+    <!-- Back to List Link -->
+    <div class="mt-6 text-center">
+        <a href="{% url 'contact_list' %}"
+            class="text-gray-500 hover:text-gray-700 hover:underline transition duration-300">Back to Contact List</a>
+    </div>
+</div>
+
+<script>
+    function toggleSection(id) {
+        let content = document.getElementById(id + 'Content');
+        content.classList.toggle('hidden');
+    }
+
+    document.getElementById('toggleBio').addEventListener('click', function () {
+        toggleSection('bio');
+    });
+    document.getElementById('toggleDetails').addEventListener('click', function () {
+        toggleSection('details');
+    });
+    document.getElementById('toggleLogs').addEventListener('click', function () {
+        toggleSection('logs');
+    });
+
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this?");
+    }
+</script>
+
+{% endblock %}
