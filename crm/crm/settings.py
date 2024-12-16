@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django_select2',
+    'widget_tweaks',
     "dashboard",
     "core",
     "contacts",
@@ -98,7 +99,7 @@ WSGI_APPLICATION = "crm.wsgi.application"
 
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
     'default': {
@@ -149,6 +150,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 

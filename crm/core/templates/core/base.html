@@ -1,60 +1,47 @@
 {% load static %}
-  
+
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>{% block title %}My App{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+
+    <!-- Custom Global CSS -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- <script src="{% static 'django_select2/js/select2.full.min.js' %}"></script> -->
-
     <!-- Select2 CSS via CDN -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
-    
-    <!-- Select2 JS via CDN -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script> -->
-
-    <!-- <link href="{% static 'django_select2/css/select2.min.css' %}" rel="stylesheet"> -->
-
-    {% load static %}
-
-    <link rel="stylesheet" href="{% static 'main.min.css' %}">
-    
-    <!-- Include Select2 CSS -->
-    <link href="{% static 'select2/css/select2.min.css' %}" rel="stylesheet">
-    
-    <!-- Include Select2 JS -->
-    <script src="{% static 'select2/js/select2.full.min.js' %}"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
         /* Custom linger effect */
         .custom-linger {
             transition-delay: 0ms;
         }
-    
+
         .group:hover .custom-linger {
             transition-delay: 0ms;
         }
-    
+
         .group:not(:hover) .custom-linger {
             transition-delay: 100ms;
-            /* 2 seconds before fade-out */
-        } 
+        }
     </style>
-    <title> {% block title %} {% endblock %} </title>
 </head>
 
 <body class="bg-gray-100">
     <!-- Navbar -->
     {% include 'core/partials/nav.html' %}
-    
+
     <!-- Notification Messages -->
     {% if messages %}
     <div class="py-6 px-6">
@@ -62,18 +49,25 @@
         <div class="py-4 px-4 bg-gray-500 text-white rounded-xl">
             {{ message }}
         </div>
-            {% endfor %}
+        {% endfor %}
     </div>
     {% endif %}
 
-        {% block content %}
-
+    <!-- Main Content -->
+    {% block content %}
     {% endblock %}
 
     <!-- Footer -->
     {% include 'core/partials/footer.html' %}
 
+    <!-- jQuery via CDN (version updated) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
+    <!-- Select2 JS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Initialize Select2 -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Apply Select2 to all <select> elements with the class 'select2'
@@ -81,4 +75,5 @@
         });
     </script>
 </body>
+
 </html>
