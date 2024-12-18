@@ -197,22 +197,6 @@ class ContactDetailCreationForm(forms.ModelForm):
         required=False,
         label="Assign Tags")
 
-    # assigned_staff = forms.ModelChoiceField(
-    #     queryset=User.objects.filter(Q(is_staff=True) | Q(groups__name="Staff")).distinct(),
-    #     label="Assigned Staff",
-    #     empty_label="Select Staff",
-    #     to_field_name="id",  # This is important to keep the correct ID
-    #     widget=Select2Widget(
-    #         attrs={
-    #         'class': 'form-select block w-full rounded border border-gray-700 p-2 mb-2',
-    #         'style': 'background-color: #f5f5f5;',
-    #         'data-placeholder': 'Select a reference...',  # Placeholder for the dropdown
-    #         'data-allow-clear': 'true',  # Allow the user to clear their selection
-    #         'data-minimum-results-for-search': '0',
-    #     }),
-    #     required=False
-    # )
-
     referred_by = forms.ModelChoiceField(
         queryset=User.objects.all(),
         label="Referred By",
@@ -236,7 +220,7 @@ class ContactDetailCreationForm(forms.ModelForm):
         fields = [
             'first_name', 'middle_name', 'last_name', 'email', 'status', 'tags',
             'assigned_staff', 'phone_number', 'traffic_source', 'services',
-            'referred_by', 'date_of_birth'
+            'referred_by', 'date_of_birth', 'address'
         ]
         widgets = {
             'status':

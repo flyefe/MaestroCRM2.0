@@ -1,5 +1,6 @@
 from django import forms
-from .models import Segment, Status, Tag
+from .models import Segment
+from settings.models import Status, Tag
 
 
 class SegmentForm(forms.ModelForm):
