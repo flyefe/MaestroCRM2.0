@@ -4,20 +4,7 @@ from contacts.models import ContactDetail
 from settings.models import Status, Tag
 
 class Segment(models.Model):
-    LOGIC = [
-        ('EQ', '=='),
-        ('NOTEQ', '!='),
-    ]
-    
-    LOGICAL_OPERATORS = [
-        ('AND', 'AND'),
-        ('OR', 'OR'),
-    ]
-
-    FIELDS_NAME = [
-        ('STATUS', 'status'),
-        ('TAGS', 'tags'),
-    ]
+    # 
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)

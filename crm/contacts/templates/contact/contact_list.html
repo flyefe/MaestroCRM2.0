@@ -109,7 +109,10 @@
                     </td>
                     <td class="border px-4 py-2 text-blue-500">
                         {% for tag in contact.tags.all %}
+                        <!-- <a href="{% url 'contacts_by_tag' tag.id %}" class="hover:underline block">{{ tag.name }}</a> -->
+                         <span class="tagStyle">
                         <a href="{% url 'contacts_by_tag' tag.id %}" class="hover:underline block">{{ tag.name }}</a>
+                         </span>
                         {% empty %}
                         <span>No Tags</span>
                         {% endfor %}

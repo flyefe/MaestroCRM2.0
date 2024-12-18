@@ -153,3 +153,16 @@ How to
 
 
 
+Next to do
+- How to automatically build
+- How to deploy to python anywhere
+- Dashboard analytics
+    - Number of Contacts
+    - Number of contacts who are Customer (status)
+    - number of contacts who are customers not contacted for the past 1 week, 2weeks, 1 month, using last log activity
+    - Last contacted(using last log)
+    - number of contacts who are lead(status)
+    - Number of contacts who are Customer(status) and unassigned
+    - Number of contacts who are Customer and are not assigned
+    - Total conversion per month (number of leads that were updated to customers)
+    - 
