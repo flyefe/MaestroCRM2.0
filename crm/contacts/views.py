@@ -300,7 +300,7 @@ def contact_list(request):
     ).order_by('-modified_at')
 
     # Pagination
-    paginator = Paginator(contacts, 10)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
