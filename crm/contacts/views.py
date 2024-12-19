@@ -515,13 +515,16 @@ def update_contact(request, contact_id):
             # Update contact details
             contact = form.save(commit=False)
             contact.updated_by = request.user
-            contact.save()
 
             # Update tags
             contact.tags.clear()  # Clear existing tags
             for tag_name in combined_tags:
                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
                 contact.tags.add(tag)  # Add tag to contact
+                
+            contact.save()
+
+            
 
             messages.success(request, 'Contact and user details updated successfully.')
             return redirect(reverse('contact_detail', args=[contact.id]))
