@@ -5,4 +5,4 @@ from .models import Segment
 class SegmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'created_at', 'modified_at')
     search_fields = ('name', 'description')
-    filter_horizontal = ('contacts',)
+    # filter_horizontal = ('contacts',)
