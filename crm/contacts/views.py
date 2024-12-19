@@ -16,6 +16,9 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.core.paginator import Paginator
 
+from segments.utils import reevaluate_segments_for_contacts  # Import the helper function
+
+
 
 @login_required
 def contacts_by_service(request, service_id):
@@ -397,6 +400,91 @@ def filter_contact(request):
 
     return render(request, 'contact/contact_list.html', context)
 
+# @login_required
+# def contacts_bulk_action(request):
+#     if request.method == "POST":
+#         action_type = request.POST.get("action_type")
+#         selected_contacts = request.POST.get("selected_contacts", "").split(',')
+        
+#         # Ensure contacts are selected
+#         if not selected_contacts:
+#             messages.error(request, "No contacts selected.")
+#             return redirect("contact_list")
+        
+#         # Handle each action
+#         if action_type == "update_status":
+#             status_id = request.POST.get("status")
+#             if status_id:
+#                 ContactDetail.objects.filter(id__in=selected_contacts).update(status_id=status_id)
+#                 messages.success(request, "Status updated successfully!")
+#             else:
+#                 messages.error(request, "No status selected.")
+        
+#         elif action_type == "add_tags":
+#             # tags_input = request.POST.get("tags", "").split(",")
+#             tag_ids = request.POST.getlist("tags")
+#             if tag_ids:
+#                 for contact in ContactDetail.objects.filter(id__in=selected_contacts):                    
+#                     # Add selected tags
+#                     contact.tags.add(*tag_ids)
+#                 messages.success(request, "Tags added successfully!")
+#             else:
+#                 messages.error(request, "No tags provided or selected.")
+        
+#         elif action_type == "remove_tags":
+#             tag_ids = request.POST.getlist("tags")
+#             if tag_ids:
+#                 tags = Tag.objects.filter(id__in=tag_ids)
+#                 contacts = ContactDetail.objects.filter(id__in=selected_contacts)
+
+#                 for contact in contacts:
+#                     # Remove selected tags
+#                     contact.tags.remove(*tags)
+#                 messages.success(request, "Tags removed successfully!")
+#             else:
+#                 messages.error(request, "No tags provided or selected.")
+        
+#         elif action_type == "delete":
+#             contacts=ContactDetail.objects.filter(id__in=selected_contacts)
+
+#             for contact in contacts:
+#                 # Delete associated user account if it exists
+#                 if contact.user: #Assuming ContactDetails has relationship with User
+#                     contact.user.delete()
+#                 contact.delete() #Delete the ContactDetail Object
+#             messages.success(request, "Selected contacts deleted successfully!")
+
+#         elif action_type == "assign_staff":
+#             assigned_staff_id = request.POST.get("assigned_staff")
+#             if assigned_staff_id:
+#                 ContactDetail.objects.filter(id__in=selected_contacts).update(assigned_staff_id=assigned_staff_id)                  
+#                 messages.success(request, "Contacts assigned to staff successfully!")
+#             else:
+#                 messages.error(request, "No staff provided or selected.")
+
+#         elif action_type == "traffic_source":
+#             traffic_source_id = request.POST.get("traffic_source")
+#             if traffic_source_id:
+#                 ContactDetail.objects.filter(id__in=selected_contacts).update(traffic_source_id=traffic_source_id)                  
+#                 messages.success(request, "Contacts traffic sources updated successfully!")
+#             else:
+#                 messages.error(request, "No staff provided or selected.")
+
+#         elif action_type == "services":
+#             services_id = request.POST.get("services")
+#             if services_id:
+#                 ContactDetail.objects.filter(id__in=selected_contacts).update(services_id=services_id)                  
+#                 messages.success(request, "Contacts services updated successfully!")
+#             else:
+#                 messages.error(request, "No staff provided or selected.")
+        
+#         else:
+#             messages.error(request, "Invalid action selected.")
+        
+#         return redirect("contact_list")
+#     return redirect('contact_list')
+
+
 @login_required
 def contacts_bulk_action(request):
     if request.method == "POST":
@@ -404,82 +492,96 @@ def contacts_bulk_action(request):
         selected_contacts = request.POST.get("selected_contacts", "").split(',')
         
         # Ensure contacts are selected
-        if not selected_contacts:
+        if not selected_contacts or not any(selected_contacts):
             messages.error(request, "No contacts selected.")
             return redirect("contact_list")
         
-        # Handle each action
+        # Fetch contacts queryset once
+        contacts = ContactDetail.objects.filter(id__in=selected_contacts)
+        
+        if not contacts.exists():
+            messages.error(request, "No valid contacts found.")
+            return redirect("contact_list")
+
+        # Action: Update Status
         if action_type == "update_status":
             status_id = request.POST.get("status")
             if status_id:
-                ContactDetail.objects.filter(id__in=selected_contacts).update(status_id=status_id)
+                contacts.update(status_id=status_id)
                 messages.success(request, "Status updated successfully!")
+                reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No status selected.")
         
+        # Action: Add Tags
         elif action_type == "add_tags":
-            # tags_input = request.POST.get("tags", "").split(",")
             tag_ids = request.POST.getlist("tags")
             if tag_ids:
-                for contact in ContactDetail.objects.filter(id__in=selected_contacts):                    
-                    # Add selected tags
+                for contact in contacts:
                     contact.tags.add(*tag_ids)
                 messages.success(request, "Tags added successfully!")
+                reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No tags provided or selected.")
         
+        # Action: Remove Tags
         elif action_type == "remove_tags":
             tag_ids = request.POST.getlist("tags")
             if tag_ids:
                 tags = Tag.objects.filter(id__in=tag_ids)
-                contacts = ContactDetail.objects.filter(id__in=selected_contacts)
-
                 for contact in contacts:
-                    # Remove selected tags
                     contact.tags.remove(*tags)
                 messages.success(request, "Tags removed successfully!")
+                reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No tags provided or selected.")
         
+        # Action: Delete Contacts
         elif action_type == "delete":
-            contacts=ContactDetail.objects.filter(id__in=selected_contacts)
-
             for contact in contacts:
-                # Delete associated user account if it exists
-                if contact.user: #Assuming ContactDetails has relationship with User
+                if contact.user:  # Delete associated User account if it exists
                     contact.user.delete()
-                contact.delete() #Delete the ContactDetail Object
+                contact.delete()
             messages.success(request, "Selected contacts deleted successfully!")
+            # No reevaluation needed, as contacts are deleted
 
+        # Action: Assign to Staff
         elif action_type == "assign_staff":
             assigned_staff_id = request.POST.get("assigned_staff")
             if assigned_staff_id:
-                ContactDetail.objects.filter(id__in=selected_contacts).update(assigned_staff_id=assigned_staff_id)                  
+                contacts.update(assigned_staff_id=assigned_staff_id)
                 messages.success(request, "Contacts assigned to staff successfully!")
+                reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No staff provided or selected.")
 
+        # Action: Update Traffic Source
         elif action_type == "traffic_source":
             traffic_source_id = request.POST.get("traffic_source")
             if traffic_source_id:
-                ContactDetail.objects.filter(id__in=selected_contacts).update(traffic_source_id=traffic_source_id)                  
+                contacts.update(traffic_source_id=traffic_source_id)
                 messages.success(request, "Contacts traffic sources updated successfully!")
+                # reevaluate_segments_for_contacts(contacts)
             else:
-                messages.error(request, "No staff provided or selected.")
+                messages.error(request, "No traffic source provided or selected.")
 
+        # Action: Update Services
         elif action_type == "services":
             services_id = request.POST.get("services")
             if services_id:
-                ContactDetail.objects.filter(id__in=selected_contacts).update(services_id=services_id)                  
+                contacts.update(services_id=services_id)
                 messages.success(request, "Contacts services updated successfully!")
+                # reevaluate_segments_for_contacts(contacts)
             else:
-                messages.error(request, "No staff provided or selected.")
-        
+                messages.error(request, "No service provided or selected.")
+
         else:
             messages.error(request, "Invalid action selected.")
-        
+
         return redirect("contact_list")
-    return redirect('contact_list')
+    
+    return redirect("contact_list")
+
 
 @login_required
 def update_contact(request, contact_id):
