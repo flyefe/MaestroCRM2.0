@@ -251,10 +251,6 @@ class ContactDetailCreationForm(forms.ModelForm):
                     'form-select block w-full rounded border border-black p-2 mb-2',
                     'style': 'background-color: #f5f5f5;'
                 }),
-            # 'referred_by': Select2Widget(attrs={
-            #     'class': 'form-select block w-full rounded border border-black p-2 mb-2',
-            #     'style': 'background-color: #f5f5f5;',
-            # }),
             'services':
             forms.Select(
                 attrs={

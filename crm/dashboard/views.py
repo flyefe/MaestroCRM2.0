@@ -1,12 +1,15 @@
 from django.utils.safestring import mark_safe
 import json
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from django.db.models.functions import TruncMonth
 from django.utils.timezone import now
 from django.db.models import Count
 from contacts.models import ContactDetail
 
+
+@login_required
 def dashboard(request):
     contacts = ContactDetail.objects.all()
     active_contacts_count = contacts.filter(status__name='Customer').count()
