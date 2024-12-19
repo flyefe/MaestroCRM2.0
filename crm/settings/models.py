@@ -14,12 +14,23 @@ class Status(models.Model):
         return self.name   
     class Meta:
         verbose_name_plural = "Statuses"
-    
-class Tag(models.Model):
+
+
+class TagCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
+      
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    category = models.ForeignKey(TagCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='segments')
+
+    def __str__(self):
+        return self.name
+
+
     
 class Service(models.Model):
     name = models.CharField(max_length=50, unique=True)  # e.g., 'Active', 'Inactive', 'Pending'

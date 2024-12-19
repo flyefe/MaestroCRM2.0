@@ -14,7 +14,15 @@ class ContactDetail(models.Model):
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('U', 'Prefer not to say')], blank=True)
     marital_status = models.CharField(max_length=20, choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced'), ('Widowed', 'Widowed'), ('Other', 'Other')], blank=True)
     date_of_birth = models.DateTimeField(blank=True, null=True)
-    address = models.OneToOneField('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='contact')
+    # address = models.OneToOneField('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='contact')
+
+     # Address fields added directly to the ContactDetail model
+    address_line1 = models.CharField(max_length=255, blank=True, null=True)
+    address_line2 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
     
 
     services = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True, blank=True, related_name='contacts')

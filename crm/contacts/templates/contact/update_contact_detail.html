@@ -14,13 +14,13 @@
 
             <!-- Left Section: Contact Details -->
             <div class="basis-4/5 p-2 mb-4 px-4">
-                <div id="left-toggle" class="shadow-md bg-white-300 border-1 border-gray-100">
+                <div id="left-toggle" class="shadow-2xl bg-gray-100 border-1 border-gray-100">
                     <button type="button"
-                        class="w-full flex justify-between items-center border-2 border-gray-200 py-2 px-4 font-semibold mb-4 toggle-button">
+                        class="w-full flex justify-between items-center border-2 border-gray-300 py-2 px-4 font-semibold mb-4 toggle-button">
                         Contact Details
                         <span class="toggle-icon">-</span>
                     </button>
-                    <div class="toggle-content pr-2 pl-2">
+                    <div class="toggle-content hidden pr-2 pl-2">
                         <div class="grid grid-cols-1 gap-6">
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
@@ -56,8 +56,45 @@
                             </div>
                         </div>
                     </div>
+               
+                    <!-- Address Toggle -->
+                    <button type="button"
+                        class="w-full flex justify-between items-center border-2 border-gray-300 py-2 px-4 font-semibold mb-4 toggle-button">
+                        Address Details
+                        <span class="toggle-icon">+</span>
+                    </button>
+                    <div class="toggle-content hidden pr-2 pl-2">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label for="address_line1" class="block text-sm font-medium text-gray-700">Address Line 1</label>
+                                {{ form.address_line1|safe }}
+                            </div>
+                            <div>
+                                <label for="address_line2" class="block text-sm font-medium text-gray-700">Address Line 2</label>
+                                {{ form.address_line2|safe }}
+                            </div>
+                            <div>
+                                <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                {{ form.city|safe }}
+                            </div>
+                            <div>
+                                <label for="state" class="block text-sm font-medium text-gray-700">State/Province</label>
+                                {{ form.state|safe }}
+                            </div>
+                            <div>
+                                <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                                {{ form.country|safe }}
+                            </div>
+                            <div>
+                                <label for="postal_code" class="block text-sm font-medium text-gray-700">Postal Code</label>
+                                {{ form.postal_code|safe }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            
 
             <!-- Right Section: Toggles -->
             <div class="basis-1/5 p-2 bg-white">

@@ -12,7 +12,7 @@ class LogAdmin(admin.ModelAdmin):
     search_fields = ('contact__user__username', 'log_title', 'log_type', 'created_by__username')
 
 
-@admin.register(Address)
-class AddressAdmin(admin.ModelAdmin):
-    list_display = ('first_line', 'second_line', 'city', 'state', 'country', 'postal_code')
-    search_fields = ('city', 'state', 'country', 'first_line')
+# @admin.register(Address)
+# class AddressAdmin(admin.ModelAdmin):
+#     list_display = ('first_line', 'second_line', 'city', 'state', 'country', 'postal_code')
+#     search_fields = ('city', 'state', 'country', 'first_line')

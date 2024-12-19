@@ -214,13 +214,17 @@ class ContactDetailCreationForm(forms.ModelForm):
                 'data-minimum-results-for-search': '0',
             }),
         required=False)
+    
+   
+
 
     class Meta:
         model = ContactDetail
         fields = [
             'first_name', 'middle_name', 'last_name', 'email', 'status', 'tags',
             'assigned_staff', 'phone_number', 'traffic_source', 'services',
-            'referred_by', 'date_of_birth', 'address'
+            'referred_by', 'date_of_birth', 'address_line1', 'address_line2', 'city',
+            'state', 'country', 'postal_code'
         ]
         widgets = {
             'status':
@@ -251,10 +255,6 @@ class ContactDetailCreationForm(forms.ModelForm):
                     'form-select block w-full rounded border border-black p-2 mb-2',
                     'style': 'background-color: #f5f5f5;'
                 }),
-            # 'referred_by': Select2Widget(attrs={
-            #     'class': 'form-select block w-full rounded border border-black p-2 mb-2',
-            #     'style': 'background-color: #f5f5f5;',
-            # }),
             'services':
             forms.Select(
                 attrs={
@@ -278,6 +278,62 @@ class ContactDetailCreationForm(forms.ModelForm):
                     'form-input block w-full rounded border border-black p-2 mb-2',
                     'style': 'background-color:#f5f5f5'
                 }),
+          
+          
+             # Address fields in the form
+            'address_line1':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'Address Line 1'
+                }),
+
+            'address_line2':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'Address Line 2'
+                }),
+
+            'city':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'City/Town'
+                }),
+
+            'state':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'State/Province'
+                }),
+
+            'country':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'Country'
+                }),
+
+            'postal_code':
+            forms.TextInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color:#f5f5f5',
+                    'placeholder': 'Postal Code'
+                }),              
         }
 
         # Set referred_by field to be not required within the Meta class
