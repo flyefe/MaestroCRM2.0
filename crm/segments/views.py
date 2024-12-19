@@ -132,7 +132,7 @@ def edit_segment(request, pk):
         'existing_conditions': json.dumps(existing_conditions),  # Pass for front-end use
     }
     return render(request, 'segments/edit_segment.html', context)
-
+ 
 
 # @role_required(['Admin'])
 # def edit_segment(request, pk):
