@@ -1,40 +1,38 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import ProfileForm
+from contacts.models import ContactDetail
+from contacts.forms import ContactDetailCreationForm # Assuming this form is defined elsewhere
 
 @login_required
 def client_portal(request):
     """Main Client Portal View"""
-    profile_form = ProfileForm(instance=request.user)
-    # message_form = MessageForm()
+    # Fetch or create the user's ContactDetail
+    try:
+        contact_detail = ContactDetail.objects.get(user=request.user)
+    except ContactDetail.DoesNotExist:
+        # If no ContactDetail exists, create one
+        contact_detail = ContactDetail(user=request.user)
+        contact_detail.save()
 
-    # Handle Profile Updates
+    # Initialize the form with the existing contact detail
+    contact_detail_form = ContactDetailCreationForm(instance=contact_detail)
+
+    # Handle Profile (Contact Detail) Updates
     if request.method == "POST" and 'update_profile' in request.POST:
-        profile_form = ProfileForm(request.POST, instance=request.user)
-        if profile_form.is_valid():
-            profile_form.save()
+        contact_detail_form = ContactDetailCreationForm(request.POST, instance=contact_detail)
+        if contact_detail_form.is_valid():
+            contact_detail_form.save()
             messages.success(request, "Profile updated successfully.")
             return redirect('client_portal')
 
-    # Handle Message Sending
-    # if request.method == "POST" and 'send_message' in request.POST:
-    #     # message_form = MessageForm(request.POST)
-    #     if message_form.is_valid():
-    #         message = message_form.save(commit=False)
-    #         message.sender = request.user
-    #         message.save()
-    #         messages.success(request, "Message sent successfully.")
-    #         return redirect('client_portal')
+    # Placeholder for messages (replace with actual implementation when ready)
+    # messages = []
+    # invoices = []
 
-    # Messages and Invoice (Placeholder)
-    # user_messages = Message.objects.filter(receiver=request.user).order_by('-created_at')
+    # Render the client portal page with form
     return render(request, 'clientportal/client_portal.html', {
-        'profile_form': profile_form,
-        # 'message_form': message_form,
-        # 'user_messages': user_messages
+        'form': contact_detail_form,
+        # 'messages': messages,
+        # 'invoices': invoices
     })
