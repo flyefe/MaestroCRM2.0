@@ -96,6 +96,7 @@ from django.db.models import Count
 from django.db.models import Q
 from contacts.models import ContactDetail, Tag
 from datetime import timedelta
+from django.db.models.functions import ExtractMonth
 
 @login_required
 def dashboard(request):
@@ -205,6 +206,25 @@ def dashboard(request):
     )
     monthly_conversions_data = {item['month'].strftime('%B %Y'): item['conversions'] for item in monthly_conversions}
 
+
+    
+
+    birthdays_per_month = (
+        ContactDetail.objects
+        .filter(date_of_birth__isnull=False)
+        .annotate(month=ExtractMonth('date_of_birth'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+
+    # Convert month numbers to names for better readability
+    from calendar import month_name
+    birthdays_per_month = [
+        {'month': month_name[item['month']], 'count': item['count']}
+        for item in birthdays_per_month
+    ]
+
     context = {
         'contacts': contacts,
         'customers_count': customers_count,
@@ -225,6 +245,7 @@ def dashboard(request):
         'traffic_sources_per_month': traffic_sources_per_month,
         'services_breakdown': {service['services__name']: service['count'] for service in services_breakdown},
         'verdict_tags_data': verdict_tags_data,
-        'monthly_conversions': monthly_conversions_data
+        'monthly_conversions': monthly_conversions_data,
+        'birthdays_per_month': birthdays_per_month
     }
     return render(request, 'dashboard/dashboard.html', context)

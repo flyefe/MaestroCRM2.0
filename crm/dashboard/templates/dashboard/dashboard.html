@@ -34,6 +34,27 @@
         </div>
     </div>
 
+    <!-- Birthday per Month -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Birthdays Per Month</h3>
+        <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-2 px-4 text-left">Month</th>
+                    <th class="py-2 px-4 text-left">Birthdays</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in birthdays_per_month %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ item.month }}</td>
+                    <td class="py-2 px-4 font-bold">{{ item.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <!-- Monthly Contacts Overview -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
         <h3 class="text-xl font-bold mb-4">Contacts Added Per Month</h3>
@@ -54,6 +75,8 @@
             </tbody>
         </table>
     </div>
+
+    
 
     <!-- Monthly Traffic Sources Overview -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
