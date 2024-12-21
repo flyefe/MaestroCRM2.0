@@ -1,0 +1,4 @@
+crm/.env
+crm/certs/
+.venv/
+requirements.txt
