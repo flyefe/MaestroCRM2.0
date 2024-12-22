@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     // "./templates/**/*.html",        // All HTML files in templates directory
-    // "./**/*.html",                  // Catch any stray HTML files in the project
+    "./**/*.html",                  // Catch any stray HTML files in the project
     // "./static/**/*.js",             // Include JS files inside static (if applicable)
     // "./crm/**/*.html",              // If templates are inside app directories
 
