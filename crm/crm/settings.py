@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "dashboard",
     "core",
     "contacts",
+    "compressor",
     "clientportal",
     "django_extensions",
     "settings",
@@ -149,10 +150,13 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# # If you're using Django Compressor
-# COMPRESS_ROOT = BASE_DIR / 'static'
-# COMPRESS_ENABLED = True
-# STATICFILES_FINDERS = ('compressor.finders.CompressorFinder', )
+# If you're using Django Compressor
+COMPRESS_ROOT = BASE_DIR / 'static'
+COMPRESS_ENABLED = True
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
 
 
 

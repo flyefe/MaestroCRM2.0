@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.pyd
+__mypycache__/
+crm/.env
+crm/certs
+crm/db.sqlite3
+crm/static/media/

@@ -12,7 +12,13 @@
     <!-- <link rel="stylesheet" href="{% static 'css/custom.css' %}"> -->
 
     <!-- Tailwind CSS -->
+    <!-- <link rel="stylesheet" href="{% static 'css/main.min.css' %}"> -->
+
+    <!-- Using Django-Compressor -->
+    {% load compress %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
+    {% endcompress %}
 
     <!-- Tailwind CDN -->
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
