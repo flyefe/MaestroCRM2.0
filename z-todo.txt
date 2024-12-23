@@ -166,3 +166,10 @@ Next to do
     - Number of contacts who are Customer and are not assigned
     - Total conversion per month (number of leads that were updated to customers)
     - 
+
+-Get all contacts with empty
+    - Tag field
+    - status
+
+- Make imported contact have hace contact status
+- Make thier tag and status become titled
