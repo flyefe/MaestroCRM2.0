@@ -1,30 +1,34 @@
-ARG PYTHON_VERSION=3.12-slim
+# Use the official Python image.
+FROM python:3.11-slim
 
-FROM python:${PYTHON_VERSION}
+# Set the working directory in the container.
+WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# install psycopg2 dependencies.
+# Install system dependencies for MySQL and other tools.
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
     gcc \
+    libmariadb-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /code
+# Copy the requirements file into the container.
+COPY requirements.txt .
 
-WORKDIR /code
+# Install dependencies.
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY requirements.txt /tmp/requirements.txt
-RUN set -ex && \
-    pip install --upgrade pip && \
-    pip install -r /tmp/requirements.txt && \
-    rm -rf /root/.cache/
-COPY . /code
+# Copy the project files into the container.
+COPY . .
 
-ENV SECRET_KEY "pkFCZ29Wsd3S6oLEXAaQ3wa6Ue8D3FouzFhBGCo8a6J9oZ48fb"
+# Set environment variables for Django.
+ENV PYTHONUNBUFFERED=1 \
+    DJANGO_SETTINGS_MODULE=crm.settings
+
+# Collect static files
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8000
+# Apply database migrations
+RUN python manage.py migrate
 
-CMD ["gunicorn","--bind",":8000","--workers","2","crm.wsgi"]
+# Run Django server (update to your project’s wsgi or asgi server for production).
+CMD ["gunicorn", "crm.wsgi:application", "--bind", "0.0.0.0:8000"]
