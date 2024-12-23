@@ -6,3 +6,5 @@ crm/.env
 crm/certs
 crm/db.sqlite3
 crm/static/media/
+crm/crm/settings2.py
+crm/crm/set-interpreted.py
