@@ -24,9 +24,11 @@ RUN set -ex && \
     rm -rf /root/.cache/
 COPY . /code
 
-ENV SECRET_KEY "GszxBSQwwcwZGQMmHc0aZ7wKjDOAHeGFK8UmYGZ77iOTEjlkmb"
+ENV SECRET_KEY "2qdsrzik75rxTdtDSYjy1wJfbj6zWzDiRCnpo4Sm5OA7zGrkCx"
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["gunicorn","--bind",":8000","--workers","2","crm.wsgi"]
+# CMD ["gunicorn","--bind",":8000","--workers","2","crm.wsgi"]
+CMD ["sh", "-c", "python manage.py migrate && gunicorn --bind :8000 --workers 2 crm.wsgi"]
+

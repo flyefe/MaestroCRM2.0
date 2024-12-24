@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for crm-quiet-hill-1806 on 2024-12-24T15:33:45+01:00
+# fly.toml app configuration file generated for flyibatcrm on 2024-12-24T19:49:24+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'crm-quiet-hill-1806'
+app = 'flyibatcrm'
 primary_region = 'lhr'
 console_command = '/code/manage.py shell'
 
