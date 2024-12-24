@@ -167,9 +167,15 @@ Next to do
     - Total conversion per month (number of leads that were updated to customers)
     - 
 
+- Make Admin account creation possible
+- 
+
 -Get all contacts with empty
     - Tag field
     - status
 
 - Make imported contact have hace contact status
 - Make thier tag and status become titled
+
+
+
