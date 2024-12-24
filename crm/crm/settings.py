@@ -31,7 +31,7 @@ DEBUG = config("DEBUG")
 
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', 'flyibatcrm.fly.dev,127.0.0.1,crm-quiet-hill-1806.fly.dev').split(',')
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'flyibatcrm.fly.dev,127.0.0.1').split(',')
 
 
 
@@ -190,11 +190,11 @@ LOGIN_REDIRECT_URL = '/'  # Redirect to home page or another page after successf
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = config("TIME_ZONE")  # Timezone, configurable via environment variables.
+# TIME_ZONE = config("TIME_ZONE")  # Timezone, configurable via environment variables.
 
 USE_I18N = True
 
 USE_TZ = True
 # settings.py
 # USE_TZ = True
-# TIME_ZONE = 'Etc/GMT-1'  # or 'Etc/GMT-1' for GMT+1 without DST
+TIME_ZONE = 'Etc/GMT-1'  # or 'Etc/GMT-1' for GMT+1 without DST

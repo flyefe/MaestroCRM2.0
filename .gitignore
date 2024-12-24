@@ -1,7 +1,4 @@
 crm/.env
 crm/certs/
 .venv/
-requirements.txt
-crm/crm/settings2.py
-crm/crm/set-interpreted.py
 crm/Dockerfile
