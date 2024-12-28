@@ -167,12 +167,33 @@ Next to do
     - Total conversion per month (number of leads that were updated to customers)
     - 
 
-- Make Admin account creation possible
-- 
 
--Get all contacts with empty
-    - Tag field
+
+CURRENT
+- Make Front end Login (all login to front page)
+- Make Registeration possible (all newly registered has a contact detail and user account - Contact role)
+- For User ID 1
+    - Auto Create roles
+    - Make admin
+    - Auto Create Basic services
+    - Auto Create Traffic source
+    - Auto Create basic Status: Leads, Prosepects, Contacts
+- For other users 
+    - Create User
+        - Assign Contact role
+    - Create Contact Details
+    - Assign user to contact detail
+    - Assign contact to Lead status
+
+
+
+- Get all contacts with empty
+    - Tag
     - status
+    - Not assigned
+    - No services
+    - No Traffic source
+    - 
 
 - Make imported contact have hace contact status
 - Make thier tag and status become titled
