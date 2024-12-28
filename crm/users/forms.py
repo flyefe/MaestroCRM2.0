@@ -164,7 +164,7 @@ class RoleCreationForm(forms.ModelForm):
         }
 
 
-class RegisterForm(forms.ModelForm):
+class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300',
         'placeholder': 'Enter your password'
@@ -177,11 +177,16 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'first_name']
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300',
                 'placeholder': 'Enter your email'
+            }),
+
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300',
+                'placeholder': 'Enter your first name'
             }),
         }
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Customs Duty Calculation</title>
+</head>
+
+<body>
+    <h1>Customs Duty Calculation Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Calculate Duty</button>
+    </form>
+</body>
+</html>

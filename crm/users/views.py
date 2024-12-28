@@ -10,7 +10,7 @@ import random, string
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 
-from .forms import UserEditForm, RegisterForm, RoleCreationForm,RoleEditForm
+from .forms import UserEditForm, SignUpForm, RoleCreationForm,RoleEditForm
 
 from django.core.paginator import Paginator
 from django.db.models import Q  # Import the Q object
@@ -354,7 +354,7 @@ def login_view(request):
 @login_required
 def register_user(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             
@@ -371,7 +371,7 @@ def register_user(request):
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
-        form = RegisterForm()
+        form = SignUpForm()
            
     return render(request, 'register.html', {'form': form})
 

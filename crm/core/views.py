@@ -15,7 +15,7 @@ from django.contrib import messages
 from contacts.models import ContactDetail
 
 
-from users.forms import RegisterForm
+from users.forms import SignUpForm
 
 from .decorators import role_required
 
@@ -69,7 +69,7 @@ def login_view(request):
 
 # def sign_up(request):
 #     if request.method == 'POST':
-#         form = RegisterForm(request.POST)
+#         form = SignUpForm(request.POST)
 #         if form.is_valid():
 #             email = form.cleaned_data['email']
 
@@ -107,7 +107,7 @@ def login_view(request):
 #         else:
 #             messages.error(request, 'Please correct the errors below.')
 #     else:
-#         form = RegisterForm()
+#         form = SignUpForm()
 
 #     return render(request, 'core/sign_up.html', {'form': form})
 
@@ -115,7 +115,7 @@ def login_view(request):
 
 def sign_up(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
 
@@ -170,7 +170,7 @@ def sign_up(request):
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
-        form = RegisterForm()
+        form = SignUpForm()
 
     return render(request, 'core/sign_up.html', {'form': form})
 
