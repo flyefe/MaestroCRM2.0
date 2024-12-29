@@ -32,6 +32,7 @@ class ContactDetail(models.Model):
     assigned_staff = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_contacts')
     traffic_source = models.ForeignKey(TrafficSource, on_delete=models.SET_NULL, null=True, blank=True, related_name='traffic_source_contact')
     referred_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='referee_contacts')
+    # new_or_old = models.CharField(max_length=20, choices=[('Daily', 'Daily'), ('Weekly', 'Weekly'), ('Monthly', 'Monthly'), ('On Demand', 'On Demand')], blank=True) #Can help in scheduling follow-ups or communications.
    
     contact_frequency = models.CharField(max_length=20, choices=[('Daily', 'Daily'), ('Weekly', 'Weekly'), ('Monthly', 'Monthly'), ('On Demand', 'On Demand')], blank=True) #Can help in scheduling follow-ups or communications.
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_contacts')
