@@ -247,7 +247,7 @@ def users_table(request):
             'user_contact_id': contact_detail.id if contact_detail else None  # Safely get the ContactDetail ID
         })
 
-    paginator = Paginator(user_list, 10)  # Show 10 users per page
+    paginator = Paginator(user_list, 200)  # Show 10 users per page
     page_number = request.GET.get('page')
     page_users = paginator.get_page(page_number)
 

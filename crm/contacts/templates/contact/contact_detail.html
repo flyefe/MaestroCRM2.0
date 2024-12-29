@@ -14,6 +14,7 @@
                 <div>
                     <h2 class="text-3xl font-bold">{{ contact.user.first_name }} {{ contact.user.last_name }}</h2>
                     <p class="text-gray-200 font-medium">{{ contact.status }}</p>
+                    <p class="text-gray-200 font-medium">{{ contact.new_or_old }} Customer</p>
                 </div>
             </div>
             <button id="toggleBio"
@@ -24,7 +25,7 @@
             {% for activity in recent_activities %}
             <p class="text-sm text-gray-200">
                 <span class="font-semibold">{{ activity.created_by.get_full_name }}</span>
-                <span class="italic">{{ activity.log_description }}</span>
+                <span class="italic">{{ activity.log_title }}</span>
                 <span class="text-xs text-gray-300">{{ activity.created_at|date:"Y-m-d h:i a" }}</span>
             </p>
             {% empty %}
@@ -41,7 +42,7 @@
                 class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Contact
                 Details</button>
         </div>
-        <div id="detailsContent" class="px-6 pb-6 hidden">
+        <div id="detailsContent" class="px-6 pb-6">
             <table class="min-w-full divide-y divide-gray-300">
                 <tbody>
                     <tr>
@@ -91,7 +92,7 @@
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Traffic Source</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.trafick_source }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.traffic_source }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Service</td>

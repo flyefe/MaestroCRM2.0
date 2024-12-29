@@ -86,7 +86,7 @@ class UserEditForm(forms.ModelForm):
         queryset=Group.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple(attrs={
-            'class': 'w-full p-2 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring- focus:ring-gray-300'
+            'class': 'p-2 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring- focus:ring-gray-300'
         }),
         label="Roles (Groups)"
     )

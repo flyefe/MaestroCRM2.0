@@ -29,7 +29,7 @@ def contacts_by_service(request, service_id):
     contacts = ContactDetail.objects.filter(services=service)
     
     # Add pagination (Optional)
-    paginator = Paginator(contacts, 2)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
     
@@ -49,7 +49,7 @@ def contacts_by_traffic_source(request, traffic_source_id):
     contacts = ContactDetail.objects.filter(traffic_source=traffic_source)
     
     # Add pagination (Optional)
-    paginator = Paginator(contacts, 2)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
     
@@ -68,7 +68,7 @@ def contacts_by_assigned_staff(request, assigned_staff_id):
     contacts = ContactDetail.objects.filter(assigned_staff=assigned_staff)
     
     # Add pagination (Optional)
-    paginator = Paginator(contacts, 2)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
     
@@ -87,7 +87,7 @@ def contacts_by_status(request, status_id):
     contacts = ContactDetail.objects.filter(status=status)
     
     # Add pagination (Optional)
-    paginator = Paginator(contacts, 2)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
     
@@ -103,7 +103,7 @@ def contacts_by_tag(request, tag_id):
     contacts = ContactDetail.objects.filter(tags=tag)  # Filter contacts by tag
 
      # Add pagination (Optional)
-    paginator = Paginator(contacts, 2)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
@@ -387,7 +387,7 @@ def filter_contact(request):
             contacts = contacts.filter(assigned_staff=filter_form.cleaned_data['assigned_staff'])
 
     # Pagination
-    paginator = Paginator(contacts, 5)  # Show 5 contacts per page
+    paginator = Paginator(contacts, 200)  # Show 5 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 

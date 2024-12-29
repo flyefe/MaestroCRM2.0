@@ -50,6 +50,34 @@ class ContactDetail(models.Model):
     
 
 
+class Log(models.Model):
+    LOG_TYPE_CHOICES = [
+        # ('call', 'Call'),
+        # ('whatsapp', 'WhatsApp'),
+        ('email', 'Email'),
+        ('feedback', 'Feedback'),
+    ]
+    contact = models.ForeignKey(ContactDetail, related_name='log', on_delete=models.CASCADE)
+    log_type = models.CharField(max_length=20, choices=LOG_TYPE_CHOICES)  # Options filled in
+    log_title = models.CharField(max_length=255)  # Added this field
+    log_description = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(User, related_name='created_log', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)  # Set at creation
+    modified_at = models.DateTimeField(auto_now=True)      # Updated on save
+
+    def __str__(self):
+        return f'commented by {self.created_by.username} on {self.created_at}'
+
+
+
+
+
+
+
+
+
+
+
 # class Address(models.Model):
 #     """
 #     Model representing an address associated with a contact.
@@ -79,25 +107,3 @@ class ContactDetail(models.Model):
 
 #     class Meta:
 #         verbose_name_plural = "Addresses"
-
-
-
-
-
-class Log(models.Model):
-    LOG_TYPE_CHOICES = [
-        # ('call', 'Call'),
-        # ('whatsapp', 'WhatsApp'),
-        ('email', 'Email'),
-        ('feedback', 'Feedback'),
-    ]
-    contact = models.ForeignKey(ContactDetail, related_name='log', on_delete=models.CASCADE)
-    log_type = models.CharField(max_length=20, choices=LOG_TYPE_CHOICES)  # Options filled in
-    log_title = models.CharField(max_length=255)  # Added this field
-    log_description = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(User, related_name='created_log', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)  # Set at creation
-    modified_at = models.DateTimeField(auto_now=True)      # Updated on save
-
-    def __str__(self):
-        return f'commented by {self.created_by.username} on {self.created_at}'
