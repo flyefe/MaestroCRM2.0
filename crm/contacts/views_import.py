@@ -60,7 +60,24 @@ def map_fields(request):
 
     
     # Fetch all contact fields dynamically
-    contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in ContactDetail._meta.get_fields()]
+    # contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in ContactDetail._meta.get_fields()]
+    contact_fields = [
+        'first_name',
+        'middle_name',
+        'last_name', 
+        'email', 
+        'phone_number', 
+        'gender', 
+        'marital_status',
+        'date_of_birth',
+        'services',
+        'status',
+        'tags',
+        'traffic_source',
+        'new_or_old',
+        'log'
+    ]
+
     # Step 3: Create the dynamic form for field mapping
     class FieldMappingForm(forms.Form):
         def __init__(self, *args, **kwargs):
