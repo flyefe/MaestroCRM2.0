@@ -28,7 +28,7 @@ def edit_group(request, group_id):
 
     # Fetch the group to be edited
     group = get_object_or_404(Group, id=group_id)
-    
+
     if request.method == 'POST':
         form = RoleEditForm(request.POST, instance=group)
         if form.is_valid():
@@ -73,7 +73,7 @@ def users_in_group(request, group_id):
 #Create Role
 @login_required
 def create_group(request):
-    
+
     groups = Group.objects.all()
 
     if request.method == 'POST':
@@ -98,7 +98,7 @@ def create_group(request):
 @login_required
 def delete_user(request, user_id):
     # Check if the user has the appropriate permissions
-    
+
     # if not request.user.is_superuser:  # or another permission check
     if not request.user.has_perm('auth.delete_user'):
         messages.error(request, "You do not have permission to delete users.")
@@ -114,15 +114,22 @@ def delete_user(request, user_id):
 
     # Delete the user and display a success message
     user.delete()
-    messages.success(request, f"User {user.username} has been deleted successfully.")
-    return redirect('user_list')  # Redirect to the list of users or another page
+    messages.success(request,
+                     f"User {user.username} has been deleted successfully.")
+    referer = request.META.get('HTTP_REFERER')
+    
+    if referer and referer.startswith(request.build_absolute_uri('/')):
+        return redirect(referer)
+    else:
+        return redirect('staff_list')  # or handle this case differently
+    # return redirect('user_list')  # Redirect to the list of users or another page
 
 
 #Edit Users
 @login_required
 def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    
+
     if request.method == 'POST':
         form = UserEditForm(request.POST, instance=user)
         if form.is_valid():
@@ -184,7 +191,6 @@ def add_staff_user(request):
 
     else:
         form = UserEditForm()
-
     return render(request, 'add_staff_user.html', {'form': form})
 
 @login_required
@@ -195,12 +201,12 @@ def staff_table(request):
 
     # Fetch users who belong to either 'Staff' or 'Admin' group
     users = (User.objects.filter(groups__in=staff_group) | User.objects.filter(groups__in=admin_group)).distinct()
-    
+
     user_list = []  # This will hold user data with roles
 
     for user in users:
         groups = user.groups.all()  # Fetch all roles (groups) for each user
-        contact_detail = getattr(user, 'Contact', None)  # Access the Contact instance if it exists        
+        contact_detail = getattr(user, 'Contact', None)  # Access the Contact instance if it exists
         user_list.append({
             'user_id': user.id,
             'username': user.username,
@@ -273,7 +279,7 @@ def users_bulk_action(request):
         if not selected_users:
             messages.error(request, "No users selected.")
             return redirect("user_list")
-        
+
         if action_type == "add_groups":
             group_ids = request.POST.getlist("groups")
             if group_ids:
@@ -282,7 +288,7 @@ def users_bulk_action(request):
                 messages.success(request, "Groups added successfully!")
             else:
                 messages.error(request, "No groups provided or selected.")
-        
+
         elif action_type == "remove_groups":  # Fixed to match the front-end action
             group_ids = request.POST.getlist("groups")
             if group_ids:
@@ -291,24 +297,24 @@ def users_bulk_action(request):
                 messages.success(request, "Groups removed successfully!")
             else:
                 messages.error(request, "No groups provided or selected.")
-        
+
         elif action_type == "delete_users":
             userid = request.user.id
             userid = str(userid)
             if userid in selected_users:
                 messages.error(request, "You cannot select your own account for deletion.")
                 return redirect('user_list')  # Redirect to prevent the process from continuing
-            
+
             users = User.objects.filter(id__in=selected_users)
             for user in users:
                 if hasattr(user, 'Contact'):  # Check for associated Contact
                     user.Contact.delete()
                 user.delete()
             messages.success(request, "Selected users deleted successfully!")
-        
+
         else:
             messages.error(request, "Invalid action selected.")
-        
+
         return redirect('staff_list')
 
 
@@ -357,12 +363,12 @@ def register_user(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            
+
             # Check if a user with this email already exists
             if User.objects.filter(username=email).exists():
                 messages.error(request, 'A user with this email already exists. Please use a different email or log in.')
                 return render(request, 'register.html', {'form': form})
-            
+
             user = form.save()
             staff_group = Group.objects.get(name='Staff')
             user.groups.add(staff_group)
@@ -372,7 +378,7 @@ def register_user(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = SignUpForm()
-           
+
     return render(request, 'register.html', {'form': form})
 
 
@@ -381,7 +387,7 @@ def register_user(request):
 # @login_required
 # def change_password(request, user_id):
 #     user = get_object_or_404(User, id=user_id)
-    
+
 #     if request.method == 'POST':
 #         form = UserEditForm(request.POST, instance=user)
 #         if form.is_valid():
@@ -401,7 +407,7 @@ def register_user(request):
 
 #     return render(request, 'change_password.html', {
 #         'form': form,
-#         'password_form' : password_form, 
+#         'password_form' : password_form,
 #         'user': user
 #     })
 
@@ -414,18 +420,18 @@ from django.contrib.auth.models import User
 @login_required
 def change_password(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    
+
     if request.method == 'POST':
         # Handle user edit form submission
         form = UserEditForm(request.POST, instance=user)
-        
+
         # Handle password change form submission separately
         password_form = AdminPasswordChangeForm(user=user, data=request.POST)
-        
+
         # if form.is_valid():
         #     form.save()
         #     messages.success(request, 'User has been edited successfully.')
-        
+
         if password_form.is_valid():
             password_form.save()
             messages.success(request, f" {user.first_name}'s Password has been updated successfully.")
@@ -445,6 +451,6 @@ def change_password(request, user_id):
 
     return render(request, 'change_password.html', {
         # 'form': form,
-        'password_form': password_form, 
+        'password_form': password_form,
         'user': user
     })

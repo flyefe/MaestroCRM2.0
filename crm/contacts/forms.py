@@ -425,7 +425,7 @@ class ContactImportForm(forms.Form):
 
 
 # Fetch all contact fields dynamically
-contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in Contact._meta.get_fields()]
+contact_fields = [field.name for field in Contact._meta.get_fields()]
 class FieldMappingForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

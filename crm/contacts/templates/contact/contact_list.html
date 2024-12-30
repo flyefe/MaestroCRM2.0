@@ -87,7 +87,7 @@
                     <td class="border px-4 py-2">
                         <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.last_name }} {{contact.first_name}} </a>
                     </td>
-                    <td class="border px-4 py-2">{{ contact.user.email }}</td>
+                    <td class="border px-4 py-2">{{ contact.email }}</td>
                     <td class="border px-4 py-2">{{ contact.phone_number }}</td>
                     <td class="border px-4 py-2">{{ contact.date_of_birth|date:"d/m/Y"|default:'None' }}</td>
                     <td class="border px-4 py-2">{{ contact.services }}</td>
