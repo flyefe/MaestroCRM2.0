@@ -638,12 +638,12 @@ def update_contact(request, contact_id):
             'last_name': contact.last_name,
             'tag': ', '.join(contact.tags.values_list('name', flat=True))
         }
-        # if user:  # If user exists, include their details in the form
-        #     form_initial.update({
-        #         'email': user.email,
-        #         'first_name': user.first_name,
-        #         'last_name': user.last_name,
-        #     })
+        if user:  # If user exists, include their details in the form
+            form_initial.update({
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+            })
         
         form = ContactCreationForm(instance=contact, initial=form_initial)
         

@@ -224,10 +224,17 @@ class ContactCreationForm(forms.ModelForm):
             'first_name', 'middle_name', 'last_name', 'email', 'status', 'tags',
             'assigned_staff', 'phone_number', 'traffic_source', 'services',
             'referred_by', 'date_of_birth', 'address_line1', 'address_line2', 'city',
-            'state', 'country', 'postal_code'
+            'state', 'country', 'postal_code', 'new_or_old'
         ]
         widgets = {
             'status':
+            forms.Select(
+                attrs={
+                    'class':
+                    'form-select block w-full rounded border border-black p-2 mb-2',
+                    'style': 'background-color: #f5f5f5;'
+                }),
+            'new_or_old':
             forms.Select(
                 attrs={
                     'class':

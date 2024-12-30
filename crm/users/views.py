@@ -422,18 +422,18 @@ def change_password(request, user_id):
         # Handle password change form submission separately
         password_form = AdminPasswordChangeForm(user=user, data=request.POST)
         
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'User has been edited successfully.')
+        # if form.is_valid():
+        #     form.save()
+        #     messages.success(request, 'User has been edited successfully.')
         
         if password_form.is_valid():
             password_form.save()
-            messages.success(request, 'Password has been updated successfully.')
-            return redirect('user_list')  # Redirect to a page that lists all users or any preferred page
+            messages.success(request, f" {user.first_name}'s Password has been updated successfully.")
+            return redirect('staff_list')  # Redirect to a page that lists all users or any preferred page
 
     else:
         # Initialize both forms for GET request
-        form = UserEditForm(instance=user)
+        # form = UserEditForm(instance=user)
         password_form = AdminPasswordChangeForm(user=user)
 
         # Customize widgets for password_form fields
@@ -444,7 +444,7 @@ def change_password(request, user_id):
             })
 
     return render(request, 'change_password.html', {
-        'form': form,
+        # 'form': form,
         'password_form': password_form, 
         'user': user
     })
