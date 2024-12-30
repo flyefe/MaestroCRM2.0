@@ -1,0 +1,339 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-full mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Dashboard</h2>
+
+    <!-- Overview Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-blue-100 text-blue-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Total Contacts</h3>
+            <p class="text-2xl font-bold">{{ contacts.count }}</p>
+        </div>
+        <div class="bg-green-100 text-green-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Converted Contacts (Customers)</h3>
+            <p class="text-2xl font-bold">{{ customers_count }}</p>
+        </div>
+        <div class="bg-yellow-100 text-yellow-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Pending Assignments</h3>
+            <p class="text-2xl font-bold">{{ unassigned_contacts_count }}</p>
+        </div>
+        <div class="bg-purple-100 text-purple-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Leads</h3>
+            <p class="text-2xl font-bold">{{ leads_count }}</p>
+        </div>
+        <div class="bg-indigo-100 text-indigo-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Prospects</h3>
+            <p class="text-2xl font-bold">{{ prospects_count }}</p>
+        </div>
+        <div class="bg-pink-100 text-pink-700 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Need Follow-Up</h3>
+            <p class="text-2xl font-bold">{{ need_follow_up_count }}</p>
+        </div>
+    </div>
+
+    <!-- Birthday per Month -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Birthdays Per Month</h3>
+        <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-2 px-4 text-left">Month</th>
+                    <th class="py-2 px-4 text-left">Birthdays</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in birthdays_per_month %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ item.month }}</td>
+                    <td class="py-2 px-4 font-bold">{{ item.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Monthly Contacts Overview -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Contacts Added Per Month</h3>
+        <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-2 px-4 text-left">Month</th>
+                    <th class="py-2 px-4 text-left">Total Contacts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in contacts_per_month %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ item.month }}</td>
+                    <td class="py-2 px-4 font-bold">{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    
+
+
+    <!-- Monthly chart data -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Monthly Contacts</h3>
+        <div class="w-full h-64">
+            <canvas id="monthlyContactsChart"></canvas>
+        </div>
+    </div>
+
+
+    <!-- Monthly Traffic Sources Overview -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Traffic Sources Per Month</h3>
+        {% for month, sources in traffic_sources_per_month.items %}
+        <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-2">{{ month }}</h4>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Source</th>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source, total in sources.items %}
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            {% if source %}
+                            {{ source }}
+                            {% else %}
+                            Unknown
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4 border-b border-gray-200 font-bold">{{ total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <!-- Traffic Source Chart -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Traffic Sources</h3>
+        <div class="flex flex-col md:flex-row justify-center gap-8">
+            <!-- Bar Chart -->
+            <div class="w-full md:w-1/2 ">
+                <h4 class="text-lg font-semibold text-center mb-2">Bar Chart</h4>
+                <canvas id="trafficSourceChart" style="width: 100%; max-width: 300px; height: 200px;"></canvas>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="w-full md:w-1/2">
+                <h4 class="text-lg font-semibold text-center mb-2">Pie Chart</h4>
+                <canvas id="trafficChart" style="width: 100%; max-width: 300px; height: 200px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verdict Tags Chart -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Verdict Tags</h3>
+        <canvas id="verdictTagsChart" style="width: 100%; max-width: 400px; height: 200px;"></canvas>
+    </div>
+
+    <!-- Customers Not Contacted -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Customers Not Contacted</h3>
+        <ul>
+            <li>1 Week: <span class="font-bold">{{ no_contact_1week }}</span></li>
+            <li>2 Weeks: <span class="font-bold">{{ no_contact_2weeks }}</span></li>
+            <li>1 Month: <span class="font-bold">{{ no_contact_1month }}</span></li>
+        </ul>
+    </div>
+
+    <!-- Last Contacted -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Last Contacted</h3>
+        <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-2 px-4 text-left">Name</th>
+                    <th class="py-2 px-4 text-left">Last Contact</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in modified_at %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ contact.user.first_name }} {{ contact.user.last_name }}</td>
+                    <td class="py-2 px-4">{{ contact.modified_at|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total Conversion Per Month -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Total Conversion Per Month</h3>
+        <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-2 px-4 text-left">Month</th>
+                    <th class="py-2 px-4 text-left">Conversions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for month, count in monthly_conversions.items %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-2 px-4">{{ month }}</td>
+                    <td class="py-2 px-4 font-bold">{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Services Overview -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Services Overview</h3>
+        <ul>
+            {% for service, count in services_breakdown.items %}
+            <li class="flex justify-between">
+                <span>{{ service }}</span>
+                <span class="font-bold">{{ count }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Recent Contacts -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-bold mb-4">Recently Added Contacts</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-4 text-left">Name</th>
+                        <th class="py-2 px-4 text-left">Email</th>
+                        <th class="py-2 px-4 text-left">Phone</th>
+                        <th class="py-2 px-4 text-left">Added On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in recent_contacts %}
+                    <tr class="hover:bg-gray-100">
+                        <td class="py-2 px-4">{{ contact.first_name }} {{ contact.last_name }}</td>
+                        <td class="py-2 px-4">{{ contact.email }}</td>
+                        <td class="py-2 px-4">{{ contact.phone_number }}</td>
+                        <td class="py-2 px-4">{{ contact.created_at|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Safely load data from the context
+    const trafficSourcesData = {{ traffic_sources_data| safe }};
+    const mchartLabels = {{ mchart_labels| safe }};
+    const mchartData = {{ mchart_data| safe }};
+    const verdictTagsData = {{ verdict_tags_data| safe }};
+
+    // Monthly chart
+    const ctxMonthly = document.getElementById('monthlyContactsChart').getContext('2d');
+    new Chart(ctxMonthly, {
+        type: 'bar',
+        data: {
+            labels: mchartLabels,
+            datasets: [{
+                label: 'Contacts Per Month',
+                data: mchartData,
+                backgroundColor: '#36A2EB'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Pie Chart Configuration
+    const ctxPie = document.getElementById('trafficChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: trafficSourcesData.labels,
+            datasets: [{
+                label: 'Traffic Sources',
+                data: trafficSourcesData.values,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            }]
+        },
+        options: {
+            responsive: true,
+            // maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+
+    // Bar Chart Configuration
+    const ctxBar = document.getElementById('trafficSourceChart').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: trafficSourcesData.labels,
+            datasets: [{
+                label: 'Traffic Sources',
+                data: trafficSourcesData.values,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            }]
+        },
+        options: {
+            responsive: true,
+            // maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+    // Verdict Tags Chart
+    const ctxVerdict = document.getElementById('verdictTagsChart').getContext('2d');
+    new Chart(ctxVerdict, {
+        type: 'bar',
+        data: {
+            labels: verdictTagsData.labels,
+            datasets: [{
+                label: 'Verdict Tags',
+                data: verdictTagsData.values,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8B4513', '#00FF7F', '#DC143C'],
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}
