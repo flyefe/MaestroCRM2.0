@@ -56,7 +56,7 @@ def login_view(request):
                     return redirect(next_url)  # Redirect to the page the user was trying to access
                 else:
                     messages.success(request, 'Logged in successfully.')
-                    return redirect('/')  # Or use a default page like 'index'
+                    return redirect('my_assigned_contacts')  # Or use a default page like 'index'
             else:
                 messages.error(request, 'Invalid username or password.')
         else:

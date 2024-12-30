@@ -78,22 +78,6 @@
 
     
 
-    <!-- Monthly Traffic Sources Overview -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h3 class="text-xl font-bold mb-4">Traffic Sources Per Month</h3>
-        {% for month, sources in traffic_sources_per_month.items %}
-        <h4 class="text-lg font-semibold">{{ month }}</h4>
-        <ul class="list-disc pl-6 mb-4">
-            {% for source, total in sources.items %}
-            {% if source %}
-            <li>{{ source }}: <span class="font-bold">{{ total }}</span></li>
-            {% else %}
-            <span>Unknown</span>
-            {% endif %}
-            {% endfor %}
-        </ul>
-        {% endfor %}
-    </div>
 
     <!-- Monthly chart data -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -102,6 +86,40 @@
             <canvas id="monthlyContactsChart"></canvas>
         </div>
     </div>
+
+
+    <!-- Monthly Traffic Sources Overview -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h3 class="text-xl font-bold mb-4">Traffic Sources Per Month</h3>
+        {% for month, sources in traffic_sources_per_month.items %}
+        <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-2">{{ month }}</h4>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Source</th>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source, total in sources.items %}
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            {% if source %}
+                            {{ source }}
+                            {% else %}
+                            Unknown
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4 border-b border-gray-200 font-bold">{{ total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
 
     <!-- Traffic Source Chart -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -208,8 +226,8 @@
                 <tbody>
                     {% for contact in recent_contacts %}
                     <tr class="hover:bg-gray-100">
-                        <td class="py-2 px-4">{{ contact.user.first_name }} {{ contact.user.last_name }}</td>
-                        <td class="py-2 px-4">{{ contact.user.email }}</td>
+                        <td class="py-2 px-4">{{ contact.first_name }} {{ contact.last_name }}</td>
+                        <td class="py-2 px-4">{{ contact.email }}</td>
                         <td class="py-2 px-4">{{ contact.phone_number }}</td>
                         <td class="py-2 px-4">{{ contact.created_at|date:"d/m/Y" }}</td>
                     </tr>
