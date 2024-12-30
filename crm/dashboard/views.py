@@ -7,11 +7,11 @@
 # from django.db.models.functions import TruncMonth
 # from django.utils.timezone import now
 # from django.db.models import Count
-# from contacts.models import ContactDetail
+# from contacts.models import Contact
 
 # @login_required
 # def dashboard(request):
-#     contacts = ContactDetail.objects.all()
+#     contacts = Contact.objects.all()
 #     active_contacts_count = contacts.filter(status__name='Customer').count()
 #     unassigned_contacts_count = contacts.filter(assigned_staff__isnull=True).count()
 #     recent_contacts = contacts.order_by('-created_at')[:5]
@@ -27,7 +27,7 @@
 
 #      # Example: Contacts grouped by month
 #     monthly_contacts = (
-#         ContactDetail.objects
+#         Contact.objects
 #         .annotate(month=TruncMonth('created_at'))  # Truncate the date to month
 #         .values('month')  # Group by month
 #         .annotate(total=Count('id'))  # Count the number of contacts per month
@@ -36,7 +36,7 @@
 
 #     # Example: Traffic sources grouped by month
 #     monthly_traffic_sources = (
-#         ContactDetail.objects
+#         Contact.objects
 #         .annotate(month=TruncMonth('created_at'))
 #         .values('month', 'traffic_source__name')  # Group by month and traffic_source
 #         .annotate(total=Count('id'))
@@ -94,13 +94,13 @@ from django.db.models.functions import TruncMonth
 from django.utils.timezone import now
 from django.db.models import Count
 from django.db.models import Q
-from contacts.models import ContactDetail, Tag
+from contacts.models import Contact, Tag
 from datetime import timedelta
 from django.db.models.functions import ExtractMonth
 
 @login_required
 def dashboard(request):
-    contacts = ContactDetail.objects.all()
+    contacts = Contact.objects.all()
 
     # Existing counts
     customers_count = contacts.filter(status__name='Customer').count()
@@ -197,7 +197,7 @@ def dashboard(request):
 
     # Monthly conversion from Lead to Customer
     monthly_conversions = (
-        ContactDetail.objects
+        Contact.objects
         .filter(status__name='Customer')
         .annotate(month=TruncMonth('created_at'))
         .values('month')
@@ -210,7 +210,7 @@ def dashboard(request):
     
 
     birthdays_per_month = (
-        ContactDetail.objects
+        Contact.objects
         .filter(date_of_birth__isnull=False)
         .annotate(month=ExtractMonth('date_of_birth'))
         .values('month')

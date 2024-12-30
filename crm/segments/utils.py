@@ -1,17 +1,17 @@
 from django.db.models import Q
 from .models import Segment
-from contacts.models import ContactDetail
+from contacts.models import Contact
 
 def reevaluate_segments_for_contacts(contacts_queryset):
     """
-    Reevaluate segment conditions for a contacts_queryset of ContactDetail instances.
+    Reevaluate segment conditions for a contacts_queryset of Contact instances.
     Adds matching contacts to the segment and removes non-matching ones
     without affecting unrelated contacts.
     """
 
     # Ensure contacts is a queryset
-    if isinstance(contacts_queryset, ContactDetail):
-        contacts_queryset = ContactDetail.objects.filter(pk=contacts_queryset.pk)
+    if isinstance(contacts_queryset, Contact):
+        contacts_queryset = Contact.objects.filter(pk=contacts_queryset.pk)
     print(f"Reevaluating segments for {contacts_queryset.count()} contacts")
 
     

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User, Group
 from django.db.models import Q  # Import Q here
-from .models import ContactDetail, Log
+from .models import Contact, Log
 from settings.models import TrafficSource, Service, Status,Tag
 
 from django_select2.forms import Select2Widget, ModelSelect2Widget
@@ -13,7 +13,7 @@ from django.contrib.auth.models import User, Group
 from .models import Status, Tag, Service, TrafficSource
 
 from django import forms
-from .models import Log, User, ContactDetail
+from .models import Log, User, Contact
 
 
 
@@ -136,7 +136,7 @@ class ContactFilterForm(forms.Form):
         self.fields['assigned_staff'].label_from_instance = lambda obj: f"{obj.get_full_name()}" if obj.get_full_name() else obj.username
 
 
-class ContactDetailCreationForm(forms.ModelForm):
+class ContactCreationForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=30,
         label="First Name",
@@ -219,7 +219,7 @@ class ContactDetailCreationForm(forms.ModelForm):
 
 
     class Meta:
-        model = ContactDetail
+        model = Contact
         fields = [
             'first_name', 'middle_name', 'last_name', 'email', 'status', 'tags',
             'assigned_staff', 'phone_number', 'traffic_source', 'services',
@@ -382,7 +382,7 @@ class LogForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LogForm, self).__init__(*args, **kwargs)
-        # self.fields['contact'].queryset = ContactDetail.objects.all()
+        # self.fields['contact'].queryset = Contact.objects.all()
         # self.fields['created_by'].queryset = User.objects.all()
 
 class StatusForm(forms.ModelForm):
@@ -418,7 +418,7 @@ class ContactImportForm(forms.Form):
 
 
 # Fetch all contact fields dynamically
-contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in ContactDetail._meta.get_fields()]
+contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in Contact._meta.get_fields()]
 class FieldMappingForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

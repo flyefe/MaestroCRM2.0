@@ -200,7 +200,7 @@ def staff_table(request):
 
     for user in users:
         groups = user.groups.all()  # Fetch all roles (groups) for each user
-        contact_detail = getattr(user, 'contactdetail', None)  # Access the ContactDetail instance if it exists        
+        contact_detail = getattr(user, 'Contact', None)  # Access the Contact instance if it exists        
         user_list.append({
             'user_id': user.id,
             'username': user.username,
@@ -209,7 +209,7 @@ def staff_table(request):
             'email': user.email,
             'roles': [group.name for group in groups],  # Add roles (group names)
             'date_joined': user.date_joined,
-            'user_contact_id': contact_detail.id if contact_detail else None  # Safely get the ContactDetail ID
+            'user_contact_id': contact_detail.id if contact_detail else None  # Safely get the Contact ID
         })
 
     paginator = Paginator(user_list, 10)  # Show 10 users per page
@@ -235,7 +235,7 @@ def users_table(request):
 
     for user in users:
         groups = user.groups.all()  # Fetch all roles (groups) for each user
-        contact_detail = getattr(user, 'contactdetail', None)  # Access the ContactDetail instance if it exists
+        contact_detail = getattr(user, 'Contact', None)  # Access the Contact instance if it exists
         user_list.append({
             'user_id': user.id,
             'username': user.username,
@@ -244,7 +244,7 @@ def users_table(request):
             'email': user.email,
             'roles': [group.name for group in groups],  # Add roles (group names)
             'date_joined': user.date_joined,
-            'user_contact_id': contact_detail.id if contact_detail else None  # Safely get the ContactDetail ID
+            'user_contact_id': contact_detail.id if contact_detail else None  # Safely get the Contact ID
         })
 
     paginator = Paginator(user_list, 200)  # Show 10 users per page
@@ -301,8 +301,8 @@ def users_bulk_action(request):
             
             users = User.objects.filter(id__in=selected_users)
             for user in users:
-                if hasattr(user, 'contactdetail'):  # Check for associated ContactDetail
-                    user.contactdetail.delete()
+                if hasattr(user, 'Contact'):  # Check for associated Contact
+                    user.Contact.delete()
                 user.delete()
             messages.success(request, "Selected users deleted successfully!")
         

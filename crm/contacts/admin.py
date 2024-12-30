@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import ContactDetail, Log
+from .models import Contact, Log
 
-@admin.register(ContactDetail)
-class ContactDetailAdmin(admin.ModelAdmin):
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
     list_display = ('user', 'status', 'assigned_staff', 'phone_number', 'traffic_source', 'services', 'created_at', 'modified_at')
     search_fields = ('user__username', 'user__first_name', 'user__last_name', 'phone_number', 'tags')
 

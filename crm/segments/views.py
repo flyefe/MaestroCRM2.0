@@ -9,8 +9,8 @@ from django.core.paginator import Paginator
 from .models import Segment
 from .forms import SegmentForm
 
-from contacts.models import ContactDetail
-from contacts.forms import ContactDetailCreationForm, ContactFilterForm, ContactSearchForm
+from contacts.models import Contact
+from contacts.forms import ContactCreationForm, ContactFilterForm, ContactSearchForm
 
 from core.decorators import role_required
 
@@ -101,7 +101,7 @@ def edit_segment(request, pk):
                     current_q |= new_q
 
         # Filter contacts based on the combined Q object
-        filtered_contacts = ContactDetail.objects.filter(current_q) if current_q else ContactDetail.objects.none()
+        filtered_contacts = Contact.objects.filter(current_q) if current_q else Contact.objects.none()
         
         for contact in filtered_contacts:
             print(contact)
@@ -182,7 +182,7 @@ def edit_segment(request, pk):
 #             q = current_q
 
 #         # Filter contacts based on the Q object
-#         filtered_contacts = ContactDetail.objects.filter(q)
+#         filtered_contacts = Contact.objects.filter(q)
 
 #         # Update the segment with the new data
 #         segment.name = name
@@ -261,7 +261,7 @@ def add_segment(request):
             q = current_q
 
         # Filter contacts based on the Q object
-        filtered_contacts = ContactDetail.objects.filter(q)
+        filtered_contacts = Contact.objects.filter(q)
 
         # Save the segment
         segment = Segment.objects.create(
@@ -310,7 +310,7 @@ def segment_contacts(request, pk):
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
-    form = ContactDetailCreationForm
+    form = ContactCreationForm
     filter_form = ContactFilterForm
     search_form = ContactSearchForm
 

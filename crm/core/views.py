@@ -12,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from contacts.models import ContactDetail
+from contacts.models import Contact
 
 
 from users.forms import SignUpForm
@@ -158,7 +158,7 @@ def sign_up(request):
                 user.groups.add(contact_group)
 
                 # Create contact details for the user
-                contact = ContactDetail.objects.create(user=user)
+                contact = Contact.objects.create(user=user)
 
                 # Assign the contact to the 'Lead' status
                 lead_status = Status.objects.get(name='Lead')

@@ -3,12 +3,12 @@ from django.db.models import Q
 from django import forms
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import ContactDetail
+from .models import Contact
 from .forms import ContactImportForm, FieldMappingForm
 
 from datetime import datetime
 from django.contrib.auth.models import User, Group
-from .models import ContactDetail, Log
+from .models import Contact, Log
 
 from settings.models import Service, TrafficSource, Tag, Status
 
@@ -53,7 +53,7 @@ def import_contacts(request):
     return render(request, 'import/import_contacts.html', {'form': form})
 
 
-# View 2: Map CSV Headers to ContactDetail Fields
+# View 2: Map CSV Headers to Contact Fields
 def map_fields(request):
     if 'csv_headers' not in request.session:
         messages.error(request, "No CSV headers found. Please upload the file again.")
@@ -63,7 +63,7 @@ def map_fields(request):
 
     
     # Fetch all contact fields dynamically
-    # contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in ContactDetail._meta.get_fields()]
+    # contact_fields = ['first_name', 'last_name', 'email'] + [field.name for field in Contact._meta.get_fields()]
     contact_fields = [
         'first_name',
         'middle_name',
@@ -259,8 +259,8 @@ def save_mapped_data(request):
             user.groups.add(contact_group)
             user.save()
 
-            # Create or update ContactDetail
-            contact, contact_created = ContactDetail.objects.get_or_create(
+            # Create or update Contact
+            contact, contact_created = Contact.objects.get_or_create(
                 user=user,
                 defaults={key: value for key, value in contact_data.items() if key != 'log'}
             )
@@ -427,8 +427,8 @@ def save_mapped_data(request):
 #             user.groups.add(contact_group)
 #             user.save()
 
-#             # Create or update ContactDetail
-#             contact, contact_created = ContactDetail.objects.get_or_create(
+#             # Create or update Contact
+#             contact, contact_created = Contact.objects.get_or_create(
 #                 user=user,
 #                 defaults={key: value for key, value in contact_data.items() if key != 'log'}
 #             )
@@ -581,8 +581,8 @@ def save_mapped_data(request):
 #             user.groups.add(contact_group)
 #             user.save()
 
-#             # Create or update ContactDetail
-#             contact, contact_created = ContactDetail.objects.get_or_create(
+#             # Create or update Contact
+#             contact, contact_created = Contact.objects.get_or_create(
 #                 user=user,
 #                 defaults={key: value for key, value in contact_data.items() if key != 'log'}
 #             )
@@ -675,14 +675,14 @@ def save_mapped_data(request):
 #                 user.last_name = last_name or user.last_name
 #                 user.save()
 
-#             # Check if a ContactDetail already exists for this user
-#             contact, contact_created = ContactDetail.objects.get_or_create(
+#             # Check if a Contact already exists for this user
+#             contact, contact_created = Contact.objects.get_or_create(
 #                 user=user,
 #                 defaults=contact_data  # Only used if the contact is new
 #             )
 
 #             if not contact_created:
-#                 # Update existing ContactDetail with new data
+#                 # Update existing Contact with new data
 #                 for key, value in contact_data.items():
 #                     setattr(contact, key, value)
 #                 contact.save()

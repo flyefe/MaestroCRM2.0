@@ -7,7 +7,7 @@ from settings.models import Status, Service, TrafficSource, Tag
 
 
 
-class ContactDetail(models.Model):
+class Contact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contact', null=True, blank=True)
     first_name = models.CharField(max_length=150, blank=True, null=True)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
@@ -19,7 +19,7 @@ class ContactDetail(models.Model):
     date_of_birth = models.DateTimeField(blank=True, null=True)
     # address = models.OneToOneField('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='contact')
 
-     # Address fields added directly to the ContactDetail model
+     # Address fields added directly to the Contact model
     address_line1 = models.CharField(max_length=255, blank=True, null=True)
     address_line2 = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
@@ -60,7 +60,7 @@ class Log(models.Model):
         ('email', 'Email'),
         ('feedback', 'Feedback'),
     ]
-    contact = models.ForeignKey(ContactDetail, related_name='log', on_delete=models.CASCADE)
+    contact = models.ForeignKey(Contact, related_name='log', on_delete=models.CASCADE)
     log_type = models.CharField(max_length=20, choices=LOG_TYPE_CHOICES)  # Options filled in
     log_title = models.CharField(max_length=255)  # Added this field
     log_description = models.TextField(blank=True, null=True)

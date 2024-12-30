@@ -8,8 +8,8 @@ import random, string
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
-from .forms import ContactDetailCreationForm, LogForm, ContactFilterForm, ContactSearchForm
-from .models import ContactDetail, Log
+from .forms import ContactCreationForm, LogForm, ContactFilterForm, ContactSearchForm
+from .models import Contact, Log
 # from .utility import filter_contacts
 from settings.models import Tag, Status, TrafficSource, Service
 from django.contrib.auth.decorators import login_required
@@ -26,7 +26,7 @@ def contacts_by_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     
     # Filter contacts by status
-    contacts = ContactDetail.objects.filter(services=service)
+    contacts = Contact.objects.filter(services=service)
     
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
@@ -46,7 +46,7 @@ def contacts_by_traffic_source(request, traffic_source_id):
     traffic_source = get_object_or_404(TrafficSource, id=traffic_source_id)
     
     # Filter contacts by traffic_source
-    contacts = ContactDetail.objects.filter(traffic_source=traffic_source)
+    contacts = Contact.objects.filter(traffic_source=traffic_source)
     
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
@@ -65,7 +65,7 @@ def contacts_by_assigned_staff(request, assigned_staff_id):
     assigned_staff = get_object_or_404(User, id=assigned_staff_id)
     
     # Filter contacts by staff
-    contacts = ContactDetail.objects.filter(assigned_staff=assigned_staff)
+    contacts = Contact.objects.filter(assigned_staff=assigned_staff)
     
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
@@ -84,7 +84,7 @@ def contacts_by_status(request, status_id):
     status = get_object_or_404(Status, id=status_id)
     
     # Filter contacts by status
-    contacts = ContactDetail.objects.filter(status=status)
+    contacts = Contact.objects.filter(status=status)
     
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
@@ -100,7 +100,7 @@ def contacts_by_status(request, status_id):
 @login_required
 def contacts_by_tag(request, tag_id):
     tag = get_object_or_404(Tag, id=tag_id)  # Get the tag by ID
-    contacts = ContactDetail.objects.filter(tags=tag)  # Filter contacts by tag
+    contacts = Contact.objects.filter(tags=tag)  # Filter contacts by tag
 
      # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
@@ -149,9 +149,9 @@ def update_log(request, log_id):
 
 @login_required
 def contact_detail(request, contact_id, log_id=None):
-    contact = get_object_or_404(ContactDetail, id=contact_id)
+    contact = get_object_or_404(Contact, id=contact_id)
 
-    # Fetch recent activities (assuming Log model has a ForeignKey to ContactDetail)
+    # Fetch recent activities (assuming Log model has a ForeignKey to Contact)
     recent_activities = contact.log.all().order_by('-created_at')[:3]
     logs = Log.objects.filter(contact=contact).order_by('-created_at')
 
@@ -195,7 +195,7 @@ def delete_contact(request, contact_id):
         messages.error(request, "You do not have permission to delete contacts or associated user accounts.")
         return redirect('contact_list')  # Assuming you have a contact list view
 
-    contact = get_object_or_404(ContactDetail, id=contact_id)
+    contact = get_object_or_404(Contact, id=contact_id)
     
     # Check if the user is trying to delete their own contact
     if contact.user == request.user:
@@ -214,7 +214,7 @@ def delete_contact(request, contact_id):
     
 # @login_required
 # def contact_list(request):
-#     contacts = ContactDetail.objects.select_related('user').all().order_by('-modified_at')  # Retrieves Profile and related User data in a single query
+#     contacts = Contact.objects.select_related('user').all().order_by('-modified_at')  # Retrieves Profile and related User data in a single query
 #     # logs = Log.objects.filter(contact=contact).order_by('-created_at')
 
   
@@ -223,7 +223,7 @@ def delete_contact(request, contact_id):
 #     page_number = request.GET.get('page')
 #     page_contacts = paginator.get_page(page_number)
 
-#     form = ContactDetailCreationForm
+#     form = ContactCreationForm
 #     filter_form = ContactFilterForm
 #     search_form = ContactSearchForm
 
@@ -243,7 +243,7 @@ def delete_contact(request, contact_id):
 def my_assigned_contacts(request):
     # Subquery to get the most recent log (type = 'feedback') title
     recent_feedback_log_title = Log.objects.filter(
-        contact=OuterRef('pk'),  # Match the Log with the ContactDetail
+        contact=OuterRef('pk'),  # Match the Log with the Contact
         log_type='feedback'      # Filter only feedback logs
     ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
     
@@ -253,8 +253,8 @@ def my_assigned_contacts(request):
         log_type='feedback'
     ).order_by('-created_at').values('log_description')[:1]  # Get the most recent log description
 
-    # Add annotations for recent log title and description to ContactDetail
-    contacts = ContactDetail.objects.select_related('user').filter(
+    # Add annotations for recent log title and description to Contact
+    contacts = Contact.objects.select_related('user').filter(
         assigned_staff= request.user
     ).annotate(
         recent_feedback_log_title=Coalesce(Subquery(recent_feedback_log_title, output_field=CharField()), Value('No Feedback')),
@@ -267,7 +267,7 @@ def my_assigned_contacts(request):
     page_contacts = paginator.get_page(page_number)
 
     # Forms
-    form = ContactDetailCreationForm()
+    form = ContactCreationForm()
     filter_form = ContactFilterForm()
     search_form = ContactSearchForm()
 
@@ -283,7 +283,7 @@ def my_assigned_contacts(request):
 def contact_list(request):
     # Subquery to get the most recent log (type = 'feedback') title
     recent_feedback_log_title = Log.objects.filter(
-        contact=OuterRef('pk'),  # Match the Log with the ContactDetail
+        contact=OuterRef('pk'),  # Match the Log with the Contact
         log_type='feedback'      # Filter only feedback logs
     ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
     
@@ -293,8 +293,8 @@ def contact_list(request):
         log_type='feedback'
     ).order_by('-created_at').values('log_description')[:1]  # Get the most recent log description
 
-    # Add annotations for recent log title and description to ContactDetail
-    contacts = ContactDetail.objects.select_related('user').annotate(
+    # Add annotations for recent log title and description to Contact
+    contacts = Contact.objects.select_related('user').annotate(
         recent_feedback_log_title=Coalesce(Subquery(recent_feedback_log_title, output_field=CharField()), Value('No Feedback')),
         recent_feedback_log_description=Coalesce(Subquery(recent_feedback_log_description, output_field=CharField()), Value('No Description'))
     ).order_by('-modified_at')
@@ -305,7 +305,7 @@ def contact_list(request):
     page_contacts = paginator.get_page(page_number)
 
     # Forms
-    form = ContactDetailCreationForm()
+    form = ContactCreationForm()
     filter_form = ContactFilterForm()
     search_form = ContactSearchForm()
 
@@ -320,12 +320,12 @@ def contact_list(request):
 
 @login_required
 def search_contact(request):
-    contacts = ContactDetail.objects.select_related('user').all()
-    form = ContactDetailCreationForm
+    contacts = Contact.objects.select_related('user').all()
+    form = ContactCreationForm
     filter_form = ContactFilterForm(request.GET)
     search_form = ContactSearchForm(request.GET or None)
     query = request.GET.get('query', '').strip()
-    # contacts = ContactDetail.objects.all()
+    # contacts = Contact.objects.all()
 
 
 
@@ -365,12 +365,12 @@ def filter_contact(request):
     #Pass in search form as well
     search_form = ContactSearchForm(request.GET or None)
 
-    form = ContactDetailCreationForm
+    form = ContactCreationForm
 
 
 
     # Start with all contacts, then apply filters
-    contacts = ContactDetail.objects.select_related('user').all()
+    contacts = Contact.objects.select_related('user').all()
 
 
     if filter_form.is_valid():
@@ -415,7 +415,7 @@ def filter_contact(request):
 #         if action_type == "update_status":
 #             status_id = request.POST.get("status")
 #             if status_id:
-#                 ContactDetail.objects.filter(id__in=selected_contacts).update(status_id=status_id)
+#                 Contact.objects.filter(id__in=selected_contacts).update(status_id=status_id)
 #                 messages.success(request, "Status updated successfully!")
 #             else:
 #                 messages.error(request, "No status selected.")
@@ -424,7 +424,7 @@ def filter_contact(request):
 #             # tags_input = request.POST.get("tags", "").split(",")
 #             tag_ids = request.POST.getlist("tags")
 #             if tag_ids:
-#                 for contact in ContactDetail.objects.filter(id__in=selected_contacts):                    
+#                 for contact in Contact.objects.filter(id__in=selected_contacts):                    
 #                     # Add selected tags
 #                     contact.tags.add(*tag_ids)
 #                 messages.success(request, "Tags added successfully!")
@@ -435,7 +435,7 @@ def filter_contact(request):
 #             tag_ids = request.POST.getlist("tags")
 #             if tag_ids:
 #                 tags = Tag.objects.filter(id__in=tag_ids)
-#                 contacts = ContactDetail.objects.filter(id__in=selected_contacts)
+#                 contacts = Contact.objects.filter(id__in=selected_contacts)
 
 #                 for contact in contacts:
 #                     # Remove selected tags
@@ -445,19 +445,19 @@ def filter_contact(request):
 #                 messages.error(request, "No tags provided or selected.")
         
 #         elif action_type == "delete":
-#             contacts=ContactDetail.objects.filter(id__in=selected_contacts)
+#             contacts=Contact.objects.filter(id__in=selected_contacts)
 
 #             for contact in contacts:
 #                 # Delete associated user account if it exists
-#                 if contact.user: #Assuming ContactDetails has relationship with User
+#                 if contact.user: #Assuming Contacts has relationship with User
 #                     contact.user.delete()
-#                 contact.delete() #Delete the ContactDetail Object
+#                 contact.delete() #Delete the Contact Object
 #             messages.success(request, "Selected contacts deleted successfully!")
 
 #         elif action_type == "assign_staff":
 #             assigned_staff_id = request.POST.get("assigned_staff")
 #             if assigned_staff_id:
-#                 ContactDetail.objects.filter(id__in=selected_contacts).update(assigned_staff_id=assigned_staff_id)                  
+#                 Contact.objects.filter(id__in=selected_contacts).update(assigned_staff_id=assigned_staff_id)                  
 #                 messages.success(request, "Contacts assigned to staff successfully!")
 #             else:
 #                 messages.error(request, "No staff provided or selected.")
@@ -465,7 +465,7 @@ def filter_contact(request):
 #         elif action_type == "traffic_source":
 #             traffic_source_id = request.POST.get("traffic_source")
 #             if traffic_source_id:
-#                 ContactDetail.objects.filter(id__in=selected_contacts).update(traffic_source_id=traffic_source_id)                  
+#                 Contact.objects.filter(id__in=selected_contacts).update(traffic_source_id=traffic_source_id)                  
 #                 messages.success(request, "Contacts traffic sources updated successfully!")
 #             else:
 #                 messages.error(request, "No staff provided or selected.")
@@ -473,7 +473,7 @@ def filter_contact(request):
 #         elif action_type == "services":
 #             services_id = request.POST.get("services")
 #             if services_id:
-#                 ContactDetail.objects.filter(id__in=selected_contacts).update(services_id=services_id)                  
+#                 Contact.objects.filter(id__in=selected_contacts).update(services_id=services_id)                  
 #                 messages.success(request, "Contacts services updated successfully!")
 #             else:
 #                 messages.error(request, "No staff provided or selected.")
@@ -497,7 +497,7 @@ def contacts_bulk_action(request):
             return redirect("contact_list")
         
         # Fetch contacts queryset once
-        contacts = ContactDetail.objects.filter(id__in=selected_contacts)
+        contacts = Contact.objects.filter(id__in=selected_contacts)
         
         if not contacts.exists():
             messages.error(request, "No valid contacts found.")
@@ -585,11 +585,11 @@ def contacts_bulk_action(request):
 
 @login_required
 def update_contact(request, contact_id):
-    contact = get_object_or_404(ContactDetail, id=contact_id)
+    contact = get_object_or_404(Contact, id=contact_id)
     user = contact.user
 
     if request.method == 'POST':
-        form = ContactDetailCreationForm(request.POST, instance=contact)
+        form = ContactCreationForm(request.POST, instance=contact)
         if form.is_valid():
             email = form.cleaned_data['email']
             first_name = form.cleaned_data['first_name']
@@ -632,7 +632,7 @@ def update_contact(request, contact_id):
             return redirect(reverse('contact_detail', args=[contact.id]))
     else:
         # Populate the form with current contact details
-        form = ContactDetailCreationForm(instance=contact, initial={
+        form = ContactCreationForm(instance=contact, initial={
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -645,7 +645,7 @@ def update_contact(request, contact_id):
 @transaction.atomic
 def create_contact(request):
     if request.method == 'POST':
-        form = ContactDetailCreationForm(request.POST)
+        form = ContactCreationForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             # tags = [tag.strip().title() for tag in form.cleaned_data['tags'].split(',') if tag.strip()]
@@ -682,7 +682,7 @@ def create_contact(request):
                 contact_group = Group.objects.get(name='Contact')
                 user.groups.add(contact_group)
 
-                # Create the ContactDetail instance
+                # Create the Contact instance
                 contact = form.save(commit=False)
                 contact.user = user
                 contact.created_by = request.user
@@ -704,6 +704,6 @@ def create_contact(request):
                 return render(request, 'contact/create_contact.html', {'form': form})
 
     else:
-        form = ContactDetailCreationForm()
+        form = ContactCreationForm()
     return render(request, 'contact/create_contact.html', {'form': form})
 
