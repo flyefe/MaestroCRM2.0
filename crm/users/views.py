@@ -182,7 +182,7 @@ def add_staff_user(request):
                 user.save()
 
                 messages.success(request, "Staff user added successfully.")
-                print(f"Password for {email} is: {password}")  # Log password or send via email
+                # print(f"Password for {email} is: {password}")  # Log password or send via email
                 return redirect('staff_list')  # Assuming you have a URL named 'staff_list'
 
             except Group.DoesNotExist:

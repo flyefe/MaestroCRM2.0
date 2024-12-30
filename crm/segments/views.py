@@ -30,7 +30,7 @@ def bulk_action(request):
         action_type = request.POST.get("action_type")
         selected_segments = request.POST.get("selected_segments", "").split(',')
 
-        print(action_type)
+        # print(action_type)
         
         # Ensure segments are selected
         if not selected_segments:
@@ -69,7 +69,7 @@ def edit_segment(request, pk):
         # Safely load conditions from JSON input
         try:
             conditions = json.loads(request.POST.get('conditions', '[]'))
-            print(conditions)
+            # print(conditions)
         except json.JSONDecodeError:
             messages.error(request, "Invalid conditions format.")
             return redirect('segments:edit', pk=pk)
@@ -103,8 +103,8 @@ def edit_segment(request, pk):
         # Filter contacts based on the combined Q object
         filtered_contacts = Contact.objects.filter(current_q) if current_q else Contact.objects.none()
         
-        for contact in filtered_contacts:
-            print(contact)
+        # for contact in filtered_contacts:
+        #     print(contact)
 
         # Update the segment with new data
         segment.name = name
@@ -221,7 +221,7 @@ def add_segment(request):
         name = request.POST.get('name')
         description = request.POST.get('description')
         conditions = json.loads(request.POST.get('conditions', '[]'))
-        print(conditions)
+        # print(conditions)
 
         # Initialize the main Q object
         q = Q()
@@ -303,7 +303,7 @@ def segment_contacts(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
     # contacts = segment.get_contacts()
     contacts = segment.contacts.all()
-    print(contacts)
+    # print(contacts)
 
     # Add pagination (Optional)
     paginator = Paginator(contacts, 10)  # Show 10 contacts per page
