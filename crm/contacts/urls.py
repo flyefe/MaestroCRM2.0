@@ -18,7 +18,7 @@ urlpatterns = [
 
 
     # path('contacts/filter/<str:filter_type>/<int:filter_id>/', filter_contacts, name='filter_contacts'),
-
+    path('contacts/<int:contact_id>/create-account/', views.create_user_account_for_contact, name='create_user_account_for_contact'),
     path('delete-contact/<int:contact_id>/delete', views.delete_contact, name='delete_contact'),
     path('update-contact/<int:contact_id>/update', views.update_contact, name='update_contact'),
     path('contact_deatil/<int:contact_id>/', views.contact_detail, name='contact_detail'),

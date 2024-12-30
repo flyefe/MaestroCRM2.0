@@ -20,8 +20,23 @@
                     <p class="text-gray-200 font-medium">{{ contact.new_or_old }} Customer</p>
                 </div>
             </div>
-            <button id="toggleBio"
-                class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Recent Feedback</button>
+            <div>
+                <div class="py-4">
+                    {% if not contact.user %}
+                    <a href="{% url 'create_user_account_for_contact' contact.id %}"
+                        class="btn btn-primary text-xs bg-gray-300 hover:bg-gray-500 text-gray-700 px-4 py-2 rounded transition duration-300">Create
+                        Account</a>
+                    {% else %}
+                    <p class="text-xs bg-gray-300 hover:bg-gray-500 text-gray-600 px-4 py-2 rounded transition duration-300">
+                        User Account: {{contact.user.username }}
+                    </p>
+                    {% endif %}
+                </div>
+                <button id="toggleBio"
+                    class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Recent Feedback
+                </button>
+            
+            </div>
         </div>
         <div id="bioContent" class="p-4 hidden">
             <h3 class="font-semibold mb-2">Recent Activity</h3>

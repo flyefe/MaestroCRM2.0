@@ -533,6 +533,59 @@ def contacts_bulk_action(request):
         
 #     return render(request, 'contact/update_contact_detail.html', {'form': form})
 
+from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.urls import reverse
+import random
+import string
+
+@login_required
+def create_user_account_for_contact(request, contact_id):
+    # Retrieve the contact
+    contact = get_object_or_404(Contact, id=contact_id)
+
+    if contact.user:
+        messages.error(request, "This contact already has a user account.")
+        return redirect(reverse('contact_detail', args=[contact_id]))
+
+    if contact.email:
+        try:
+            # Generate a random password
+            password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+            email=contact.email,
+
+
+            # Create the user account
+            user = User.objects.create_user(
+                # username=f"{contact.first_name.lower()}.{contact.last_name.lower()}_{contact_id}",
+                email=email,
+                username=email,
+                first_name=contact.first_name,
+                last_name=contact.last_name,
+                password=password
+            )
+
+            # Assign the user to the 'Contact' group
+            contact_group = Group.objects.get(name='Contact')  # Ensure this group exists
+            user.groups.add(contact_group)
+
+            # Link the user account to the contact
+            contact.user = user
+            contact.save()
+
+            # Optional: Log or notify the generated password
+            print(f"Password for {user.email}: {password}")  # Remove this in production
+            messages.success(request, "User account created successfully. Password has been generated.")
+
+        except Exception as e:
+            messages.error(request, f"An error occurred while creating the user account: {str(e)}")
+    else:
+        messages.error(request, "contact has no email. Email is required to create an account")
+        
+
+    return redirect(reverse('contact_detail', args=[contact_id]))
+
 
 @login_required
 def update_contact(request, contact_id):
