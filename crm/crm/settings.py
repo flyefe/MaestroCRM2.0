@@ -185,7 +185,7 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = '/accounts/login/'  # Redirect to /accounts/login/ when login is required
+LOGIN_URL = '/login/'  # Redirect to /accounts/login/ when login is required
 LOGIN_REDIRECT_URL = '/'  # Redirect to home page or another page after successful login
 
 

@@ -8,8 +8,11 @@ from settings.models import Status, Service, TrafficSource, Tag
 
 
 class ContactDetail(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contact')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contact', null=True, blank=True)
+    first_name = models.CharField(max_length=150, blank=True, null=True)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=150, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True)
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], blank=True)
     marital_status = models.CharField(max_length=20, choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced'), ('Widowed', 'Widowed'), ('Other', 'Other')], blank=True)

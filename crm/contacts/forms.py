@@ -85,7 +85,7 @@ class ContactFilterForm(forms.Form):
             "class": "text-sm border border-gray-300 rounded-md py-2 px-3 w-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
             "aria-label": "Filter by Status"
         }),
-        empty_label="Status",
+        empty_label="Search by Status",
         label=''
     )
     tags = forms.ModelChoiceField(
@@ -96,7 +96,7 @@ class ContactFilterForm(forms.Form):
             "aria-label": "Filter by Tags"
         }),
         label='',
-        empty_label="Tag",
+        empty_label="Search by Tag",
     )
     services = forms.ModelChoiceField(
         queryset=Service.objects.all(),
@@ -105,7 +105,7 @@ class ContactFilterForm(forms.Form):
             "class": "text-sm border border-gray-300 rounded-md py-2 px-3 w-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
             "aria-label": "Filter by Services"
         }),
-        empty_label="Service",
+        empty_label="Search by Service",
         label=''
     )
     traffic_source = forms.ModelChoiceField(
@@ -115,7 +115,7 @@ class ContactFilterForm(forms.Form):
             "class": "text-sm border border-gray-300 rounded-md py-2 px-3 w-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
             "aria-label": "Filter by Traffic Source"
         }),
-        empty_label="Traffic Source",
+        empty_label="Search by Traffic Source",
         label=''
     )
 
@@ -127,7 +127,7 @@ class ContactFilterForm(forms.Form):
             "class": "text-sm border border-gray-300 rounded-md py-2 px-3 w-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
             "aria-label": "Filter by Assigned Staff"
         }),
-        empty_label="Assigned Staff",
+        empty_label="Search by Assigned Staff",
         label=''
     )
 

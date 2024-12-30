@@ -171,32 +171,34 @@ Next to do
 
 CURRENT
 - Make Front end Login (all login to front page)
-- Make Registeration possible (all newly registered has a contact detail and user account - Contact role)
-- For User ID 1
+- Done Make Registeration possible (all newly registered has a contact detail and user account - Contact role)
+- Done For User ID 1
     - Auto Create roles
     - Make admin
     - Auto Create Basic services
     - Auto Create Traffic source
     - Auto Create basic Status: Leads, Prosepects, Contacts
-- For other users 
+- Done For other users 
     - Create User
         - Assign Contact role
     - Create Contact Details
     - Assign user to contact detail
     - Assign contact to Lead status
 
+- DONE Make imported contact have hace contact status
+- DONE Make thier tag and status become titled
 
 
-- Get all contacts with empty
+
+
+- Make it possible to create contact without users account
+- Make it possible to create user account from contact Details
+- Make it possible to update user's first_name and last_name when contact first name and last name update using trigar
+
+
+-DIFFERED Get all contacts with empty
     - Tag
     - status
     - Not assigned
     - No services
     - No Traffic source
-    - 
-
-- Make imported contact have hace contact status
-- Make thier tag and status become titled
-
-
-
