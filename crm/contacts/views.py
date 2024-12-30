@@ -206,36 +206,12 @@ def delete_contact(request, contact_id):
     contact.delete()
 
     # Then delete the associated user
-    user = contact.user
-    user.delete()
+    if contact.user:
+        user = contact.user
+        user.delete()
 
     messages.success(request, f"Contact '{contact.user.first_name}' and associated user account have been successfully deleted.")
     return redirect('contact_list')  # Redirect to contact list or another appropriate page
-    
-# @login_required
-# def contact_list(request):
-#     contacts = Contact.objects.select_related('user').all().order_by('-modified_at')  # Retrieves Profile and related User data in a single query
-#     # logs = Log.objects.filter(contact=contact).order_by('-created_at')
-
-  
-#     # Add pagination (Optional)
-#     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
-#     page_number = request.GET.get('page')
-#     page_contacts = paginator.get_page(page_number)
-
-#     form = ContactCreationForm
-#     filter_form = ContactFilterForm
-#     search_form = ContactSearchForm
-
-
-#     context = {
-#         'contacts': page_contacts, 
-#         'form': form,
-#         'filter_form': filter_form,
-#         'search_form': search_form,
-#         # 'logs': logs
-#     }
-#     return render(request, 'contact/contact_list.html', context)
 
 
 
@@ -400,90 +376,6 @@ def filter_contact(request):
 
     return render(request, 'contact/contact_list.html', context)
 
-# @login_required
-# def contacts_bulk_action(request):
-#     if request.method == "POST":
-#         action_type = request.POST.get("action_type")
-#         selected_contacts = request.POST.get("selected_contacts", "").split(',')
-        
-#         # Ensure contacts are selected
-#         if not selected_contacts:
-#             messages.error(request, "No contacts selected.")
-#             return redirect("contact_list")
-        
-#         # Handle each action
-#         if action_type == "update_status":
-#             status_id = request.POST.get("status")
-#             if status_id:
-#                 Contact.objects.filter(id__in=selected_contacts).update(status_id=status_id)
-#                 messages.success(request, "Status updated successfully!")
-#             else:
-#                 messages.error(request, "No status selected.")
-        
-#         elif action_type == "add_tags":
-#             # tags_input = request.POST.get("tags", "").split(",")
-#             tag_ids = request.POST.getlist("tags")
-#             if tag_ids:
-#                 for contact in Contact.objects.filter(id__in=selected_contacts):                    
-#                     # Add selected tags
-#                     contact.tags.add(*tag_ids)
-#                 messages.success(request, "Tags added successfully!")
-#             else:
-#                 messages.error(request, "No tags provided or selected.")
-        
-#         elif action_type == "remove_tags":
-#             tag_ids = request.POST.getlist("tags")
-#             if tag_ids:
-#                 tags = Tag.objects.filter(id__in=tag_ids)
-#                 contacts = Contact.objects.filter(id__in=selected_contacts)
-
-#                 for contact in contacts:
-#                     # Remove selected tags
-#                     contact.tags.remove(*tags)
-#                 messages.success(request, "Tags removed successfully!")
-#             else:
-#                 messages.error(request, "No tags provided or selected.")
-        
-#         elif action_type == "delete":
-#             contacts=Contact.objects.filter(id__in=selected_contacts)
-
-#             for contact in contacts:
-#                 # Delete associated user account if it exists
-#                 if contact.user: #Assuming Contacts has relationship with User
-#                     contact.user.delete()
-#                 contact.delete() #Delete the Contact Object
-#             messages.success(request, "Selected contacts deleted successfully!")
-
-#         elif action_type == "assign_staff":
-#             assigned_staff_id = request.POST.get("assigned_staff")
-#             if assigned_staff_id:
-#                 Contact.objects.filter(id__in=selected_contacts).update(assigned_staff_id=assigned_staff_id)                  
-#                 messages.success(request, "Contacts assigned to staff successfully!")
-#             else:
-#                 messages.error(request, "No staff provided or selected.")
-
-#         elif action_type == "traffic_source":
-#             traffic_source_id = request.POST.get("traffic_source")
-#             if traffic_source_id:
-#                 Contact.objects.filter(id__in=selected_contacts).update(traffic_source_id=traffic_source_id)                  
-#                 messages.success(request, "Contacts traffic sources updated successfully!")
-#             else:
-#                 messages.error(request, "No staff provided or selected.")
-
-#         elif action_type == "services":
-#             services_id = request.POST.get("services")
-#             if services_id:
-#                 Contact.objects.filter(id__in=selected_contacts).update(services_id=services_id)                  
-#                 messages.success(request, "Contacts services updated successfully!")
-#             else:
-#                 messages.error(request, "No staff provided or selected.")
-        
-#         else:
-#             messages.error(request, "Invalid action selected.")
-        
-#         return redirect("contact_list")
-#     return redirect('contact_list')
-
 
 @login_required
 def contacts_bulk_action(request):
@@ -583,10 +475,69 @@ def contacts_bulk_action(request):
     return redirect("contact_list")
 
 
+# @login_required
+# def update_contact(request, contact_id):
+#     contact = get_object_or_404(Contact, id=contact_id)
+#     user = contact.user
+
+#     if request.method == 'POST':
+#         form = ContactCreationForm(request.POST, instance=contact)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             first_name = form.cleaned_data['first_name']
+#             last_name = form.cleaned_data['last_name']
+#             # tags = [tag.strip().title() for tag in form.cleaned_data['tags'].split(',') if tag.strip()]
+
+#              # Extract and merge tags from both fields
+#             tags_from_text = [tag.strip().title() for tag in form.cleaned_data['tag'].split(',') if tag.strip()]
+#             tags_from_select = [tag.name.strip() for tag in form.cleaned_data['tags']]  # Taking `tags` is a multi-select field
+#             combined_tags = set(tags_from_text + tags_from_select)  # Remove duplicates
+
+#             # Check if the email has been changed
+#             if email != user.email:
+#                 # Check if the new email already exists for another user
+#                 if User.objects.filter(email=email).exclude(id=user.id).exists():
+#                     messages.error(request, 'This email is already in use by another contact.')
+#                     return render(request, 'contact/update_contact_detail.html', {'form': form})
+            
+#             # Update user details
+#             user.email = email
+#             user.first_name = first_name
+#             user.last_name = last_name
+#             user.save()
+
+#             # Update contact details
+#             contact = form.save(commit=False)
+#             contact.updated_by = request.user
+
+#             # Update tags
+#             contact.tags.clear()  # Clear existing tags
+#             for tag_name in combined_tags:
+#                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
+#                 contact.tags.add(tag)  # Add tag to contact
+                
+#             contact.save()
+
+            
+
+#             messages.success(request, 'Contact and user details updated successfully.')
+#             return redirect(reverse('contact_detail', args=[contact.id]))
+#     else:
+#         # Populate the form with current contact details
+#         form = ContactCreationForm(instance=contact, initial={
+#             'email': user.email,
+#             'first_name': user.first_name,
+#             'last_name': user.last_name,
+#             'tag': ', '.join(contact.tags.values_list('name', flat=True))  # Populate tags as a comma-separated string
+#         })
+        
+#     return render(request, 'contact/update_contact_detail.html', {'form': form})
+
+
 @login_required
 def update_contact(request, contact_id):
     contact = get_object_or_404(Contact, id=contact_id)
-    user = contact.user
+    user = contact.user  # This can be None
 
     if request.method == 'POST':
         form = ContactCreationForm(request.POST, instance=contact)
@@ -594,25 +545,24 @@ def update_contact(request, contact_id):
             email = form.cleaned_data['email']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
-            # tags = [tag.strip().title() for tag in form.cleaned_data['tags'].split(',') if tag.strip()]
 
-             # Extract and merge tags from both fields
+            # Extract and merge tags from both fields
             tags_from_text = [tag.strip().title() for tag in form.cleaned_data['tag'].split(',') if tag.strip()]
-            tags_from_select = [tag.name.strip() for tag in form.cleaned_data['tags']]  # Taking `tags` is a multi-select field
+            tags_from_select = [tag.name.strip() for tag in form.cleaned_data['tags']]  # Multi-select field
             combined_tags = set(tags_from_text + tags_from_select)  # Remove duplicates
 
-            # Check if the email has been changed
-            if email != user.email:
-                # Check if the new email already exists for another user
-                if User.objects.filter(email=email).exclude(id=user.id).exists():
-                    messages.error(request, 'This email is already in use by another contact.')
-                    return render(request, 'contact/update_contact_detail.html', {'form': form})
-            
-            # Update user details
-            user.email = email
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
+            if user:  # If a user exists, update user details
+                if email != user.email:  # Check if the email has been changed
+                    # Check if the new email already exists for another user
+                    if User.objects.filter(email=email).exclude(id=user.id).exists():
+                        messages.error(request, 'This email is already in use by another contact.')
+                        return render(request, 'contact/update_contact_detail.html', {'form': form})
+                
+                # Update user details
+                user.email = email
+                user.first_name = first_name
+                user.last_name = last_name
+                user.save()
 
             # Update contact details
             contact = form.save(commit=False)
@@ -623,23 +573,29 @@ def update_contact(request, contact_id):
             for tag_name in combined_tags:
                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
                 contact.tags.add(tag)  # Add tag to contact
-                
+            
             contact.save()
 
-            
-
-            messages.success(request, 'Contact and user details updated successfully.')
+            messages.success(request, 'Contact details updated successfully.')
             return redirect(reverse('contact_detail', args=[contact.id]))
     else:
         # Populate the form with current contact details
-        form = ContactCreationForm(instance=contact, initial={
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'tag': ', '.join(contact.tags.values_list('name', flat=True))  # Populate tags as a comma-separated string
-        })
+        form_initial = {
+            'first_name': contact.first_name,
+            'last_name': contact.last_name,
+            'tag': ', '.join(contact.tags.values_list('name', flat=True))
+        }
+        # if user:  # If user exists, include their details in the form
+        #     form_initial.update({
+        #         'email': user.email,
+        #         'first_name': user.first_name,
+        #         'last_name': user.last_name,
+        #     })
+        
+        form = ContactCreationForm(instance=contact, initial=form_initial)
         
     return render(request, 'contact/update_contact_detail.html', {'form': form})
+
 
 @login_required
 @transaction.atomic
@@ -658,29 +614,32 @@ def create_contact(request):
             password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
 
             try:
-                # Attempt to get or create the user, which inherently checks for existence
-                user, created = User.objects.get_or_create(
-                    username=email,
-                    defaults={
-                        'email': email,
-                        'first_name': form.cleaned_data['first_name'],
-                        'last_name': form.cleaned_data['last_name'],
-                    }
-                )
+                user = None
+                if email:
+                    # Attempt to get or create the user, which inherently checks for existence
+                    user, created = User.objects.get_or_create(
+                        username=email,
+                        defaults={
+                            'email': email,
+                            'first_name': form.cleaned_data['first_name'],
+                            'last_name': form.cleaned_data['last_name'],
+                        }
+                    )
                 
-                if not created:
-                    messages.error(request, "A user with this email already exists.")
-                    return render(request, 'contact/create_contact.html', {'form': form})
-                
-                # If we reach here, the user was created
-                password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
-                user.set_password(make_password(password))
-                user.save()    
-                print(f"Password for {email} is: {password}")  # Log or send password
+                    if not created:
+                        messages.error(request, "A user with this email already exists.")
+                        return render(request, 'contact/create_contact.html', {'form': form})
+                    
+                    # If we reach here, the user was created
+                    password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+                    user.set_password(make_password(password))
+                    user.save()    
+                    
+                    print(f"Password for {email} is: {password}")  # Log or send password
 
-                # Add the user to the 'Contact' group
-                contact_group = Group.objects.get(name='Contact')
-                user.groups.add(contact_group)
+                    # Add the user to the 'Contact' group
+                    contact_group = Group.objects.get(name='Contact')
+                    user.groups.add(contact_group)
 
                 # Create the Contact instance
                 contact = form.save(commit=False)

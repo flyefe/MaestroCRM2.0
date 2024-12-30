@@ -140,7 +140,7 @@ class ContactCreationForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=30,
         label="First Name",
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class':
@@ -156,7 +156,7 @@ class ContactCreationForm(forms.ModelForm):
     last_name = forms.CharField(
         max_length=30,
         label="Last Name",
-        required=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class':
@@ -166,7 +166,7 @@ class ContactCreationForm(forms.ModelForm):
             }))
     email = forms.EmailField(
         label="Email",
-        required=True,
+        required=False,
         widget=forms.EmailInput(
             attrs={
                 'class':

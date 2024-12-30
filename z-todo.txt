@@ -202,3 +202,9 @@ CURRENT
     - Not assigned
     - No services
     - No Traffic source
+
+
+
+Let it be that you can add contacts without having to add account. 
+But you cannot add account without contact details
+And you can create account from an already existing contact

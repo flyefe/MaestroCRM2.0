@@ -12,7 +12,10 @@
                 <img src="https://via.placeholder.com/100" alt="Contact Photo"
                     class="rounded-full border-4 border-white">
                 <div>
-                    <h2 class="text-3xl font-bold">{{ contact.user.first_name }} {{ contact.user.last_name }}</h2>
+                    <h2 class="text-3xl font-bold">
+                        <!-- {{ contact.user.first_name }} {{ contact.user.last_name }} -->
+                        {{ contact.first_name }} {{ contact.last_name }}
+                    </h2>
                     <p class="text-gray-200 font-medium">{{ contact.status }}</p>
                     <p class="text-gray-200 font-medium">{{ contact.new_or_old }} Customer</p>
                 </div>
@@ -37,7 +40,7 @@
     <!-- Client Details Section -->
     <div id="detailsSection" class="bg-gray-100 rounded-lg shadow-lg mb-4 overflow-hidden">
         <div class="px-6 py-4 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-gray-700">About {{contact.user.first_name}} </h2>
+            <h2 class="text-xl font-bold text-gray-700">About {{contact.first_name}} </h2>
             <button id="toggleDetails"
                 class="text-sm bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-300">Contact
                 Details</button>
@@ -47,7 +50,7 @@
                 <tbody>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">First Name</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.first_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{contact.first_name}} </td>
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Middle Name</td>
@@ -55,11 +58,11 @@
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Last Name</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.last_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{contact.last_name}} </td>
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Email</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.user.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{contact.email}} </td>
                     </tr>
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phone Number</td>

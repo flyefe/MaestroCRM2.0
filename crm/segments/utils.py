@@ -12,7 +12,7 @@ def reevaluate_segments_for_contacts(contacts_queryset):
     # Ensure contacts is a queryset
     if isinstance(contacts_queryset, Contact):
         contacts_queryset = Contact.objects.filter(pk=contacts_queryset.pk)
-    print(f"Reevaluating segments for {contacts_queryset.count()} contacts")
+    # print(f"Reevaluating segments for {contacts_queryset.count()} contacts")
 
     
 
@@ -51,18 +51,18 @@ def reevaluate_segments_for_contacts(contacts_queryset):
         # Evaluate which contacts match the segment conditions
         matching_contacts = contacts_queryset.filter(current_q)
 
-        print(f"Segment '{segment.name}' matches {matching_contacts.count()} contacts")
+        # print(f"Segment '{segment.name}' matches {matching_contacts.count()} contacts")
 
         # Add matching contacts that are not already in the segment
         existing_contacts = segment.contacts
         contacts_to_add = matching_contacts.exclude(pk__in=segment.contacts.all())
         if contacts_to_add.exists():
             existing_contacts.add(*contacts_to_add)
-            print(f"Added {contacts_to_add.count()} contacts to segment '{segment.name}'")
+            # print(f"Added {contacts_to_add.count()} contacts to segment '{segment.name}'")
 
         # Remove contacts that no longer match the segment conditions
         # contacts_to_remove = existing_contacts.exclude(pk__in=matching_contacts)
         contacts_to_remove = contacts_queryset.filter(pk__in=segment.contacts.all()).exclude(pk__in=matching_contacts)
         if contacts_to_remove.exists():
             segment.contacts.remove(*contacts_to_remove)
-            print(f"Removed {contacts_to_remove.count()} contacts from segment '{segment.name}'")
+            # print(f"Removed {contacts_to_remove.count()} contacts from segment '{segment.name}'")

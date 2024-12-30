@@ -85,7 +85,7 @@
                         <span class="text-gray-400 text-xs">by {{ contact.created_by.get_full_name }}</span>
                     </td>
                     <td class="border px-4 py-2">
-                        <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.last_name }}</a>
+                        <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.last_name }} {{contact.first_name}} </a>
                     </td>
                     <td class="border px-4 py-2">{{ contact.user.email }}</td>
                     <td class="border px-4 py-2">{{ contact.phone_number }}</td>
