@@ -14,7 +14,7 @@ def update_user_from_contact(sender, instance, **kwargs):
         user = instance.user
         if user.first_name != instance.first_name or user.last_name != instance.last_name or user.email != instance.email:
             user.first_name = instance.first_name
-            user.last_name = instance.last_name
+            user.last_name = instance.last_name or user.last_name
             instance.email = user.email
             user.save()
             # print(f'user updated to {user.first_name} and {user.last_name} and {user.email}')

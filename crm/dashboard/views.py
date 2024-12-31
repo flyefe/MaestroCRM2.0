@@ -90,6 +90,7 @@ from django.utils.safestring import mark_safe
 import json
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from core.decorators import role_required
 from django.db.models.functions import TruncMonth
 from django.utils.timezone import now
 from django.db.models import Count
@@ -98,6 +99,8 @@ from contacts.models import Contact, Tag
 from datetime import timedelta
 from django.db.models.functions import ExtractMonth
 
+
+@role_required(['Admin', 'Staff'])
 @login_required
 def dashboard(request):
     contacts = Contact.objects.all()

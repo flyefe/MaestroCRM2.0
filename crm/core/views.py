@@ -14,7 +14,6 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from contacts.models import Contact
 
-
 from users.forms import SignUpForm
 
 from .decorators import role_required
@@ -113,19 +112,92 @@ def login_view(request):
 
 # Ensure these models are correctly defined in your app
 
+# def sign_up(request):
+#     if request.method == 'POST':
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+
+#             # Check if a user with this email already exists
+#             if User.objects.filter(username=email).exists():
+#                 messages.error(request, 'A user with this email already exists. Please use a different email or log in.')
+#                 return render(request, 'sign_up.html', {'form': form})
+
+#             # Save the user
+#             user = form.save()
+
+#             # If the user is the first user, perform initial setup
+#             if user.id == 1:
+#                 # Create roles
+#                 admin_group, _ = Group.objects.get_or_create(name='Admin')
+#                 staff_group, _ = Group.objects.get_or_create(name='Staff')
+#                 contact_group, _ = Group.objects.get_or_create(name='Contact')
+
+#                 # Grant admin permissions to the Admin group
+#                 user.groups.add(admin_group)
+
+#                 # Create traffic sources
+#                 traffic_sources = ['Facebook', 'Instagram', 'X', 'Google', 'Walk-in', 'Others']
+#                 for source in traffic_sources:
+#                     TrafficSource.objects.get_or_create(name=source)
+
+#                 # Create basic services
+#                 basic_services = ['Service 1', 'Service 2']
+#                 for service in basic_services:
+#                     Service.objects.get_or_create(name=service)
+
+#                 # Create basic statuses
+#                 statuses = ['Lead', 'Prospect', 'Customer', 'Closed']
+#                 for status in statuses:
+#                     Status.objects.get_or_create(name=status)
+
+#             else:
+#                 # Assign the user to the Contact group
+#                 contact_group = Group.objects.get(name='Contact')
+#                 user.groups.add(contact_group)
+
+#                 # Create contact details for the user
+#                 contact = Contact.objects.create(user=user)
+
+#                 # Assign the contact to the 'Lead' status
+#                 lead_status = Status.objects.get(name='Lead')
+#                 contact.status = lead_status
+#                 contact.save()
+
+#             messages.success(request, 'User registered successfully.')
+#             return redirect('login')  # Redirect to the login page or desired page
+#         else:
+#             messages.error(request, 'Please correct the errors below.')
+#     else:
+#         form = SignUpForm()
+
+#     return render(request, 'core/sign_up.html', {'form': form})
+
+
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            last_name = form.cleaned_data['last_name']
+            
 
             # Check if a user with this email already exists
             if User.objects.filter(username=email).exists():
-                messages.error(request, 'A user with this email already exists. Please use a different email or log in.')
-                return render(request, 'sign_up.html', {'form': form})
+                messages.error(
+                    request,
+                    'A user with this email already exists. Please use a different email or log in.'
+                )
+                return render(request, 'core/sign_up.html', {'form': form})
 
+            print(f"{last_name} just before non commit")
             # Save the user
-            user = form.save()
+            user = form.save(commit=False)
+            user.username = email
+            user.last_name = last_name
+            user.save()
 
             # If the user is the first user, perform initial setup
             if user.id == 1:
@@ -138,7 +210,9 @@ def sign_up(request):
                 user.groups.add(admin_group)
 
                 # Create traffic sources
-                traffic_sources = ['Facebook', 'Instagram', 'X', 'Google', 'Walk-in', 'Others']
+                traffic_sources = [
+                    'Facebook', 'Instagram', 'X', 'Google', 'Walk-in', 'Others'
+                ]
                 for source in traffic_sources:
                     TrafficSource.objects.get_or_create(name=source)
 
