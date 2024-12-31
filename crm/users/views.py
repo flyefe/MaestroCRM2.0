@@ -1,21 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from django.contrib.auth.forms import AuthenticationForm, AdminPasswordChangeForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth.hashers import make_password
 import random, string
-
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
-
 from .forms import UserEditForm, SignUpForm, RoleCreationForm,RoleEditForm
-
 from django.core.paginator import Paginator
 from django.db.models import Q  # Import the Q object
-
 from core.decorators import role_required
+
+
 
 
 
@@ -386,39 +382,7 @@ def register_user(request):
 
 
 
-#Edit Users
-# @login_required
-# def change_password(request, user_id):
-#     user = get_object_or_404(User, id=user_id)
 
-#     if request.method == 'POST':
-#         form = UserEditForm(request.POST, instance=user)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'User has been editted successfully.')
-#             return redirect('user_list')  # Redirect to a page that lists all users or any preferred page
-#     else:
-#         form = UserEditForm(instance=user)
-#         password_form = AdminPasswordChangeForm(user=user)
-
-#          # Customize widgets for password_form fields
-#         for field_name, field in password_form.fields.items():
-#             field.widget.attrs.update({
-#                 'class': 'w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300',
-#                 'placeholder': f'Enter {field.label}'
-#             })
-
-#     return render(request, 'change_password.html', {
-#         'form': form,
-#         'password_form' : password_form,
-#         'user': user
-#     })
-
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.forms import AdminPasswordChangeForm
-from .forms import UserEditForm  # Assuming UserEditForm is imported from your forms module
-from django.contrib.auth.models import User
 
 @login_required
 def change_password(request, user_id):

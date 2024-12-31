@@ -13,7 +13,7 @@ def update_user_from_contact(sender, instance, **kwargs):
     if instance.user:
         user = instance.user
         if user.first_name != instance.first_name or user.last_name != instance.last_name or user.email != instance.email:
-            user.first_name = instance.first_name
+            user.first_name = instance.first_name or user.first_name
             user.last_name = instance.last_name or user.last_name
             instance.email = user.email
             user.save()
