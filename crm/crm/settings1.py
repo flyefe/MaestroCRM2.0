@@ -106,24 +106,46 @@ WSGI_APPLICATION = "crm.wsgi.application"
 #     }
 # }
 
-if config("USE_SQLITE"):  # Determines whether to use SQLite.
+
+if not config("USE_SQLITE", default=False, cast=bool):  # Use PostgreSQL if USE_SQLITE is False
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",  # SQLite database engine.
-            "NAME": BASE_DIR / "db.sqlite3",  # SQLite database file path.
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DATABASE_NAME"),
+            "USER": config("DATABASE_USER"),
+            "PASSWORD": config("DATABASE_PASSWORD"),
+            "HOST": config("DATABASE_HOST"),
+            "PORT": config("DATABASE_PORT"),
+            "OPTIONS": {
+                "sslmode": config("DATABASE_SSLMODE", default="require"),  # Enable SSL
+            },
         }
     }
-else:  # PostgreSQL configuration for production.
+else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",  # PostgreSQL database engine.
-            "NAME": config("DATABASE_NAME"),  # Database name from environment.
-            "USER": config("DATABASE_USER"),  # Database username from environment.
-            "PASSWORD": config("DATABASE_PASSWORD"),  # Database password from environment.
-            "HOST": config("DATABASE_HOST"),  # Database host from environment.
-            "PORT": config("DATABASE_PORT"),  # Database port from environment.
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+# if config("USE_SQLITE"):  # Determines whether to use SQLite.
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",  # SQLite database engine.
+#             "NAME": BASE_DIR / "db.sqlite3",  # SQLite database file path.
+#         }
+#     }
+# else:  # PostgreSQL configuration for production.
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",  # PostgreSQL database engine.
+#             "NAME": config("DATABASE_NAME"),  # Database name from environment.
+#             "USER": config("DATABASE_USER"),  # Database username from environment.
+#             "PASSWORD": config("DATABASE_PASSWORD"),  # Database password from environment.
+#             "HOST": config("DATABASE_HOST"),  # Database host from environment.
+#             "PORT": config("DATABASE_PORT"),  # Database port from environment.
+#         }
+#     }
     # DATABASES = {
     #     'default': {
     #         "default": env.db()

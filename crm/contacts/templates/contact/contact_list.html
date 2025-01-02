@@ -6,13 +6,13 @@
 
 <div class="p-2 w-full mx-auto mt-10 bg-gradient-to-b from-gray-50 to-gray-200">
     {% if assigned_contacts %}
-    <h2 class="text-4xl font-extrabold mb-6 text-center text-gray-800"> Assigned To Me</h2>
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-600"> Assigned To Me</h2>
     <p class="text-center">
         Dear <strong>{{user.first_name}}</strong>, here are some contacts assigned for you to deal with today. endeavour to be snappy about it. Cheers! <br>
         <strong> -Admin </strong>
     </p>
     {% else %}
-    <h2 class="text-4xl font-extrabold mb-6 text-center text-gray-800">Contact List</h2>
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-600">Contact List</h2>
     {% endif %}
 
     <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
