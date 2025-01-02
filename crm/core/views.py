@@ -36,9 +36,7 @@ def logout_view(request):
 
 # Login
 def login_view(request):
-
     form = AuthenticationForm()
-
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -54,7 +52,8 @@ def login_view(request):
                     return redirect(next_url)  # Redirect to the page the user was trying to access
                 else:
                     messages.success(request, 'Logged in successfully.')
-                    if user.groups == 'Staff' or user.groups == 'Admin':
+                     # Check if user is in Staff or Admin group
+                    if user.groups.filter(name__in=['Staff', 'Admin']).exists():
                         return redirect('my_assigned_contacts')  # Or use a default page like 'index'
                     else:
                         return redirect('client_portal') 

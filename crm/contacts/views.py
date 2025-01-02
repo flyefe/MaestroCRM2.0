@@ -246,12 +246,16 @@ def my_assigned_contacts(request):
     form = ContactCreationForm()
     filter_form = ContactFilterForm()
     search_form = ContactSearchForm()
+    assigned_contacts = True
+    user = request.user
 
     context = {
         'contacts': page_contacts,
         'form': form,
         'filter_form': filter_form,
         'search_form': search_form,
+        'assigned_contacts' : assigned_contacts,
+        'user' : user,
     }
     return render(request, 'contact/contact_list.html', context)
 
@@ -474,71 +478,6 @@ def contacts_bulk_action(request):
     
     return redirect("contact_list")
 
-
-# @login_required
-# def update_contact(request, contact_id):
-#     contact = get_object_or_404(Contact, id=contact_id)
-#     user = contact.user
-
-#     if request.method == 'POST':
-#         form = ContactCreationForm(request.POST, instance=contact)
-#         if form.is_valid():
-#             email = form.cleaned_data['email']
-#             first_name = form.cleaned_data['first_name']
-#             last_name = form.cleaned_data['last_name']
-#             # tags = [tag.strip().title() for tag in form.cleaned_data['tags'].split(',') if tag.strip()]
-
-#              # Extract and merge tags from both fields
-#             tags_from_text = [tag.strip().title() for tag in form.cleaned_data['tag'].split(',') if tag.strip()]
-#             tags_from_select = [tag.name.strip() for tag in form.cleaned_data['tags']]  # Taking `tags` is a multi-select field
-#             combined_tags = set(tags_from_text + tags_from_select)  # Remove duplicates
-
-#             # Check if the email has been changed
-#             if email != user.email:
-#                 # Check if the new email already exists for another user
-#                 if User.objects.filter(email=email).exclude(id=user.id).exists():
-#                     messages.error(request, 'This email is already in use by another contact.')
-#                     return render(request, 'contact/update_contact_detail.html', {'form': form})
-            
-#             # Update user details
-#             user.email = email
-#             user.first_name = first_name
-#             user.last_name = last_name
-#             user.save()
-
-#             # Update contact details
-#             contact = form.save(commit=False)
-#             contact.updated_by = request.user
-
-#             # Update tags
-#             contact.tags.clear()  # Clear existing tags
-#             for tag_name in combined_tags:
-#                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
-#                 contact.tags.add(tag)  # Add tag to contact
-                
-#             contact.save()
-
-            
-
-#             messages.success(request, 'Contact and user details updated successfully.')
-#             return redirect(reverse('contact_detail', args=[contact.id]))
-#     else:
-#         # Populate the form with current contact details
-#         form = ContactCreationForm(instance=contact, initial={
-#             'email': user.email,
-#             'first_name': user.first_name,
-#             'last_name': user.last_name,
-#             'tag': ', '.join(contact.tags.values_list('name', flat=True))  # Populate tags as a comma-separated string
-#         })
-        
-#     return render(request, 'contact/update_contact_detail.html', {'form': form})
-
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from django.urls import reverse
-import random
-import string
 
 @login_required
 def create_user_account_for_contact(request, contact_id):

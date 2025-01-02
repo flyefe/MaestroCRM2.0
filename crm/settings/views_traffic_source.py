@@ -4,8 +4,10 @@ from .forms import TrafficSourceForm
 
 from django.contrib.auth.decorators import login_required
 
-# View to create a new TrafficSource
+from core.decorators import role_required
 
+# View to create a new TrafficSource
+# @role_required(['Admin'])
 @login_required
 def traffic_source_list(request):
     traffic_sources = TrafficSource.objects.all()  # Fetch all traffic_sources for display
@@ -26,6 +28,7 @@ def traffic_source_list(request):
 
 
 # View to update an existing TrafficSource
+@role_required(['Admin'])
 @login_required
 def edit_traffic_source(request, traffic_source_id):
     # Fetch the traffic_source object or return a 404 if not found
@@ -47,6 +50,7 @@ def edit_traffic_source(request, traffic_source_id):
     })
 
 # View to delete an existing TrafficSource
+@role_required(['Admin'])
 @login_required
 def delete_traffic_source(request, traffic_source_id):
     traffic_source = get_object_or_404(TrafficSource, id=traffic_source_id)  # Fetch traffic_source object

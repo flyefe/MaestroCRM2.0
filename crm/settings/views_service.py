@@ -3,6 +3,8 @@ from .models import Service
 from .forms import ServiceForm
 
 from django.contrib.auth.decorators import login_required
+from core.decorators import role_required
+
 
 # View to create a new Service
 
@@ -26,6 +28,7 @@ def service_list(request):
 
 
 # View to update an existing Service
+@role_required(['Admin'])
 @login_required
 def edit_service(request, service_id):
     # Fetch the service object or return a 404 if not found
@@ -47,6 +50,7 @@ def edit_service(request, service_id):
     })
 
 # View to delete an existing Service
+@role_required(['Admin'])
 @login_required
 def delete_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)  # Fetch service object

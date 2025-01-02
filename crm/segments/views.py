@@ -24,6 +24,7 @@ def delete_segment(request, pk):
     messages.success(request, f" Segment has been successfully deleted.")
     return redirect('segments:list')
 
+@role_required(['Admin'])
 @login_required
 def bulk_action(request):
     if request.method == "POST":
@@ -51,8 +52,7 @@ def bulk_action(request):
         return redirect("segments:list")
     return redirect('segments:list')
 
-
-role_required(['Admin'])
+@role_required(['Admin'])
 @login_required
 def edit_segment(request, pk):
     # Get the segment object from the database
@@ -60,16 +60,13 @@ def edit_segment(request, pk):
 
     # Retrieve existing conditions (JSON field)
     existing_conditions = segment.conditions if segment.conditions else []
-
     if request.method == 'POST':
         # Get form data from POST
         name = request.POST.get('name')
         description = request.POST.get('description')
         
-        # Safely load conditions from JSON input
         try:
             conditions = json.loads(request.POST.get('conditions', '[]'))
-            # print(conditions)
         except json.JSONDecodeError:
             messages.error(request, "Invalid conditions format.")
             return redirect('segments:edit', pk=pk)
@@ -102,9 +99,6 @@ def edit_segment(request, pk):
 
         # Filter contacts based on the combined Q object
         filtered_contacts = Contact.objects.filter(current_q) if current_q else Contact.objects.none()
-        
-        # for contact in filtered_contacts:
-        #     print(contact)
 
         # Update the segment with new data
         segment.name = name
@@ -134,85 +128,6 @@ def edit_segment(request, pk):
     return render(request, 'segments/edit_segment.html', context)
  
 
-# @role_required(['Admin'])
-# def edit_segment(request, pk):
-#     # Get the segment object from the database
-#     segment = get_object_or_404(Segment, pk=pk)
-
-#     # Retrieve the conditions (assuming it's a JSON field in the model)
-#     existing_conditions = segment.conditions  # Assuming `conditions` is a JSON field in your model
-    
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         description = request.POST.get('description')
-#         conditions = json.loads(request.POST.get('conditions', '[]'))
-#         print(conditions)
-
-#         # Initialize the main Q object for filtering contacts
-#         q = Q()
-#         current_q = None  # Variable to keep track of the current condition
-
-#         for i, condition in enumerate(conditions):
-#             # Create a new Q object for each condition
-#             new_q = Q()
-
-#             # Handle the condition based on type and operation
-#             if condition['type'] == 'status':
-#                 if condition['operation'] == '=':
-#                     new_q &= Q(status=condition['value'])
-#                 elif condition['operation'] == '!=':
-#                     new_q &= ~Q(status=condition['value'])
-#             elif condition['type'] == 'tag':
-#                 if condition['operation'] == '=':
-#                     new_q &= Q(tags__name=condition['value'])
-#                 elif condition['operation'] == '!=':
-#                     new_q &= ~Q(tags__name=condition['value'])
-
-#             # Logic for combining conditions (AND/OR)
-#             if i == 0:
-#                 current_q = new_q
-#             else:
-#                 if condition['logic'] == 'and':
-#                     current_q &= new_q
-#                 elif condition['logic'] == 'or':
-#                     current_q |= new_q
-
-#         # After the loop, current_q holds the combined query
-#         if current_q:
-#             q = current_q
-
-#         # Filter contacts based on the Q object
-#         filtered_contacts = Contact.objects.filter(q)
-
-#         # Update the segment with the new data
-#         segment.name = name
-#         segment.description = description
-#         segment.conditions = conditions  # Save the updated conditions
-#         segment.modified_at = now()  # Update the modification timestamp
-#         segment.save()  # Save the changes
-
-#         # Optional: Save filtered contacts to the segment if needed
-#         segment.contacts.clear()  # Clear existing contacts first
-#         for contact in filtered_contacts:
-#             segment.contacts.add(contact)  # Assuming you have a ManyToMany relationship with contacts
-
-#         messages.success(request, "Segment updated successfully!")
-#         return redirect('segments:list')  # Redirect to the segment list or another appropriate page
-
-#     else:
-#         # Handle GET request and pass initial data to the form
-#         form = SegmentForm(instance=segment)
-
-#         # Pass the existing conditions to the form as a JSON string for the front end
-#         if existing_conditions:
-#             form.fields['conditions'].initial = json.dumps(existing_conditions)
-
-#     context = {
-#         'form': form,
-#         'existing_conditions': json.dumps(existing_conditions),  # Pass the conditions as JSON to the template
-#     }
-
-#     return render(request, 'segments/edit_segment.html', context)
 
 @role_required(['Admin'])
 @login_required

@@ -199,7 +199,7 @@ def staff_table(request):
     admin_group = Group.objects.filter(name='Admin')  # Correct the name to 'Admin'
 
     # Fetch users who belong to either 'Staff' or 'Admin' group
-    users = (User.objects.filter(groups__in=staff_group) | User.objects.filter(groups__in=admin_group)).distinct()
+    users = (User.objects.filter(groups__in=staff_group) | User.objects.filter(groups__in=admin_group)).distinct().order_by('-date_joined')
 
     user_list = []  # This will hold user data with roles
 
@@ -235,7 +235,7 @@ def staff_table(request):
 def users_table(request):
     staff_group = Group.objects.get(name='Staff')
 
-    users = User.objects.exclude(groups=staff_group)  # Fetch all users
+    users = User.objects.exclude(groups=staff_group).order_by('-date_joined')  # Fetch all users
     user_list = []  # This will hold user data with roles
 
     for user in users:
@@ -324,35 +324,35 @@ def logout_view(request):
     messages.success(request, 'You have been successfully logged out.')
     return redirect('login')  # Redirect to login page after logout
 
-# Login
-@login_required
-def login_view(request):
+# # Login
+# @login_required
+# def login_view(request):
 
-    form = AuthenticationForm()
+#     form = AuthenticationForm()
 
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                # return redirect('index')
-                # Get the 'next' parameter from the query string
-                next_url = request.GET.get('next')
-                if next_url:
-                    messages.success(request, 'Logged in successfully.')
-                    return redirect(next_url)  # Redirect to the page the user was trying to access
-                else:
-                    messages.success(request, 'Logged in successfully.')
-                    return redirect('/')  # Or use a default page like 'index'
-            else:
-                messages.error(request, 'Invalid username or password.')
-        else:
-            messages.error(request, 'Invalid username or password.')
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, data=request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+#             user = authenticate(username=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#                 # return redirect('index')
+#                 # Get the 'next' parameter from the query string
+#                 next_url = request.GET.get('next')
+#                 if next_url:
+#                     messages.success(request, 'Logged in successfully.')
+#                     return redirect(next_url)  # Redirect to the page the user was trying to access
+#                 else:
+#                     messages.success(request, 'Logged in successfully.')
+#                     return redirect('/')  # Or use a default page like 'index'
+#             else:
+#                 messages.error(request, 'Invalid username or password.')
+#         else:
+#             messages.error(request, 'Invalid username or password.')
 
-    return render(request, 'login.html', {'form': form})
+#     return render(request, 'login.html', {'form': form})
 
 
 
