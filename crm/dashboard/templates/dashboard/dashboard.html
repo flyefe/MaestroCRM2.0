@@ -214,10 +214,17 @@
                             </tr>
                         </thead>
                         <tbody>
+                           
                             {% for contact in modified_at %}
                             <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4">{{ contact.user.first_name }} {{ contact.user.last_name }}</td>
-                                <td class="py-2 px-4">{{ contact.modified_at|date:"d/m/Y" }}</td>
+                                <td class="py-2 px-4">{{ contact.first_name }} {{ contact.last_name }}</td>
+                                <td class="py-2 px-4">{{ contact.modified_at|date:"d-m-Y g:i a" }}
+                                    {% if contact.latest_logs %}
+                                    <span class="text-gray-300 text-xs">by {{ contact.latest_logs.0.created_by }}</span>
+                                    {% else %}
+                                    <span class="text-gray-300 text-xs">No Logs</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>

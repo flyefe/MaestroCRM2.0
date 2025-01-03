@@ -68,48 +68,10 @@ class Log(models.Model):
     log_title = models.CharField(max_length=255)  # Added this field
     log_description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='created_log', on_delete=models.CASCADE)
+    logged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)  # Set at creation
     modified_at = models.DateTimeField(auto_now=True)      # Updated on save
 
     def __str__(self):
         return f'commented by {self.created_by.username} on {self.created_at}'
 
-
-
-
-
-
-
-
-
-
-
-# class Address(models.Model):
-#     """
-#     Model representing an address associated with a contact.
-    
-#     Fields:
-#     - first_line: The primary line of the address (e.g., street address)
-#     - second_line: An optional second line for additional address details
-#     - city: The city or town of the address
-#     - state: The state or province (optional for countries without states)
-#     - country: The country of the address
-#     - postal_code: The postal or zip code
-#     """
-
-#     first_line = models.CharField(max_length=255, help_text="Primary address line")
-#     second_line = models.CharField(max_length=255, blank=True, help_text="Secondary address line (optional)")
-#     city = models.CharField(max_length=100, help_text="City or town")
-#     state = models.CharField(max_length=100, blank=True, help_text="State or province (if applicable)")
-#     country = models.CharField(max_length=50, help_text="Country")
-#     postal_code = models.CharField(max_length=20, help_text="Postal or zip code")
-
-#     def __str__(self):
-#         # Return a string representation of the address
-#         if self.second_line:
-#             return f"{self.first_line}, {self.second_line}, {self.city}, {self.country} - {self.postal_code}"
-#         else:
-#             return f"{self.first_line}, {self.city}, {self.country} - {self.postal_code}"
-
-#     class Meta:
-#         verbose_name_plural = "Addresses"

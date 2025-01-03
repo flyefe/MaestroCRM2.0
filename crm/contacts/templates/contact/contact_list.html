@@ -7,10 +7,19 @@
 <div class="p-2 w-full mx-auto mt-10 bg-gradient-to-b from-gray-50 to-gray-200">
     {% if assigned_contacts %}
     <h2 class="text-3xl font-bold mb-6 text-center text-gray-600"> Assigned To Me</h2>
-    <p class="text-center">
-        Dear <strong>{{user.first_name}}</strong>, here are some contacts assigned for you to deal with today. endeavour to be snappy about it. Cheers! <br>
-        <strong> -Admin </strong>
-    </p>
+        {% if contacts.paginator.count != 0 %}
+        <p class="text-center">
+            Dear <strong>{{user.first_name}}</strong>, here are some contacts assigned for you to deal with today. 
+            Endeavour to be snappy about it. Business is counting on you. Cheers! <br>
+            <strong> -Admin </strong>
+        </p>
+        {% else %}
+        <p class="text-center">
+            Dear <strong>{{user.get_full_name}}</strong>, you seem to be unengaged at the momment with any customer. Do you want to help out with One?
+            Or if you have a customer you are dealing with, kindly add to your assigned list. Cheers! <br>
+            <strong> -Admin </strong>
+        </p>
+        {% endif %}
     {% else %}
     <h2 class="text-3xl font-bold mb-6 text-center text-gray-600">Contact List</h2>
     {% endif %}
@@ -103,8 +112,11 @@
                         <span class="text-gray-400 text-xs">by {{ contact.created_by.get_full_name }}</span>
                     </td>
                     <td class="border px-4 py-3">
-                        <a href="{% url 'contact_detail' contact.id %}"
-                            class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.last_name }} {{contact.first_name}}</a>
+                        {% if not contact.first_name %}
+                        <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.user.first_name }} {{ contact.user.middle_name }} {{contact.user.last_name}}</a>
+                        {% else %}
+                        <a href="{% url 'contact_detail' contact.id %}" class="text-blue-600 hover:underline">{{contact.first_name }} {{ contact.middle_name }} {{contact.last_name}}</a>
+                        {% endif %}
                     </td>
                     <td class="border px-4 py-3">{{ contact.email }}</td>
                     <td class="border px-4 py-3">{{ contact.phone_number }}</td>

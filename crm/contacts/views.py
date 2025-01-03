@@ -24,15 +24,15 @@ from segments.utils import reevaluate_segments_for_contacts  # Import the helper
 def contacts_by_service(request, service_id):
     # Get the service by ID
     service = get_object_or_404(Service, id=service_id)
-    
+
     # Filter contacts by status
     contacts = Contact.objects.filter(services=service)
-    
+
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
-    
+
     # Render the filtered contacts
     return render(request, 'contact/contacts_by_filter.html', {
         'service': service,
@@ -44,15 +44,15 @@ def contacts_by_service(request, service_id):
 def contacts_by_traffic_source(request, traffic_source_id):
     # Get the traffic_source ID
     traffic_source = get_object_or_404(TrafficSource, id=traffic_source_id)
-    
+
     # Filter contacts by traffic_source
     contacts = Contact.objects.filter(traffic_source=traffic_source)
-    
+
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
-    
+
     # Render the filtered contacts
     return render(request, 'contact/contacts_by_filter.html', {
         'traffic_source': traffic_source,
@@ -63,15 +63,15 @@ def contacts_by_traffic_source(request, traffic_source_id):
 def contacts_by_assigned_staff(request, assigned_staff_id):
     # Get the staff by ID
     assigned_staff = get_object_or_404(User, id=assigned_staff_id)
-    
+
     # Filter contacts by staff
     contacts = Contact.objects.filter(assigned_staff=assigned_staff)
-    
+
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
-    
+
     # Render the filtered contacts
     return render(request, 'contact/contacts_by_filter.html', {
         'assigned_staff': assigned_staff,
@@ -82,15 +82,15 @@ def contacts_by_assigned_staff(request, assigned_staff_id):
 def contacts_by_status(request, status_id):
     # Get the status by ID
     status = get_object_or_404(Status, id=status_id)
-    
+
     # Filter contacts by status
     contacts = Contact.objects.filter(status=status)
-    
+
     # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
-    
+
     # Render the filtered contacts
     return render(request, 'contact/contacts_by_filter.html', {
         'status': status,
@@ -102,7 +102,7 @@ def contacts_by_tag(request, tag_id):
     tag = get_object_or_404(Tag, id=tag_id)  # Get the tag by ID
     contacts = Contact.objects.filter(tags=tag)  # Filter contacts by tag
 
-     # Add pagination (Optional)
+    # Add pagination (Optional)
     paginator = Paginator(contacts, 100)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
@@ -120,7 +120,7 @@ def delete_log(request, log_id):
     log.delete()
 
     contact_id = log.contact_id
-    
+
     messages.success(request, f" Log has been successfully deleted.")
     return redirect ('contact_detail', contact_id)
 
@@ -196,7 +196,7 @@ def delete_contact(request, contact_id):
         return redirect('contact_list')  # Assuming you have a contact list view
 
     contact = get_object_or_404(Contact, id=contact_id)
-    
+
     # Check if the user is trying to delete their own contact
     if contact.user == request.user:
         messages.error(request, "You cannot delete your own contact.")
@@ -222,7 +222,7 @@ def my_assigned_contacts(request):
         contact=OuterRef('pk'),  # Match the Log with the Contact
         log_type='feedback'      # Filter only feedback logs
     ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
-    
+
     # Subquery to get the most recent log (type = 'feedback') description
     recent_feedback_log_description = Log.objects.filter(
         contact=OuterRef('pk'),
@@ -266,7 +266,7 @@ def contact_list(request):
         contact=OuterRef('pk'),  # Match the Log with the Contact
         log_type='feedback'      # Filter only feedback logs
     ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
-    
+
     # Subquery to get the most recent log (type = 'feedback') description
     recent_feedback_log_description = Log.objects.filter(
         contact=OuterRef('pk'),
@@ -280,7 +280,7 @@ def contact_list(request):
     ).order_by('-modified_at')
 
     # Pagination
-    paginator = Paginator(contacts, 100)  # Show 10 contacts per page
+    paginator = Paginator(contacts, 200)  # Show 10 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
@@ -307,23 +307,23 @@ def search_contact(request):
     query = request.GET.get('query', '').strip()
     # contacts = Contact.objects.all()
 
-
-
     if query:
         # Search across multiple fields
         contacts = contacts.filter(
-            Q(user__username__icontains=query) |
-            Q(user__first_name__icontains=query) |
-            Q(user__last_name__icontains=query) |
-            Q(phone_number__icontains=query) |
-            Q(status__name__icontains=query) |
-            Q(tags__name__icontains=query) |
-            Q(services__name__icontains=query) |
-            Q(traffic_source__name__icontains=query)
-        ).distinct()
+            Q(user__username__icontains=query)
+            | Q(user__first_name__icontains=query)
+            | Q(user__last_name__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(middle_name__icontains=query)
+            | Q(phone_number__icontains=query)
+            | Q(status__name__icontains=query) | Q(tags__name__icontains=query)
+            | Q(services__name__icontains=query)
+            | Q(log__log_title__icontains=query)| Q(log__log_description__icontains=query)
+            | Q(traffic_source__name__icontains=query)).distinct()
 
     # Pagination
-    paginator = Paginator(contacts, 5)  # Show 5 contacts per page
+    paginator = Paginator(contacts, 100)  # Show 5 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
@@ -332,7 +332,7 @@ def search_contact(request):
         'form': form,
         'contacts': page_contacts,  # Paginated results
         'query': query,
-        'filter_form' : filter_form
+        'filter_form': filter_form
     }
 
     return render(request, 'contact/contact_list.html', context)
@@ -386,15 +386,15 @@ def contacts_bulk_action(request):
     if request.method == "POST":
         action_type = request.POST.get("action_type")
         selected_contacts = request.POST.get("selected_contacts", "").split(',')
-        
+
         # Ensure contacts are selected
         if not selected_contacts or not any(selected_contacts):
             messages.error(request, "No contacts selected.")
             return redirect("contact_list")
-        
+
         # Fetch contacts queryset once
         contacts = Contact.objects.filter(id__in=selected_contacts)
-        
+
         if not contacts.exists():
             messages.error(request, "No valid contacts found.")
             return redirect("contact_list")
@@ -408,7 +408,7 @@ def contacts_bulk_action(request):
                 reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No status selected.")
-        
+
         # Action: Add Tags
         elif action_type == "add_tags":
             tag_ids = request.POST.getlist("tags")
@@ -419,7 +419,7 @@ def contacts_bulk_action(request):
                 reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No tags provided or selected.")
-        
+
         # Action: Remove Tags
         elif action_type == "remove_tags":
             tag_ids = request.POST.getlist("tags")
@@ -431,7 +431,7 @@ def contacts_bulk_action(request):
                 reevaluate_segments_for_contacts(contacts)
             else:
                 messages.error(request, "No tags provided or selected.")
-        
+
         # Action: Delete Contacts
         elif action_type == "delete":
             for contact in contacts:
@@ -475,7 +475,7 @@ def contacts_bulk_action(request):
             messages.error(request, "Invalid action selected.")
 
         return redirect("contact_list")
-    
+
     return redirect("contact_list")
 
 
@@ -492,7 +492,7 @@ def create_user_account_for_contact(request, contact_id):
         try:
             # Generate a random password
             password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
-            email=contact.email,
+            email=contact.email
 
 
             # Create the user account
@@ -521,7 +521,7 @@ def create_user_account_for_contact(request, contact_id):
             messages.error(request, f"An error occurred while creating the user account: {str(e)}")
     else:
         messages.error(request, "contact has no email. Email is required to create an account")
-        
+
 
     return redirect(reverse('contact_detail', args=[contact_id]))
 
@@ -549,7 +549,7 @@ def update_contact(request, contact_id):
                     if User.objects.filter(email=email).exclude(id=user.id).exists():
                         messages.error(request, 'This email is already in use by another contact.')
                         return render(request, 'contact/update_contact_detail.html', {'form': form})
-                
+
                 # Update user details
                 user.email = email
                 user.first_name = first_name
@@ -565,7 +565,7 @@ def update_contact(request, contact_id):
             for tag_name in combined_tags:
                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
                 contact.tags.add(tag)  # Add tag to contact
-            
+
             contact.save()
 
             messages.success(request, 'Contact details updated successfully.')
@@ -583,9 +583,9 @@ def update_contact(request, contact_id):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
             })
-        
+
         form = ContactCreationForm(instance=contact, initial=form_initial)
-        
+
     return render(request, 'contact/update_contact_detail.html', {'form': form})
 
 
@@ -598,7 +598,7 @@ def create_contact(request):
             email = form.cleaned_data['email']
             # tags = [tag.strip().title() for tag in form.cleaned_data['tags'].split(',') if tag.strip()]
 
-             # Extract and merge tags from both fields
+            # Extract and merge tags from both fields
             tags_from_text = [tag.strip().title() for tag in form.cleaned_data['tag'].split(',') if tag.strip()]
             tags_from_select = [tag.name.strip() for tag in form.cleaned_data['tags']]  # Taking `tags` is a multi-select field
             combined_tags = set(tags_from_text + tags_from_select)  # Remove duplicates
@@ -617,16 +617,16 @@ def create_contact(request):
                             'last_name': form.cleaned_data['last_name'],
                         }
                     )
-                
+
                     if not created:
                         messages.error(request, "A user with this email already exists.")
                         return render(request, 'contact/create_contact.html', {'form': form})
-                    
+
                     # If we reach here, the user was created
                     password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
                     user.set_password(make_password(password))
-                    user.save()    
-                    
+                    user.save()
+
                     # print(f"Password for {email} is: {password}")  # Log or send password
 
                     # Add the user to the 'Contact' group
@@ -640,11 +640,11 @@ def create_contact(request):
                 contact.updated_by = request.user
                 contact.save()
 
-                   # Process tags
+                # Process tags
                 for tag_name in combined_tags:
                     tag, _ = Tag.objects.get_or_create(name=tag_name)  # Create tag if not exists
                     contact.tags.add(tag)  # Add tag to contact
-                
+
 
                 messages.success(request, "Contact created successfully.")
                 return redirect('contact_list')
@@ -657,4 +657,3 @@ def create_contact(request):
     else:
         form = ContactCreationForm()
     return render(request, 'contact/create_contact.html', {'form': form})
-

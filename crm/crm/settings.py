@@ -111,29 +111,29 @@ WSGI_APPLICATION = "crm.wsgi.application"
 
 
 if not config("USE_SQLITE", default=False, cast=bool):  # Use PostgreSQL if USE_SQLITE is False
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",  # PostgreSQL database engine.
-            "NAME": config("DATABASE_NAME"),  # Database name from environment.
-            "USER": config("DATABASE_USER"),  # Database username from environment.
-            "PASSWORD": config("DATABASE_PASSWORD"),  # Database password from environment.
-            "HOST": config("DATABASE_HOST"),  # Database host from environment.
-            "PORT": config("DATABASE_PORT"),  # Database port from environment.
-        }
-    }
     # DATABASES = {
     #     "default": {
-    #         "ENGINE": "django.db.backends.postgresql",
-    #         "NAME": config("DATABASE_NAME"),
-    #         "USER": config("DATABASE_USER"),
-    #         "PASSWORD": config("DATABASE_PASSWORD"),
-    #         "HOST": config("DATABASE_HOST"),
-    #         "PORT": config("DATABASE_PORT"),
-    #         "OPTIONS": {
-    #             "sslmode": config("DATABASE_SSLMODE", default="require"),  # Enable SSL
-    #         },
+    #         "ENGINE": "django.db.backends.postgresql",  # PostgreSQL database engine.
+    #         "NAME": config("DATABASE_NAME"),  # Database name from environment.
+    #         "USER": config("DATABASE_USER"),  # Database username from environment.
+    #         "PASSWORD": config("DATABASE_PASSWORD"),  # Database password from environment.
+    #         "HOST": config("DATABASE_HOST"),  # Database host from environment.
+    #         "PORT": config("DATABASE_PORT"),  # Database port from environment.
     #     }
     # }
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DATABASE_NAME"),
+            "USER": config("DATABASE_USER"),
+            "PASSWORD": config("DATABASE_PASSWORD"),
+            "HOST": config("DATABASE_HOST"),
+            "PORT": config("DATABASE_PORT"),
+            # "OPTIONS": {
+            #     "sslmode": config("DATABASE_SSLMODE", default="require"),  # Enable SSL
+            # },
+        }
+    }
 else:
     DATABASES = {
         "default": {

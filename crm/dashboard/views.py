@@ -95,9 +95,11 @@ from django.db.models.functions import TruncMonth
 from django.utils.timezone import now
 from django.db.models import Count
 from django.db.models import Q
-from contacts.models import Contact, Tag
+from contacts.models import Contact, Tag, Log
 from datetime import timedelta
 from django.db.models.functions import ExtractMonth
+from django.db.models import Max, Prefetch, F, Case, When
+from django.db import models
 
 
 @role_required(['Admin', 'Staff'])
@@ -105,6 +107,21 @@ from django.db.models.functions import ExtractMonth
 def dashboard(request):
     contacts = Contact.objects.all()
 
+     # Add this to fetch the latest log for each contact
+    contacts = contacts.annotate(
+        latest_log_date=Max('log__created_at'),
+        last_modified=Case(
+            When(latest_log_date__isnull=False, then=F('latest_log_date')),
+            default='modified_at',
+            output_field=models.DateTimeField()
+        )
+    ).prefetch_related(
+        Prefetch(
+            'log',
+            queryset=Log.objects.order_by('-created_at'),
+            to_attr='latest_logs'
+        )
+    )
     # Existing counts
     customers_count = contacts.filter(status__name='Customer').count()
     leads_count = contacts.filter(status__name='Lead').count()
