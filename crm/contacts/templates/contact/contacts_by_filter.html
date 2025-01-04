@@ -1,20 +1,20 @@
 {% extends 'core/base.html' %}
 
 {% block title %}
-    {% if status.name %}
-    Contact with status "{{status.name}}"
-    {% elif tag.name %}
-    Contact Tagged "{{tag.name}}"
-    {% elif assigned_staff %}
-    Contact Assigned To "{{assigned_staff.get_full_name}}"
-    {% elif service.name %}
-    Contact For "{{service.name}}"
-    {% endif %}
+{% if status.name %}
+Contact with status "{{status.name}}"
+{% elif tag.name %}
+Contact Tagged "{{tag.name}}"
+{% elif assigned_staff %}
+Contact Assigned To "{{assigned_staff.get_full_name}}"
+{% elif service.name %}
+Contact For "{{service.name}}"
+{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 mt-10">
-    <h2 class="text-3xl font-bold mb-6 text-center">
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">
         {% if status.name %}
         Contact with status "{{status.name}}"
         {% elif tag.name %}
@@ -28,96 +28,115 @@
         {% endif %}
     </h2>
 
-    <div class="overflow-x-auto rounded-lg shadow-lg">
-        <table class="min-w-full bg-white border border-gray-300">
-            <thead class="bg-gray-600 text-white">
+    <div class="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
+        <table class="min-w-full bg-white divide-y divide-gray-200">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Added On</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Name</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Email</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Phone Number</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Services</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Status</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Tags</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Assigned Staff</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Traffick Source</th>
-                    <th class="py-3 px-4 text-left text-sm font-semibold">Last Update</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added On
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone
+                        Number</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Services
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned
+                        Staff</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Traffic
+                        Source</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last
+                        Update</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white divide-y divide-gray-200">
                 {% for contact in contacts %}
-                <tr class="hover:bg-gray-100 transition duration-200">
-                    <td class="py-2 px-4 border-b border-gray-200">{{ contact.created_at }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200">
-                        <a href="{% url 'contact_detail' contact.id %}" class="text-gray-600 hover:underline">
-                            {{ contact.user.first_name }} {{ contact.user.last_name }}
+                <tr class="hover:bg-gray-50 transition-all duration-200">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact.created_at }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <a href="{% url 'contact_detail' contact.id %}"
+                            class="text-gray-600 hover:text-gray-900 hover:underline">
+                            {{ contact.first_name }} {{ contact.last_name }}
                         </a>
                     </td>
-                    <td class="py-2 px-4 border-b border-gray-200">{{ contact.user.email }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200">{{ contact.phone_number }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200">{{ contact.services }}</td>
-                    <td class="py-2 px-4 border-b border-gray-200">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact.user.email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact.phone_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contact.services }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {% if contact.status %}
-                        <a href="{% url 'contacts_by_status' contact.status.id %}" class="text-gray-600 hover:underline">
+                        <a href="{% url 'contacts_by_status' contact.status.id %}"
+                            class="text-gray-600 hover:text-gray-900 hover:underline">
                             {{ contact.status }}
                         </a>
                         {% else %}
-                        <span>No Status</span>
+                        <span class="text-gray-400">No Status</span>
                         {% endif %}
-    
                     </td>
-                    <td class="py-2 px-4 border-b border-gray-200 text-blue-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {% for tag in contact.tags.all %}
-                        <p>
-                            <a href="{% url 'contacts_by_tag' tag.id %}" class="text-gray-600 hover:underline">
+                        <div>
+                            <a href="{% url 'contacts_by_tag' tag.id %}"
+                                class="text-gray-600 hover:text-gray-900 hover:underline">
                                 {{ tag.name }}
                             </a>
-                        </p>
+                        </div>
                         {% empty %}
-                        <span>No Tags</span>
+                        <span class="text-gray-400">No Tags</span>
                         {% endfor %}
                     </td>
-                    <td class="py-2 px-4 border-b border-gray-200">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {% if contact.assigned_staff %}
                         <a href="{% url 'contacts_by_assigned_staff' contact.assigned_staff.id %}"
-                            class="text-gray-600 hover:underline">
+                            class="text-gray-600 hover:text-gray-900 hover:underline">
                             {{ contact.assigned_staff.get_full_name }}
                         </a>
                         {% else %}
-                        <span>Not Assigned</span>
+                        <span class="text-gray-400">Not Assigned</span>
                         {% endif %}
                     </td>
-                    <td class="py-2 px-4 border-b border-gray-200">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {% if contact.traffic_source %}
-                        <a href="{% url 'contacts_by_traffic_source' contact.traffic_source.id %}" class="text-gray-600 hover:underline">
+                        <a href="{% url 'contacts_by_traffic_source' contact.traffic_source.id %}"
+                            class="text-gray-600 hover:text-gray-900 hover:underline">
                             {{ contact.traffic_source.name }}
                         </a>
                         {% else %}
-                        <span>No Source</span>
+                        <span class="text-gray-400">No Source</span>
                         {% endif %}
                     </td>
-                    <td class="py-2 px-4 border-b border-gray-200">
-                        {{ contact.modified_at }} by {{contact.updated_by.get_full_name }}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ contact.modified_at }} by {{ contact.updated_by.get_full_name }}
                     </td>
-    
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="py-4 text-center">No contacts found.</td>
+                    <td colspan="10" class="px-6 py-4 text-center text-gray-500">No contacts found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="bg-gray-600 py-2 px-4 border-b border-gray-200">
-            <span>Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}</span>
-            {% if contacts.has_previous %}
-            <a href="?page={{ contacts.previous_page_number }}" class="text-gray-300 hover:underline">Previous</a>
-            {% endif %}
-            {% if contacts.has_next %}
-            <a href="?page={{ contacts.next_page_number }}" class="text-gray-300 hover:underline">Next</a>
-            {% endif %}
+        <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div class="text-sm text-gray-700">
+                <span>Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                {% if contacts.has_previous %}
+                <a href="?page={{ contacts.previous_page_number }}"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500">
+                    Previous
+                </a>
+                {% endif %}
+                {% if contacts.has_next %}
+                <a href="?page={{ contacts.next_page_number }}"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500">
+                    Next
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

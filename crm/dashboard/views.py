@@ -15,7 +15,7 @@
 #     active_contacts_count = contacts.filter(status__name='Customer').count()
 #     unassigned_contacts_count = contacts.filter(assigned_staff__isnull=True).count()
 #     recent_contacts = contacts.order_by('-created_at')[:5]
-    
+
 #     # In your view:
 #     traffic_sources = contacts.values('traffic_source__name').annotate(count=Count('traffic_source')).order_by('-count')
 #     traffic_sources_data = {
@@ -100,6 +100,7 @@ from datetime import timedelta
 from django.db.models.functions import ExtractMonth
 from django.db.models import Max, Prefetch, F, Case, When
 from django.db import models
+from django.contrib.auth.models import User, Group
 
 
 @role_required(['Admin', 'Staff'])
@@ -107,7 +108,7 @@ from django.db import models
 def dashboard(request):
     contacts = Contact.objects.all()
 
-     # Add this to fetch the latest log for each contact
+    # Add this to fetch the latest log for each contact
     contacts = contacts.annotate(
         latest_log_date=Max('log__created_at'),
         last_modified=Case(
@@ -132,7 +133,7 @@ def dashboard(request):
 
     # New counts
     need_follow_up_count = contacts.filter(tags__name='Need Follow-Up').count()
-    
+
     # Customers not contacted in specific time frames
     one_week_ago = now() - timedelta(days=7)
     two_weeks_ago = now() - timedelta(days=14)
@@ -204,8 +205,8 @@ def dashboard(request):
 
     # Verdict tags
     verdict_tags = Tag.objects.filter(name__in=[
-        'Needs follow up', 'Ready to apply', 'Not eligible atm', 'Applied', 
-        'Successful', 'Service not available', 'Not ready to apply', 'Potential', 
+        'Needs follow up', 'Ready to apply', 'Not eligible atm', 'Applied',
+        'Successful', 'Service not available', 'Not ready to apply', 'Potential',
         'No feedback yet'
     ])
     verdict_contacts = contacts.filter(tags__in=verdict_tags).values('tags__name').annotate(count=Count('id')).order_by('-count')
@@ -227,7 +228,7 @@ def dashboard(request):
     monthly_conversions_data = {item['month'].strftime('%B %Y'): item['conversions'] for item in monthly_conversions}
 
 
-    
+
 
     birthdays_per_month = (
         Contact.objects
@@ -245,6 +246,13 @@ def dashboard(request):
         for item in birthdays_per_month
     ]
 
+   # Staff-wise contact counts
+    staff_contact_counts = (
+        Contact.objects.values('assigned_staff__id', 'assigned_staff__first_name', 'assigned_staff__last_name')
+        .annotate(total=Count('id'))
+        .filter(assigned_staff__isnull=False)
+        .order_by('-total')
+    )
     context = {
         'contacts': contacts,
         'customers_count': customers_count,
@@ -266,6 +274,7 @@ def dashboard(request):
         'services_breakdown': {service['services__name']: service['count'] for service in services_breakdown},
         'verdict_tags_data': verdict_tags_data,
         'monthly_conversions': monthly_conversions_data,
-        'birthdays_per_month': birthdays_per_month
+        'birthdays_per_month': birthdays_per_month,
+        'staff_contact_counts': staff_contact_counts,
     }
     return render(request, 'dashboard/dashboard.html', context)
