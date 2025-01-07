@@ -74,7 +74,7 @@ def sign_up(request):
         if form.is_valid():
             email = form.cleaned_data['email']
              # Validate email domain
-            if not email.endswith('@flyibat.com'):
+            if not email.endswith('@g-linelogistics.com'):
                 messages.error(request, "You are not a staff. contact a staff memeber to get access to your client portal")
                 return render(request, 'core/sign_up.html', {'form': form})
             first_name = form.cleaned_data['first_name']
