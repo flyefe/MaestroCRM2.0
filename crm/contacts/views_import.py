@@ -81,6 +81,12 @@ def map_fields(request):
         'new_or_old',
         'assigned_staff',
         'log',
+        'address_line1',
+        'address_line2',
+        'city',
+        'state',
+        'country',
+        'postal_code',
     ]
 
     # Step 3: Create the dynamic form for field mapping
