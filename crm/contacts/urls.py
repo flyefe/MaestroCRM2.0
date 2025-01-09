@@ -1,6 +1,6 @@
 from django.urls import path
 # from . import views
-from . import views, views_status, views_tags, views_import
+from . import views, views_status, views_tags, views_import, views_api
 
 #Urls patterns
 urlpatterns = [
@@ -25,8 +25,12 @@ urlpatterns = [
     path('add-contact', views.create_contact, name='add_contact'),
     path("assigned-contacts/", views.my_assigned_contacts, name='my_assigned_contacts'),
     path("contact-list/", views.contact_list, name='contact_list'),
-
     path("contacts-bulk-action/", views.contacts_bulk_action, name='contacts_bulk_action'),
+
+    #API
+    path('api/contacts/', views_api.ContactListCreateView.as_view(), name='contact-list-create'),
+    path('contacts/<int:pk>/', views_api.ContactDetailView.as_view(), name='contact-detail'),
+
 
     #Statuses
     path('status-list', views_status.status_list, name='status_list'),
@@ -40,7 +44,6 @@ urlpatterns = [
     path('delete-tag/<int:tag_id>/', views_tags.delete_tag, name='delete_tag'),
 
     #Imports
-    #Tags
     path('import-contact', views_import.import_contacts, name='import_contacts'),
     path('map_fields/', views_import.map_fields, name='map_fields'),
     path('save_mapped_data/', views_import.save_mapped_data, name='save_mapped_data'),

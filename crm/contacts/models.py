@@ -48,8 +48,6 @@ class Contact(models.Model):
     marketing_consent = models.BooleanField(default=False, help_text="Has this contact consented to marketing communications?")
     gdpr_compliant = models.BooleanField(default=False, help_text="Is this contact GDPR compliant?")
 
-    # def __str__(self):
-    #     return f"{self.user.username} - {self.status.name if self.status else 'No Status'}"
     def __str__(self):
         user_info = self.user.username if self.user else "No User"
         status_info = self.status.name if self.status else "No Status"
