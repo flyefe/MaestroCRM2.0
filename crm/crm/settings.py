@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_select2',
     'widget_tweaks',
+    'corsheaders',
     "dashboard",
     "core",
     "contacts",
@@ -63,6 +64,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "core.middleware.maintenance_middleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -72,12 +74,21 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.middleware.RoleBasedAccessMiddleware",
-
-
-]
+    ]
 
 
 ROOT_URLCONF = "crm.urls"
+
+# #API Allowed Origin
+# CORS_ALLOWED_ORIGINS = [True]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8001",  # Django development server
+    "http://localhost:8001",  # If using localhost
+    "http://127.0.0.1:5500",  # If your frontend is served from a different port, e.g., live server in VSCode
+]
+
+
 
 TEMPLATES = [
     {
