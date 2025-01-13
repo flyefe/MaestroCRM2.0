@@ -71,6 +71,35 @@
             </div>
         </div>
 
+
+        <!-- Total Conversion Per Month -->
+        <div class="mb-8">
+            <h3 class="toggle-header text-xl font-bold mb-4 cursor-pointer px-4 py-2 bg-gray-100 border border-gray-300 rounded-t-lg"
+                onclick="toggleSection(this)">Total Conversion Per Month</h3>
+            <div class="toggle-content max-h-0 overflow-hidden transition-all duration-300">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-4">Total Conversion Per Month</h3>
+                    <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Month</th>
+                                <th class="py-2 px-4 text-left">Conversions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for month, count in monthly_conversions.items %}
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-2 px-4">{{ month }}</td>
+                                <td class="py-2 px-4 font-bold">{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Monthly Contacts Overview -->
         <div class="mb-8">
             <h3 class="toggle-header text-xl font-bold mb-4 cursor-pointer px-4 py-2 bg-gray-100 border border-gray-300 rounded-t-lg"
@@ -263,33 +292,7 @@
             </div>
         </div>
 
-        <!-- Total Conversion Per Month -->
-        <div class="mb-8">
-            <h3 class="toggle-header text-xl font-bold mb-4 cursor-pointer px-4 py-2 bg-gray-100 border border-gray-300 rounded-t-lg"
-                onclick="toggleSection(this)">Total Conversion Per Month</h3>
-            <div class="toggle-content max-h-0 overflow-hidden transition-all duration-300">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-4">Total Conversion Per Month</h3>
-                    <table class="w-full bg-gray-50 border border-gray-300 rounded-lg">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="py-2 px-4 text-left">Month</th>
-                                <th class="py-2 px-4 text-left">Conversions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for month, count in monthly_conversions.items %}
-                            <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4">{{ month }}</td>
-                                <td class="py-2 px-4 font-bold">{{ count }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
+       
         <!-- Services Overview -->
         <div class="mb-8">
             <h3 class="toggle-header text-xl font-bold mb-4 cursor-pointer px-4 py-2 bg-gray-100 border border-gray-300 rounded-t-lg"
