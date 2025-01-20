@@ -270,9 +270,9 @@ class ContactCreationForm(forms.ModelForm):
                     'style': 'background-color: #f5f5f5;'
                 }),
             'date_of_birth':
-            forms.DateTimeInput(
+            forms.DateInput(
                 attrs={
-                    'type': 'datetime-local',
+                    'type': 'date',
                     'class':
                     'form-input block w-full rounded border border-black p-2 mb-2',
                     'style': 'background-color:#f5f5f5'
