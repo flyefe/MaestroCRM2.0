@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "compressor",
     "clientportal",
     "django_extensions",
+    "emails",
     "settings",
     "segments",
     "users",

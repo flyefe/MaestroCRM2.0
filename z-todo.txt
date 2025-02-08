@@ -81,6 +81,94 @@ CRM/                      # Project Root
     └── views.py
 
 
+
+
+MaestroCRM2.0/                # Root project directory
+│── core/                     # Core functionalities (middleware, utilities, base models)
+│   ├── middleware.py         # Custom middleware (e.g., RoleBasedAccessMiddleware, maintenance)
+│   ├── models.py             # Core models (possibly including Feature model)
+│   ├── utils.py              # Utility functions (e.g., checking if features are active)
+│   ├── views.py              # Core views
+│   ├── urls.py               # Core URL configurations
+│   ├── __init__.py           # Marks core as a Python package
+│
+│── dashboard/                # Dashboard-related functionality
+│   ├── templates/            # Templates for the dashboard UI
+│   ├── views.py              # Views for the dashboard
+│   ├── urls.py               # URL routing for the dashboard
+│   ├── __init__.py
+│
+│── contacts/                 # Contacts management
+│   ├── api/                  # API-related code (Django Rest Framework views)
+│   ├── models.py             # Contact model
+│   ├── views.py              # Contact views
+│   ├── serializers.py        # DRF Serializers for Contact API
+│   ├── urls.py               # Contact URL configurations
+│   ├── __init__.py
+│
+│── clientportal/             # Client portal functionality
+│   ├── templates/
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── segments/                 # Segmentation system (if active)
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── users/                    # User management and authentication
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── inventory/                # Inventory management (if active)
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── invoicing/                # Invoice generation (if active)
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── accounting/               # Accounting system (if active)
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── visitors/                 # Visitors management system (if active)
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── __init__.py
+│
+│── settings/                 # Project settings (possibly modularized)
+│   ├── base.py               # Base settings for the project
+│   ├── dev.py                # Development settings
+│   ├── prod.py               # Production settings
+│   ├── __init__.py
+│
+│── crm/                      # Main project configuration
+│   ├── settings.py           # Django settings file
+│   ├── urls.py               # Project-wide URL configurations
+│   ├── wsgi.py               # WSGI entry point for the project
+│   ├── asgi.py               # ASGI entry point for async applications
+│   ├── __init__.py
+│
+│── templates/                # Global templates
+│── static/                   # Global static files (CSS, JS)
+│── manage.py                 # Django management script
+│── requirements.txt          # Python dependencies
+│── .venv/                    # Virtual environment (if created locally)
+
+
+
 -DONE Make it possible for users to register
 -DONE Make form to add/create roles/groups
 -DONE Make it possible to edit/Update groups

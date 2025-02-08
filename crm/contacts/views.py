@@ -627,8 +627,6 @@ def create_contact(request):
                     user.set_password(make_password(password))
                     user.save()
 
-                    # print(f"Password for {email} is: {password}")  # Log or send password
-
                     # Add the user to the 'Contact' group
                     contact_group = Group.objects.get(name='Contact')
                     user.groups.add(contact_group)

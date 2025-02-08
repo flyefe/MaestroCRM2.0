@@ -26,20 +26,16 @@ def dashboard(request):
         last_modified=Case(
             When(latest_log_date__isnull=False, then=F('latest_log_date')),
             default='modified_at',
-            output_field=models.DateTimeField()
-        )
-    ).prefetch_related(
-        Prefetch(
-            'log',
-            queryset=Log.objects.order_by('-created_at'),
-            to_attr='latest_logs'
-        )
-    )
+            output_field=models.DateTimeField())).prefetch_related(
+                Prefetch('log',
+                         queryset=Log.objects.order_by('-created_at'),
+                         to_attr='latest_logs'))
     # Existing counts
     customers_count = contacts.filter(status__name='Customer').count()
     leads_count = contacts.filter(status__name='Lead').count()
     prospects_count = contacts.filter(status__name='Prospect').count()
-    unassigned_contacts_count = contacts.filter(assigned_staff__isnull=True).count()
+    unassigned_contacts_count = contacts.filter(
+        assigned_staff__isnull=True).count()
     active_contacts_count = customers_count  # Assuming 'Customer' is the converted status
     recent_contacts = contacts.order_by('-created_at')[:5]
 
@@ -51,56 +47,53 @@ def dashboard(request):
     two_weeks_ago = now() - timedelta(days=14)
     one_month_ago = now() - timedelta(days=30)
 
-    no_contact_1week = contacts.filter(
-        status__name='Customer',
-        modified_at__lt=one_week_ago
-    ).count()
+    no_contact_1week = contacts.filter(status__name='Customer',
+                                       modified_at__lt=one_week_ago).count()
 
-    no_contact_2weeks = contacts.filter(
-        status__name='Customer',
-        modified_at__lt=two_weeks_ago
-    ).count()
+    no_contact_2weeks = contacts.filter(status__name='Customer',
+                                        modified_at__lt=two_weeks_ago).count()
 
-    no_contact_1month = contacts.filter(
-        status__name='Customer',
-        modified_at__lt=one_month_ago
-    ).count()
+    no_contact_1month = contacts.filter(status__name='Customer',
+                                        modified_at__lt=one_month_ago).count()
 
     # Last contacted contacts
     modified_at = contacts.order_by('-modified_at')[:5]
 
     # Traffic sources
-    traffic_sources = contacts.values('traffic_source__name').annotate(count=Count('traffic_source')).order_by('-count')
+    traffic_sources = contacts.values('traffic_source__name').annotate(
+        count=Count('traffic_source')).order_by('-count')
     traffic_sources_data = {
-        'labels': [ts['traffic_source__name'] if ts['traffic_source__name'] else "Unknown" for ts in traffic_sources],
+        'labels': [
+            ts['traffic_source__name']
+            if ts['traffic_source__name'] else "Unknown"
+            for ts in traffic_sources
+        ],
         'values': [ts['count'] for ts in traffic_sources],
     }
     traffic_sources_data = mark_safe(json.dumps(traffic_sources_data))
 
     # Monthly data
-    monthly_contacts = (
-        contacts.annotate(month=TruncMonth('created_at'))
-        .values('month')
-        .annotate(total=Count('id'))
-        .order_by('month')
-    )
+    monthly_contacts = (contacts.annotate(
+        month=TruncMonth('created_at')).values('month').annotate(
+            total=Count('id')).order_by('month'))
 
     # Traffic sources per month
-    monthly_traffic_sources = (
-        contacts.annotate(month=TruncMonth('created_at'))
-        .values('month', 'traffic_source__name')
-        .annotate(total=Count('id'))
-        .order_by('month', 'traffic_source__name')
-    )
+    monthly_traffic_sources = (contacts.annotate(
+        month=TruncMonth('created_at')).values(
+            'month',
+            'traffic_source__name').annotate(total=Count('id')).order_by(
+                'month', 'traffic_source__name'))
 
     # Prepare data for chart
-    mchart_labels = [item['month'].strftime('%B %Y') for item in monthly_contacts]
+    mchart_labels = [
+        item['month'].strftime('%B %Y') for item in monthly_contacts
+    ]
     mchart_data = [item['total'] for item in monthly_contacts]
 
-    contacts_per_month = [
-        {'month': item['month'].strftime('%B %Y'), 'total': item['total']}
-        for item in monthly_contacts
-    ]
+    contacts_per_month = [{
+        'month': item['month'].strftime('%B %Y'),
+        'total': item['total']
+    } for item in monthly_contacts]
 
     traffic_sources_per_month = {}
     for item in monthly_traffic_sources:
@@ -113,15 +106,17 @@ def dashboard(request):
         traffic_sources_per_month[month][traffic_source] = total
 
     # Services breakdown
-    services_breakdown = contacts.values('services__name').annotate(count=Count('services')).order_by('-count')
+    services_breakdown = contacts.values('services__name').annotate(
+        count=Count('services')).order_by('-count')
 
     # Verdict tags
     verdict_tags = Tag.objects.filter(name__in=[
-        'Needs follow up', 'Ready to apply', 'Not eligible atm', 'Applied',
-        'Successful', 'Service not available', 'Not ready to apply', 'Potential',
-        'No feedback yet'
+        'Need Follow-Up', 'Ready to apply', 'Applied', 'Successful',
+        'Service not available', 'Potential', 'Processing', 'Completed'
     ])
-    verdict_contacts = contacts.filter(tags__in=verdict_tags).values('tags__name').annotate(count=Count('id')).order_by('-count')
+    verdict_contacts = contacts.filter(
+        tags__in=verdict_tags).values('tags__name').annotate(
+            count=Count('id')).order_by('-count')
     verdict_tags_data = {
         'labels': [tag['tags__name'] for tag in verdict_contacts],
         'values': [tag['count'] for tag in verdict_contacts]
@@ -129,42 +124,32 @@ def dashboard(request):
     verdict_tags_data = mark_safe(json.dumps(verdict_tags_data))
 
     # Monthly conversion from Lead to Customer
-    monthly_conversions = (
-        Contact.objects
-        .filter(status__name='Customer')
-        .annotate(month=TruncMonth('created_at'))
-        .values('month')
-        .annotate(conversions=Count('id'))
-        .order_by('month')
-    )
-    monthly_conversions_data = {item['month'].strftime('%B %Y'): item['conversions'] for item in monthly_conversions}
+    monthly_conversions = (Contact.objects.filter(
+        status__name='Customer').annotate(
+            month=TruncMonth('created_at')).values('month').annotate(
+                conversions=Count('id')).order_by('month'))
+    monthly_conversions_data = {
+        item['month'].strftime('%B %Y'): item['conversions']
+        for item in monthly_conversions
+    }
 
-
-
-
-    birthdays_per_month = (
-        Contact.objects
-        .filter(date_of_birth__isnull=False)
-        .annotate(month=ExtractMonth('date_of_birth'))
-        .values('month')
-        .annotate(count=Count('id'))
-        .order_by('month')
-    )
+    birthdays_per_month = (Contact.objects.filter(
+        date_of_birth__isnull=False).annotate(
+            month=ExtractMonth('date_of_birth')).values('month').annotate(
+                count=Count('id')).order_by('month'))
 
     # Convert month numbers to names for better readability
     from calendar import month_name
-    birthdays_per_month = [
-        {'month': month_name[item['month']], 'count': item['count']}
-        for item in birthdays_per_month
-    ]
+    birthdays_per_month = [{
+        'month': month_name[item['month']],
+        'count': item['count']
+    } for item in birthdays_per_month]
 
-   # Staff-wise contact counts
-    staff_contact_counts = (
-        Contact.objects.values('assigned_staff__id', 'assigned_staff__first_name', 'assigned_staff__last_name')
-        .annotate(total=Count('id'))
-        .filter(assigned_staff__isnull=False)
-        .order_by('-total')
-    )
+    # Staff-wise contact counts
+    staff_contact_counts = (Contact.objects.values(
+        'assigned_staff__id', 'assigned_staff__first_name',
+        'assigned_staff__last_name').annotate(total=Count('id')).filter(
+            assigned_staff__isnull=False).order_by('-total'))
     context = {
         'contacts': contacts,
         'customers_count': customers_count,
@@ -183,7 +168,10 @@ def dashboard(request):
         'mchart_labels': mchart_labels,
         'mchart_data': mchart_data,
         'traffic_sources_per_month': traffic_sources_per_month,
-        'services_breakdown': {service['services__name']: service['count'] for service in services_breakdown},
+        'services_breakdown': {
+            service['services__name']: service['count']
+            for service in services_breakdown
+        },
         'verdict_tags_data': verdict_tags_data,
         'monthly_conversions': monthly_conversions_data,
         'birthdays_per_month': birthdays_per_month,

@@ -15,6 +15,7 @@ from django.contrib import messages
 from contacts.models import Contact
 
 from users.forms import SignUpForm
+from emails.email_utils import send_custom_email
 
 from .decorators import role_required
 
@@ -52,11 +53,11 @@ def login_view(request):
                     return redirect(next_url)  # Redirect to the page the user was trying to access
                 else:
                     messages.success(request, 'Logged in successfully.')
-                     # Check if user is in Staff or Admin group
+                    # Check if user is in Staff or Admin group
                     if user.groups.filter(name__in=['Staff', 'Admin']).exists():
                         return redirect('my_assigned_contacts')  # Or use a default page like 'index'
                     else:
-                        return redirect('client_portal') 
+                        return redirect('client_portal')
 
             else:
                 messages.error(request, 'Invalid username or password.')
@@ -73,15 +74,16 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-             # Validate email domain
+            # Validate email domain
             if not email.endswith('@flyibat.com'):
-                messages.error(request, "You are not a staff. contact a staff memeber to get access to your client portal")
+                messages.error(
+                    request,
+                    "You are not a staff. contact a staff memeber to get access to your client portal"
+                )
                 return render(request, 'core/sign_up.html', {'form': form})
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             password = form.cleaned_data['password']
-
-            
 
             # Check if a user with this email already exists
             if User.objects.filter(username=email).exists():
@@ -99,7 +101,6 @@ def sign_up(request):
             user.set_password(password)
             user.save()
             print(f"First Name: {first_name}, Last Name: {last_name}")
-
 
             # If the user is the first user, perform initial setup
             if user.id == 1:
@@ -141,8 +142,16 @@ def sign_up(request):
                 contact.status = lead_status
                 contact.save()
 
+            # Send welcome email
+            send_custom_email(
+                subject="Welcome to Our System",
+                recipient_list=[user.email],
+                template_name="emails/registration_email.html",
+                context={"user": user},
+            )
             messages.success(request, 'User registered successfully.')
-            return redirect('login')  # Redirect to the login page or desired page
+            return redirect(
+                'login')  # Redirect to the login page or desired page
         else:
             messages.error(request, 'Please correct the errors below.')
     else:

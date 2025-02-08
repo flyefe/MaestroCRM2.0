@@ -16,9 +16,7 @@ class Contact(models.Model):
     phone_number = models.CharField(max_length=50, blank=True)
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], blank=True)
     marital_status = models.CharField(max_length=20, choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced'), ('Widowed', 'Widowed'), ('Other', 'Other')], blank=True)
-    # date_of_birth = models.DateTimeField(blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
-    # address = models.OneToOneField('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='contact')
 
      # Address fields added directly to the Contact model
     address_line1 = models.CharField(max_length=255, blank=True, null=True)
