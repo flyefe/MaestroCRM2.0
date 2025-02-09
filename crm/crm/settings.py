@@ -143,32 +143,6 @@ else:
         }
     }
 
-# if config("USE_SQLITE"):  # Determines whether to use SQLite.
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.sqlite3",  # SQLite database engine.
-#             "NAME": BASE_DIR / "db.sqlite3",  # SQLite database file path.
-#         }
-#     }
-# else:  # PostgreSQL configuration for production.
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.postgresql",  # PostgreSQL database engine.
-#             "NAME": config("DATABASE_NAME"),  # Database name from environment.
-#             "USER": config("DATABASE_USER"),  # Database username from environment.
-#             "PASSWORD": config("DATABASE_PASSWORD"),  # Database password from environment.
-#             "HOST": config("DATABASE_HOST"),  # Database host from environment.
-#             "PORT": config("DATABASE_PORT"),  # Database port from environment.
-#         }
-#     }
-    # DATABASES = {
-    #     'default': {
-    #         "default": env.db()
-    #     }
-    # }
-   
-
-
 
 
 
@@ -188,11 +162,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
 
@@ -224,17 +193,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = '/login/'  # Redirect to /accounts/login/ when login is required
 LOGIN_REDIRECT_URL = '/'  # Redirect to home page or another page after successful login
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 # TIME_ZONE = config("TIME_ZONE")  # Timezone, configurable via environment variables.
-
 USE_I18N = True
 
 USE_TZ = True
-# settings.py
-# USE_TZ = True
 TIME_ZONE = 'Etc/GMT-1'  # or 'Etc/GMT-1' for GMT+1 without DST
+
+
+# SMTP Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"  # Use your email provider's SMTP server
+EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
+EMAIL_USE_TLS = True  # Use True for TLS, False for SSL
+EMAIL_HOST_USER = "maestroefebms@gmail.com"
+EMAIL_HOST_PASSWORD = "MaestroTech@2025"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
