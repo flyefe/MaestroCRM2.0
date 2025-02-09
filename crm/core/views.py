@@ -46,12 +46,12 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                #Send a login email
-                # Send welcome email
+
+                # # Send welcome email
                 # send_custom_email(
                 #     subject="Welcome Back. You logged in",
                 #     recipient_list=[user.email],
-                #     template_name="emails/registration_email.html",
+                #     template_name="email.html",
                 #     context={"user": user},
                 # )
                 # Get the 'next' parameter from the query string
@@ -149,14 +149,6 @@ def sign_up(request):
                 lead_status = Status.objects.get(name='Lead')
                 contact.status = lead_status
                 contact.save()
-
-            # Send welcome email
-            send_custom_email(
-                subject="Welcome to Our System",
-                recipient_list=[user.email],
-                template_name="emails/registration_email.html",
-                context={"user": user},
-            )
             messages.success(request, 'User registered successfully.')
             return redirect(
                 'login')  # Redirect to the login page or desired page
