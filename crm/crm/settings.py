@@ -203,10 +203,12 @@ TIME_ZONE = 'Etc/GMT-1'  # or 'Etc/GMT-1' for GMT+1 without DST
 
 
 # SMTP Configuration
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"  # Use your email provider's SMTP server
-EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
-EMAIL_USE_TLS = True  # Use True for TLS, False for SSL
-EMAIL_HOST_USER = "maestroefebms@gmail.com"
-EMAIL_HOST_PASSWORD = "MaestroTech@2025"
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+

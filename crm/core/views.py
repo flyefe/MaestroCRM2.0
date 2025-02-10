@@ -47,13 +47,13 @@ def login_view(request):
             if user is not None:
                 login(request, user)
 
-                # # Send welcome email
-                # send_custom_email(
-                #     subject="Welcome Back. You logged in",
-                #     recipient_list=[user.email],
-                #     template_name="email.html",
-                #     context={"user": user},
-                # )
+                # Send welcome email
+                send_custom_email(
+                    subject="Welcome Back. You logged in",
+                    recipient_list=[user.email],
+                    template_name="email.html",
+                    context={"user": user},
+                )
                 # Get the 'next' parameter from the query string
                 next_url = request.GET.get('next')
                 if next_url:
