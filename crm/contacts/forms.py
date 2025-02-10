@@ -8,14 +8,9 @@ from django_select2.forms import Select2Widget, ModelSelect2Widget
 
 
 
-from django import forms
 from django.contrib.auth.models import User, Group
 from .models import Status, Tag, Service, TrafficSource
-
-from django import forms
-from .models import Log, User, Contact
-
-
+from django.db.models import Q
 
 class ContactSearchForm(forms.Form):
     query = forms.CharField(
@@ -28,54 +23,6 @@ class ContactSearchForm(forms.Form):
         })
     )
 
-
-# class ContactFilterForm(forms.Form):
-#     status = forms.ModelChoiceField(
-#         queryset=Status.objects.all(),
-#         required=False,
-#         empty_label="All Statuses",
-#         widget=forms.Select(attrs={"class": "text-sm border-gray-300 rounded py-2 px-3"})
-#     )
-#     tags = forms.ModelChoiceField(
-#         queryset=Tag.objects.all(),
-#         required=False,
-#         empty_label="All Tags",
-#         widget=forms.Select(attrs={"class": "text-sm border-gray-300 rounded py-2 px-3"})
-#     )
-#     services = forms.ModelChoiceField(
-#         queryset=Service.objects.all(),
-#         required=False,
-#         empty_label="All Services",
-#         widget=forms.Select(attrs={"class": "text-sm border-gray-300 rounded py-2 px-3"})
-#     )
-#     traffic_source = forms.ModelChoiceField(
-#         queryset=TrafficSource.objects.all(),
-#         required=False,
-#         empty_label="All Traffic Sources",
-#         widget=forms.Select(attrs={"class": "text-sm border-gray-300 rounded py-2 px-3"})
-#     )
-
-#     assigned_staff = forms.ModelChoiceField(
-#         queryset=User.objects.filter(assigned_contacts__isnull=False).distinct(),
-#         # queryset=User.objects.filter(Q(is_staff=True) | Q(groups__name="Staff")).distinct(),
-#         required=False,
-#         label="Assigned Staff",
-#         to_field_name="id",  # This is important to keep the correct ID
-#         empty_label="Assigned Staff",
-#         widget=forms.Select(attrs={'class': "text-sm border-gray-300 rounded py-2 px-3 form-control" }),
-
-#     )
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         # Customize the label for assigned_staff
-#         self.fields['assigned_staff'].queryset = User.objects.filter(assigned_contacts__isnull=False).distinct()
-#         self.fields['assigned_staff'].label_from_instance = lambda obj: f"{obj.get_full_name()}" if obj.get_full_name() else obj.username
-
-from django import forms
-from .models import Status, Tag, Service, TrafficSource
-from django.contrib.auth.models import User
-from django.db.models import Q
 
 class ContactFilterForm(forms.Form):
     status = forms.ModelChoiceField(
@@ -223,8 +170,9 @@ class ContactCreationForm(forms.ModelForm):
         fields = [
             'first_name', 'middle_name', 'last_name', 'email', 'status', 'tags',
             'assigned_staff', 'phone_number', 'traffic_source', 'services',
-            'referred_by', 'date_of_birth', 'address_line1', 'address_line2', 'city',
-            'state', 'country', 'postal_code', 'new_or_old'
+            'referred_by', 'date_of_birth', 'address_line1', 'address_line2', 
+            'city', 'state', 'country', 'postal_code', 'new_or_old',
+            'drive_link'
         ]
         widgets = {
             'status':
@@ -340,13 +288,16 @@ class ContactCreationForm(forms.ModelForm):
                     'form-input block w-full rounded border border-black p-2 mb-2',
                     'style': 'background-color:#f5f5f5',
                     'placeholder': 'Postal Code'
-                }),              
-        }
+                }),
 
-        # Set referred_by field to be not required within the Meta class
-        # required = {
-        #     'referred_by': False
-        # }
+            'drive_link':
+            forms.URLInput(
+                attrs={
+                    'class':
+                    'form-input block w-full rounded border border-black p-2 mb-2',
+                    'placeholder': 'Drive URL Here'
+                }),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

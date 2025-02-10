@@ -127,6 +127,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Close Date</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ contact.close_date|date:"Y-m-d H:i" }}</td>
                     </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Google Drive Folder</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {% if contact.drive_link %}
+                            <a href="{{ contact.drive_link }}" target="_blank" class="text-blue-600 font-bold">Customer Drive Folder</a>
+                            {% else %}
+                            No Drive Folder
+                            {% endif %}
+                        </td>
+                        
+                    </tr>
                 </tbody>
             </table>
         </div>

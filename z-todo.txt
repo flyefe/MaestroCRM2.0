@@ -279,9 +279,9 @@ CURRENT
 
 
 
-- Make it possible to create contact without users account
-- Make it possible to create user account from contact Details
-- Make it possible to update user's first_name and last_name when contact first name and last name update using trigar
+- DONE Make it possible to create contact without users account
+- DONE Make it possible to create user account from contact Details
+- DONE Make it possible to update user's first_name and last_name when contact first name and last name update using trigar
 
 
 -DIFFERED Get all contacts with empty
@@ -299,5 +299,26 @@ And you can create account from an already existing contact
 Password rest from admin  end
 password reset from contact end
 
+- Make it possible for email function to work using zoho
+- Make it possible to generate invoice for contacts
+- Make it pissible to send invoice via email to contact as well as download pdf copy
+- Make it possible for staff to generate order
+- Make it possible for order to be updated by staffs
+- Create group for Dispatch
+- Make it possible for dispatch to update order status from in transit to delivered
+- Make it possible for recipient to enter delivery code sent to their email for delivery to be marked as delivered
+- Make it possible for email to be sent to all party associated with delivery
+- Make it possible for delivery to be registered under dispatch and amount acrual and payable to dispatch shows on his dashbaord
 
 
+
+Work Flow to change brand for now
+- Swap Login page
+- Swap Sign up page
+- Swap base.html
+- Swap fly.toml
+- Update envireonment variable
+    - Database
+    - Debug
+    - url
+- Email sending deactivated in login vies
