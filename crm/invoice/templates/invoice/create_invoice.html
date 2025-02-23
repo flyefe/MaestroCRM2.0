@@ -3,19 +3,29 @@
 {% block content %}
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold">New Invoice</h1>
-    
+
     <!-- Invoice Header -->
     <div class="flex justify-between items-center border-b pb-4 mb-4">
         <div>
             <img src="{{ company_logo_url }}" alt="Company Logo" class="h-12">
+
+            <div>
+                <p class="text-lg font-semibold">{{ company_name }}</p>
+                <p>{{ business_type }}</p>
+                <p>{{ contact_email }}</p>
+                <p><a href="{{ website_link }}" class="text-blue-600">{{ website_link }}</a></p>
+            </div>
         </div>
         <div>
-            <p class="text-lg font-semibold">{{ company_name }}</p>
-            <p>{{ business_type }}</p>
-            <p>{{ contact_email }}</p>
-            <p><a href="{{ website_link }}" class="text-blue-600">{{ website_link }}</a></p>
+            <p class="text-lg font-semibold">
+                <select class="w-full p-2 border rounded">
+                    <option>Select customer</option>
+                </select>
+            </p>
         </div>
     </div>
+
+
     
     <!-- Invoice Details -->
     <div class="grid grid-cols-2 gap-4">
@@ -34,11 +44,16 @@
         </div>
         <div>
             <label class="block">Reference Number</label>
-            <input type="text" name="reference_number" value="{{ reference_number }}" class="w-full p-2 border rounded" readonly>
+            <input type="text" name="reference_number" value="{{ reference_number }}" class="w-full p-2 border rounded"
+                readonly>
         </div>
         <div>
             <label class="block">Due Date</label>
-            <input type="date" name="due_date" class="w-full p-2 border rounded">
+            <select class="w-full p-2 border rounded" name="unit_measurement">
+                <option value="">No Due date</option>
+                <option value="">Due on reciept</option>
+                <option value="">Due in 10 Dyas</option>
+            </select>
         </div>
         <div>
             <label class="block">Assign Invoice To</label>
@@ -46,53 +61,56 @@
         </div>
     </div>
 
+    <!-- Currency and Rate Fields -->
+    <div class="grid grid-cols-3 gap-4 mb-4">
+        <div>
+            <label class="block">Unit of Measurement</label>
+            <select id="unit_measurement" class="w-full p-2 border rounded" name="unit_measurement"
+                onchange="updateTableHeaders()">
+                <option value="Quantity">Quantity</option>
+                <option value="CBM">Volume (CBM)</option>
+                <option value="kg">Weight (kg)</option>
+            </select>
+        </div>
+        <div>
+            <label class="block">Quote Currency</label>
+            <select id="quote_currency" class="w-full p-2 border rounded" name="quote_currency"
+                onchange="updateTableHeaders()">
+                <option value="NGN">NGN</option>
+                <option value="USD">USD</option>
+                <option value="Yuan">Yuan</option>
+            </select>
+        </div>
+        <div>
+            <label class="block">Naira to USD</label>
+            <input type="number" name="rate_naira_usd" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Yuan to USD</label>
+            <input type="number" name="rate_yuan_usd" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Naira to Yuan</label>
+            <input type="number" name="rate_naira_yuan" class="w-full p-2 border rounded">
+        </div>
+    </div>
+
     <!-- Invoice Items Table -->
     <table class="w-full mt-6 border-collapse border">
         <thead>
             <tr class="bg-gray-200">
-                <th class="border p-2">Description</th>
-                <th class="border p-2">Category</th>
-                <th class="border p-2">Quantity</th>
+                <th class="border p-2">Title & Description</th>
+                <th id="unit_header" class="border p-2">Quantity</th>
                 <th class="border p-2">Price</th>
                 <th class="border p-2">Currency</th>
-                <th class="border p-2">Rate</th>
-                <th class="border p-2">Naira Equivalent</th>
+                <th id="quote_currency_header" class="border p-2">NGN</th>
                 <th class="border p-2">Tax</th>
                 <th class="border p-2">Amount</th>
                 <th class="border p-2">Actions</th>
             </tr>
         </thead>
         <tbody id="invoice-items">
-            <tr>
-                <td><input type="text" name="description[]" class="w-full p-2 border"></td>
-                <td>
-                    <select name="category[]" class="w-full p-2 border">
-                        <option value="freight">Freight</option>
-                        <option value="customs">Customs</option>
-                        <option value="procurement">Procurement</option>
-                        <option value="sales">Sales</option>
-                    </select>
-                </td>
-                <td><input type="number" name="quantity[]" class="w-full p-2 border"></td>
-                <td><input type="number" name="price[]" class="w-full p-2 border"></td>
-                <td>
-                    <select name="currency[]" class="w-full p-2 border" onchange="toggleRateField(this)">
-                        <option value="NGN">NGN</option>
-                        <option value="USD">USD</option>
-                        <option value="Yuan">Yuan</option>
-                    </select>
-                </td>
-                <td><input type="number" name="rate[]" class="w-full p-2 border"></td>
-                <td><input type="number" name="naira_equiv[]" class="w-full p-2 border" readonly></td>
-                <td>
-                    <select name="tax[]" class="w-full p-2 border">
-                        <option value="0">No Tax</option>
-                        <option value="7.5">VAT (7.5%)</option>
-                    </select>
-                </td>
-                <td><input type="number" name="amount[]" class="w-full p-2 border" readonly></td>
-                <td><button onclick="removeRow(this)" class="text-red-500">Remove</button></td>
-            </tr>
+            <!-- Dynamic Rows Will Be Added Here -->
         </tbody>
     </table>
     <button onclick="addRow()" class="mt-2 bg-blue-500 text-white p-2 rounded">Add Item</button>
@@ -112,26 +130,134 @@
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input, select").forEach(element => {
+            element.addEventListener("input", function () {
+                updateQuoteCurrencyEquivalent();
+                updateInvoiceSummary();
+            });
+        });
+    });
+
     function addRow() {
-        let row = document.querySelector("#invoice-items tr").cloneNode(true);
-        document.querySelector("#invoice-items").appendChild(row);
+        let table = document.querySelector("#invoice-items");
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>
+                <input type="text" name="title[]" class="w-full p-2 border" placeholder="Title">
+                <textarea name="description[]" class="w-full p-2 border" rows="2" placeholder="Description"></textarea>
+            </td>
+            <td><input type="number" name="unit[]" class="w-full p-2 border" oninput="updateInvoiceSummary()"></td>
+            <td><input type="number" name="price[]" class="w-full p-2 border" oninput="updateQuoteCurrencyEquivalent()"></td>
+            <td>
+                <select name="currency[]" class="w-full p-2 border" onchange="updateQuoteCurrencyEquivalent()">
+                    <option value="NGN">NGN</option>
+                    <option value="USD">USD</option>
+                    <option value="Yuan">Yuan</option>
+                </select>
+            </td>
+            <td><input type="number" name="quote_currency_equivalent[]" class="w-full p-2 border" readonly></td>
+            <td>
+                <select name="tax[]" class="w-full p-2 border" onchange="updateInvoiceSummary()">
+                    <option value="0">No Tax</option>
+                    <option value="7.5">VAT (7.5%)</option>
+                </select>
+            </td>
+            <td><input type="number" name="amount[]" class="w-full p-2 border" readonly></td>
+            <td><button onclick="removeRow(this)" class="text-red-500">❌</button></td>
+        `;
+
+        table.appendChild(row);
+        updateQuoteCurrencyEquivalent();
+        updateInvoiceSummary();
     }
 
     function removeRow(btn) {
         btn.closest("tr").remove();
+        updateInvoiceSummary();
     }
 
-    function toggleRateField(select) {
-        let row = select.closest("tr");
-        let rateField = row.querySelector("[name='rate[]']");
-        let nairaField = row.querySelector("[name='naira_equiv[]']");
-        if (select.value === "NGN") {
-            rateField.style.display = "block";
-            nairaField.style.display = "block";
-        } else {
-            rateField.style.display = "none";
-            nairaField.style.display = "none";
-        }
+    function updateTableHeaders() {
+        let unitText = document.getElementById("unit_measurement").value;
+        let quoteCurrency = document.getElementById("quote_currency").value;
+        document.getElementById("unit_header").innerText = unitText;
+        document.getElementById("quote_currency_header").innerText = quoteCurrency;
+        updateQuoteCurrencyEquivalent();
+        updateInvoiceSummary();
+    }
+
+    function updateQuoteCurrencyEquivalent() {
+        let quoteCurrency = document.getElementById("quote_currency").value;
+        let rateNairaUSD = parseFloat(document.querySelector("input[name='rate_naira_usd']").value) || 1;
+        let rateYuanUSD = parseFloat(document.querySelector("input[name='rate_yuan_usd']").value) || 1;
+        let rateNairaYuan = parseFloat(document.querySelector("input[name='rate_naira_yuan']").value) || 1;
+
+        document.querySelectorAll("#invoice-items tr").forEach(row => {
+            let priceField = row.querySelector("input[name='price[]']");
+            let currencyField = row.querySelector("select[name='currency[]']");
+            let quoteCurrencyField = row.querySelector("input[name='quote_currency_equivalent[]']");
+
+            if (priceField && currencyField && quoteCurrencyField) {
+                let price = parseFloat(priceField.value) || 0;
+                let currency = currencyField.value;
+                let convertedPrice = price;
+
+                if (currency !== quoteCurrency) {
+                    if (currency === "NGN" && quoteCurrency === "USD") {
+                        convertedPrice = price / rateNairaUSD;
+                    } else if (currency === "USD" && quoteCurrency === "NGN") {
+                        convertedPrice = price * rateNairaUSD;
+                    } else if (currency === "Yuan" && quoteCurrency === "USD") {
+                        convertedPrice = price / rateYuanUSD;
+                    } else if (currency === "USD" && quoteCurrency === "Yuan") {
+                        convertedPrice = price * rateYuanUSD;
+                    } else if (currency === "NGN" && quoteCurrency === "Yuan") {
+                        convertedPrice = price / rateNairaYuan;
+                    } else if (currency === "Yuan" && quoteCurrency === "NGN") {
+                        convertedPrice = price * rateNairaYuan;
+                    }
+                }
+
+                quoteCurrencyField.value = convertedPrice.toFixed(2);
+            }
+        });
+
+        updateInvoiceSummary();
+    }
+
+    function updateInvoiceSummary() {
+        let subtotal = 0;
+        let totalVAT = 0;
+        let grandTotal = 0;
+
+        document.querySelectorAll("#invoice-items tr").forEach(row => {
+            let unitField = row.querySelector("input[name='unit[]']");
+            let priceField = row.querySelector("input[name='quote_currency_equivalent[]']");
+            let taxField = row.querySelector("select[name='tax[]']");
+            let amountField = row.querySelector("input[name='amount[]']");
+
+            if (unitField && priceField && taxField && amountField) {
+                let unit = parseFloat(unitField.value) || 0;
+                let price = parseFloat(priceField.value) || 0;
+                let taxRate = parseFloat(taxField.value) || 0;
+
+                let amount = unit * price;
+                let taxAmount = (amount * taxRate) / 100;
+                let total = amount + taxAmount;
+
+                amountField.value = total.toFixed(2);
+
+                subtotal += amount;
+                totalVAT += taxAmount;
+                grandTotal += total;
+            }
+        });
+
+        document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+        document.getElementById("total_vat").innerText = totalVAT.toFixed(2);
+        document.getElementById("grand_total").innerText = grandTotal.toFixed(2);
     }
 </script>
+
 {% endblock %}

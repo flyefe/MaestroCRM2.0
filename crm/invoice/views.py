@@ -22,4 +22,16 @@ from core.decorators import role_required
 # Create your views here.
 @login_required
 def create_invoice(request):
-    return render(request, 'invoice/create_invoice.html')
+
+    business_name = 'G-Line Logistics'
+    business_type = 'Shipment'
+    contact_email = 'example@email.com'
+    website_link = 'www.g-linelogistics.com'
+    context = {
+        'business_name': business_name,
+        'business_type' : business_type,
+        'contact_email' : contact_email,
+        'website_link' : website_link,
+
+    }
+    return render(request, 'invoice/create_invoice.html', context=context)
