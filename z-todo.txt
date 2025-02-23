@@ -299,7 +299,7 @@ And you can create account from an already existing contact
 Password rest from admin  end
 password reset from contact end
 
-- Make it possible for email function to work using zoho
+- DONE Make it possible for email function to work using zoho
 - Make it possible to generate invoice for contacts
 - Make it pissible to send invoice via email to contact as well as download pdf copy
 - Make it possible for staff to generate order
@@ -309,16 +309,33 @@ password reset from contact end
 - Make it possible for recipient to enter delivery code sent to their email for delivery to be marked as delivered
 - Make it possible for email to be sent to all party associated with delivery
 - Make it possible for delivery to be registered under dispatch and amount acrual and payable to dispatch shows on his dashbaord
+- Order generation system
+    - Make is possible for customers/staff to be able to generate order
+    - Make it possible for order to be registered in an order table that only cutomers and assigned staffs can see orders associated with them
+    - Let assigne staff be able to see total kg shipped per month and total kg shipped all together
+    - create a wallet to show total total amount payable to staff per month
+    - Staff should be able to request payment
+- Make it possible to chat with customers on CRM
+    - Customers can send a message and any staff can see it
+    - Any staff can attend to customer
+- Make it possible for assigned staff to have a dashboard that they can see thier commision per closed order
 
 
 
 Work Flow to change brand for now
-- Swap Login page
-- Swap Sign up page
-- Swap base.html
-- Swap fly.toml
 - Update envireonment variable
     - Database
-    - Debug
-    - url
+    - Debug False
+    - SQL False
+    - allowed url updated
+- Swap Login page
+- Swap Sign up page
+- Swap base.htmla
+- Swap fly.toml
+
 - Email sending deactivated in login vies
+- flyctl auth login to flyibat account
+- flyctl deploy
+
+Features will be controled in the database as on or off
+virtual environment will be controled in database too
