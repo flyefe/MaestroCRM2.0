@@ -17,11 +17,15 @@
             </div>
         </div>
         <div>
-            <p class="text-lg font-semibold">
-                <select class="w-full p-2 border rounded">
-                    <option>Select customer</option>
-                </select>
-            </p>
+            <label class="block">Assign Invoice To</label>
+            <input type="text" name="assign_to" class="w-full p-2 border rounded">
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+
         </div>
     </div>
 
@@ -54,10 +58,6 @@
                 <option value="">Due on reciept</option>
                 <option value="">Due in 10 Dyas</option>
             </select>
-        </div>
-        <div>
-            <label class="block">Assign Invoice To</label>
-            <input type="text" name="assign_to" class="w-full p-2 border rounded">
         </div>
     </div>
 
@@ -258,6 +258,52 @@
         document.getElementById("total_vat").innerText = totalVAT.toFixed(2);
         document.getElementById("grand_total").innerText = grandTotal.toFixed(2);
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById("contact-autocomplete");
+            const suggestionBox = document.createElement("div");
+            suggestionBox.style.position = "absolute";
+            suggestionBox.style.border = "1px solid #ccc";
+            suggestionBox.style.backgroundColor = "white";
+            suggestionBox.style.zIndex = "1000";
+            suggestionBox.style.width = input.offsetWidth + "px";
+            input.parentNode.appendChild(suggestionBox);
+
+            input.addEventListener("input", function () {
+                const query = input.value.trim();
+
+                if (query.length < 2) {
+                    suggestionBox.innerHTML = "";
+                    return;
+                }
+
+                fetch(`/autocomplete/contact/?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionBox.innerHTML = "";
+                        data.results.forEach(contact => {
+                            const item = document.createElement("div");
+                            item.innerHTML = `<strong>${contact.name}</strong> - ${contact.email}`;
+                            item.style.padding = "5px";
+                            item.style.cursor = "pointer";
+
+                            item.addEventListener("click", function () {
+                                input.value = `${contact.name} - ${contact.email}`;
+                                suggestionBox.innerHTML = "";
+                            });
+
+                            suggestionBox.appendChild(item);
+                        });
+                    });
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!input.contains(event.target)) {
+                    suggestionBox.innerHTML = "";
+                }
+            });
+        });
+
 </script>
 
 {% endblock %}
