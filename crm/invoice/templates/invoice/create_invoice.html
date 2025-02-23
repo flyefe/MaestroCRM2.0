@@ -1,0 +1,137 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold">New Invoice</h1>
+    
+    <!-- Invoice Header -->
+    <div class="flex justify-between items-center border-b pb-4 mb-4">
+        <div>
+            <img src="{{ company_logo_url }}" alt="Company Logo" class="h-12">
+        </div>
+        <div>
+            <p class="text-lg font-semibold">{{ company_name }}</p>
+            <p>{{ business_type }}</p>
+            <p>{{ contact_email }}</p>
+            <p><a href="{{ website_link }}" class="text-blue-600">{{ website_link }}</a></p>
+        </div>
+    </div>
+    
+    <!-- Invoice Details -->
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block">Invoice Status</label>
+            <select class="w-full p-2 border rounded" name="invoice_status">
+                <option value="draft">Draft</option>
+                <option value="proforma">Proforma Invoice</option>
+                <option value="final">Final Invoice</option>
+                <option value="paid">Paid</option>
+            </select>
+        </div>
+        <div>
+            <label class="block">Invoice Date</label>
+            <input type="date" name="invoice_date" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Reference Number</label>
+            <input type="text" name="reference_number" value="{{ reference_number }}" class="w-full p-2 border rounded" readonly>
+        </div>
+        <div>
+            <label class="block">Due Date</label>
+            <input type="date" name="due_date" class="w-full p-2 border rounded">
+        </div>
+        <div>
+            <label class="block">Assign Invoice To</label>
+            <input type="text" name="assign_to" class="w-full p-2 border rounded">
+        </div>
+    </div>
+
+    <!-- Invoice Items Table -->
+    <table class="w-full mt-6 border-collapse border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Description</th>
+                <th class="border p-2">Category</th>
+                <th class="border p-2">Quantity</th>
+                <th class="border p-2">Price</th>
+                <th class="border p-2">Currency</th>
+                <th class="border p-2">Rate</th>
+                <th class="border p-2">Naira Equivalent</th>
+                <th class="border p-2">Tax</th>
+                <th class="border p-2">Amount</th>
+                <th class="border p-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="invoice-items">
+            <tr>
+                <td><input type="text" name="description[]" class="w-full p-2 border"></td>
+                <td>
+                    <select name="category[]" class="w-full p-2 border">
+                        <option value="freight">Freight</option>
+                        <option value="customs">Customs</option>
+                        <option value="procurement">Procurement</option>
+                        <option value="sales">Sales</option>
+                    </select>
+                </td>
+                <td><input type="number" name="quantity[]" class="w-full p-2 border"></td>
+                <td><input type="number" name="price[]" class="w-full p-2 border"></td>
+                <td>
+                    <select name="currency[]" class="w-full p-2 border" onchange="toggleRateField(this)">
+                        <option value="NGN">NGN</option>
+                        <option value="USD">USD</option>
+                        <option value="Yuan">Yuan</option>
+                    </select>
+                </td>
+                <td><input type="number" name="rate[]" class="w-full p-2 border"></td>
+                <td><input type="number" name="naira_equiv[]" class="w-full p-2 border" readonly></td>
+                <td>
+                    <select name="tax[]" class="w-full p-2 border">
+                        <option value="0">No Tax</option>
+                        <option value="7.5">VAT (7.5%)</option>
+                    </select>
+                </td>
+                <td><input type="number" name="amount[]" class="w-full p-2 border" readonly></td>
+                <td><button onclick="removeRow(this)" class="text-red-500">Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="addRow()" class="mt-2 bg-blue-500 text-white p-2 rounded">Add Item</button>
+
+    <!-- Invoice Summary -->
+    <div class="mt-6 p-4 border rounded">
+        <p><strong>Subtotal:</strong> <span id="subtotal">0</span></p>
+        <p><strong>Total VAT:</strong> <span id="total_vat">0</span></p>
+        <p><strong>Grand Total:</strong> <span id="grand_total">0</span></p>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6">
+        <button class="bg-green-500 text-white p-2 rounded">Save Invoice</button>
+        <button class="bg-gray-500 text-white p-2 rounded">Download PDF</button>
+    </div>
+</div>
+
+<script>
+    function addRow() {
+        let row = document.querySelector("#invoice-items tr").cloneNode(true);
+        document.querySelector("#invoice-items").appendChild(row);
+    }
+
+    function removeRow(btn) {
+        btn.closest("tr").remove();
+    }
+
+    function toggleRateField(select) {
+        let row = select.closest("tr");
+        let rateField = row.querySelector("[name='rate[]']");
+        let nairaField = row.querySelector("[name='naira_equiv[]']");
+        if (select.value === "NGN") {
+            rateField.style.display = "block";
+            nairaField.style.display = "block";
+        } else {
+            rateField.style.display = "none";
+            nairaField.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

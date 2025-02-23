@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "clientportal",
     "django_extensions",
     "emails",
+    "invoice",
     "settings",
     "segments",
     "users",

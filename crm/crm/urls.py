@@ -38,6 +38,7 @@ urlpatterns = [
     path('contacts/segments/', include('segments.urls')),
     path('admin/user/', include('users.urls')),
     path('admin/settings/', include('settings.urls')),
+    path('', include('invoice.urls')),
     # path('accounts/', include('django.contrib.auth.urls')),
 
     ]
