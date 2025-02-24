@@ -301,6 +301,12 @@ password reset from contact end
 
 - DONE Make it possible for email function to work using zoho
 - Make it possible to generate invoice for contacts
+    -Make it possible to create invoice
+    -Make it possible to update/edit invoice
+    -Make it possible to Delete Invoice
+    -Make it possible to tag Invoice
+    -Make it possible to search for invoice
+    -Assign Value to cutomer by  the total invoice they have paid vs the total proforma invoice they have recieved
 - Make it pissible to send invoice via email to contact as well as download pdf copy
 - Make it possible for staff to generate order
 - Make it possible for order to be updated by staffs
