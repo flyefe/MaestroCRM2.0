@@ -1,5 +1,5 @@
 from django import forms
-from .models import Invoice, InvoiceStatus, InvoiceItem, InvoiceTag
+from .models import Invoice, InvoiceItem, InvoiceTag
 from contacts.models import Contact
 
 class InvoiceForm(forms.ModelForm):
