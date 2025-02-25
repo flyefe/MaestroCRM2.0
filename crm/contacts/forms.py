@@ -78,6 +78,35 @@ class ContactFilterForm(forms.Form):
         label=''
     )
 
+    # New fields for filtering by missing contact information
+    no_phone_number = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            "class": "form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        }),
+        label="No Phone Number"
+    )
+
+    no_email = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            "class": "form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        }),
+        label="No Email"
+    )
+
+    no_phone_and_email = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            "class": "form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        }),
+        label="No Phone & Email"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['assigned_staff'].label_from_instance = lambda obj: f"{obj.get_full_name()}" if obj.get_full_name() else obj.username
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['assigned_staff'].label_from_instance = lambda obj: f"{obj.get_full_name()}" if obj.get_full_name() else obj.username

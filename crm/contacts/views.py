@@ -350,7 +350,9 @@ def filter_contact(request):
 
 
     # Start with all contacts, then apply filters
+    # contacts = Contact.objects.select_related('user').all()
     contacts = Contact.objects.select_related('user').all()
+
 
 
     if filter_form.is_valid():
@@ -365,6 +367,21 @@ def filter_contact(request):
             contacts = contacts.filter(traffic_source=filter_form.cleaned_data['traffic_source'])
         if filter_form.cleaned_data['assigned_staff']:
             contacts = contacts.filter(assigned_staff=filter_form.cleaned_data['assigned_staff'])
+
+        
+        # New filters for missing contact details
+        if filter_form.cleaned_data.get('no_phone_number'):
+            contacts = contacts.filter(Q(phone_number__isnull=True) | Q(phone_number=""))
+
+        if filter_form.cleaned_data.get('no_email'):
+            contacts = contacts.filter(Q(email__isnull=True) | Q(email=""))
+
+        if filter_form.cleaned_data.get('no_phone_and_email'):
+            contacts = contacts.filter(
+                (Q(phone_number__isnull=True) | Q(phone_number="")) & 
+                (Q(email__isnull=True) | Q(email=""))
+            )
+
 
     # Pagination
     paginator = Paginator(contacts, 200)  # Show 5 contacts per page
