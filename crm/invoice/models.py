@@ -1,6 +1,7 @@
 from django.db import models
 from contacts.models import Contact
 from django.contrib.auth.models import User, Group
+from decouple import config
 
 class InvoiceTag(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -9,9 +10,25 @@ class InvoiceTag(models.Model):
     def __str__(self):
         return self.name
 
+class Invoicesettings(models.Model):
+    business_name = models.CharField(max_length=255)
+    contact_email = models.EmailField()
+    telephone_number = models.CharField(max_length=20,)
+    website_url = models.URLField(blank=True, null=True)
+    business_logo_url = models.URLField(blank=True, null=True, default=config('COMPANY_LOGO_URL')) #to be extracted fron the COMPANY_LOGO_URL in .env file
+    
+
+    def __str__(self):
+        return self.name
 
 class Invoice(models.Model):
-    UNIT_MEASUREMENT_CHOICES = [("Quantity", "Quantity"), ("kg", "Weight (kg)"), ("CBM", "Volume (CBM)"), ("40ft Container", "Container"), ("20ft Container", "Container")]
+    UNIT_MEASUREMENT_CHOICES = [
+        ("Quantity", "Quantity"),
+        ("kg", "Weight (kg)"),
+        ("CBM", "Volume (CBM)"),
+        ("40ft Container", "Container"),
+        ("20ft Container", "Container")
+        ]
     QUOTE_CURRENCY_CHOICES = [("₦", "NGN"), ("$", "USD"), ("¥", "Yuan")]
     STATUS_CHOICES = [
             ("Draft", "Draft"),
@@ -21,26 +38,16 @@ class Invoice(models.Model):
             ("Overdue", "Overdue")            
             ]
 
+    Assign_to = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, related_name="invoices")
+    invoice_date = models.DateField(auto_now_add=True)
+    due_date = models.CharField(max_length=50) #dropdown showing due on reciept, due in 10 days, etc
     
-    company_name = models.CharField(max_length=255)
-    business_type = models.CharField(max_length=255, blank=True, null=True)
-    contact_email = models.EmailField()
-    website_link = models.URLField(blank=True, null=True)
-    company_logo_url = models.URLField(blank=True, null=True)
-    Assign_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="invoices")
+    twitter_handle = models.CharField(max_length=100, blank=True, null=True)
+    facebook_page = models.CharField(max_length=100, blank=True, null=True)
+    linkedin_id = models.CharField(max_length=100, blank=True, null=True)
 
-
-    unit_measurement = models.CharField(
-        max_length=20,
-        choices= UNIT_MEASUREMENT_CHOICES,
-        default="Quantity"
-    )
-
-    quote_currency = models.CharField(
-        max_length=10,
-        choices=QUOTE_CURRENCY_CHOICES,
-        default="NGN"
-    )
+    unit_measurement = models.CharField(max_length=20, choices= UNIT_MEASUREMENT_CHOICES, default="Quantity")
+    quote_currency = models.CharField(max_length=10, choices=QUOTE_CURRENCY_CHOICES, default="NGN")
 
     rate_naira_usd = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
     rate_yuan_usd = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
@@ -50,16 +57,11 @@ class Invoice(models.Model):
     total_vat = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     grand_total = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
 
-    # status = models.ForeignKey(InvoiceStatus, on_delete=models.SET_NULL, null=True, related_name="invoices")
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="Draft",
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Draft",)
     tags = models.ManyToManyField(InvoiceTag, blank=True, related_name="invoices")
 
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, related_name="invoices")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="invoices")
 
     def __str__(self):
         return f"Invoice #{self.id} - {self.company_name}"

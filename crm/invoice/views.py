@@ -15,6 +15,8 @@ from contacts.models import Contact
 from .models import Invoice, InvoiceItem, InvoiceTag
 import logging
 
+from decouple import config
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,10 +38,10 @@ def contact_autocomplete(request):
 
         results = [
             {
-                "id": contact.id, 
+                "id": contact.id,
                 "name": f"{contact.first_name} {contact.middle_name} {contact.last_name}".strip(),
                 "email": contact.email
-            } 
+            }
             for contact in contacts
         ]
 
@@ -52,15 +54,17 @@ def create_invoice(request):
     business_type = 'Shipment'
     contact_email = 'example@email.com'
     website_link = 'www.g-linelogistics.com'
- 
+    company_logo_url = config('COMPANY_LOGO_URL')
+
     context = {
         'unit_measurement_choices': InvoiceItem.UNIT_MEASUREMENT_CHOICES,
         'currency_choices': InvoiceItem.CURRENCY_CHOICES,
         'quote_currency_choices': Invoice.QUOTE_CURRENCY_CHOICES,
         'status_choices': Invoice.STATUS_CHOICES,
         'business_name': business_name,
-        'business_type' : business_type,
-        'contact_email' : contact_email,
-        'website_link' : website_link,
+        'business_type': business_type,
+        'contact_email': contact_email,
+        'website_link': website_link,
+        'company_logo_url' : company_logo_url
     }
     return render(request, 'invoice/create_invoice.html', context=context)
