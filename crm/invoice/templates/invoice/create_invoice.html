@@ -299,6 +299,47 @@
         document.getElementById("grand_total").innerText = grandTotal.toFixed(2);
     }
 
+      // Form Submission via AJAX
+        document.getElementById("invoice-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+            let invoiceItems = [];
+
+            document.querySelectorAll("#invoice-items tr").forEach(row => {
+                let item = {
+                    title: row.querySelector("input[name='title']").value,
+                    description: row.querySelector("textarea[name='description']").value,
+                    unit: row.querySelector("input[name='unit']").value,
+                    price: row.querySelector("input[name='price']").value,
+                    currency: row.querySelector("select[name='currency']").value,
+                    tax: row.querySelector("select[name='tax']").value
+                };
+                invoiceItems.push(item);
+            });
+
+            formData.append("items", JSON.stringify(invoiceItems));
+            formData.append("contact", selectedContactId);  // Send selected contact ID
+
+            fetch("{% url 'create_invoice' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Invoice created successfully!");
+                        window.location.href = data.redirect_url;
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
 </script>
 
 {% endblock %}

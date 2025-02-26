@@ -69,111 +69,88 @@ def contact_autocomplete(request):
 #     }
 #     return render(request, 'invoice/create_invoice.html', context=context)
 
-from django.shortcuts import get_object_or_404
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from decouple import config
 import json
-from .models import Invoice, InvoiceItem, ExchangeRate, BusinessSettings, Contact
-from django.contrib import messages
 
-@csrf_exempt  # Remove if using CSRF token in frontend
+from contacts.models import Contact
+# from .models import Invoice, InvoiceItem
+from . import models
+
+@login_required
 def create_invoice(request):
-    if request.method == "POST":
+    """Handles rendering the invoice creation page and processing AJAX form submission."""
+    
+    if request.method == "POST" and request.headers.get("X-Requested-With") == "XMLHttpRequest":
         try:
-            data = json.loads(request.body)  # Parse JSON request from frontend
+            # Retrieve form data
+            invoice_status = request.POST.get("invoice_status")
+            invoice_date = request.POST.get("invoice_date")
+            reference_number = request.POST.get("reference_number")
+            due_date = request.POST.get("due_date")
+            unit_measurement = request.POST.get("unit_measurement")
+            quote_currency = request.POST.get("quote_currency")
+            rate_naira_usd = request.POST.get("rate_naira_usd", 0)
+            rate_yuan_usd = request.POST.get("rate_yuan_usd", 0)
+            rate_naira_yuan = request.POST.get("rate_naira_yuan", 0)
+            assign_to = request.POST.get("contact")  # Expected to be the contact ID
+            items_data = json.loads(request.POST.get("items", "[]"))
 
-            # Extract Invoice Data
-            business_id = data.get("business_settings_id")
-            assign_to_id = data.get("assign_to_id")
-            due_date = data.get("due_date")
-            unit_measurement = data.get("unit_measurement")
-            quote_currency = data.get("quote_currency")
-            subtotal = float(data.get("subtotal", 0))
-            total_vat = float(data.get("total_vat", 0))
-            grand_total = float(data.get("grand_total", 0))
-            status = data.get("status")
+            # Fetch contact by ID
+            contact = Contact.objects.get(id=assign_to)
 
-            # Retrieve BusinessSettings and Contact
-            business_settings = get_object_or_404(BusinessSettings, id=business_id)
-            assign_to = get_object_or_404(Contact, id=assign_to_id)
-
-            # Create Invoice
+            # Create invoice
             invoice = Invoice.objects.create(
-                business_settings=business_settings,
-                Assign_to=assign_to,
+                contact=contact,
+                invoice_status=invoice_status,
+                invoice_date=invoice_date,
+                reference_number=reference_number,
                 due_date=due_date,
                 unit_measurement=unit_measurement,
                 quote_currency=quote_currency,
-                subtotal=subtotal,
-                total_vat=total_vat,
-                grand_total=grand_total,
-                status=status,
-                created_by=request.user if request.user.is_authenticated else None
+                rate_naira_usd=rate_naira_usd,
+                rate_yuan_usd=rate_yuan_usd,
+                rate_naira_yuan=rate_naira_yuan
             )
 
-            # Extract Invoice Items
-            items = data.get("items", [])
-            for item in items:
+            # Add invoice items
+            for item in items_data:
                 InvoiceItem.objects.create(
                     invoice=invoice,
-                    title=item.get("title"),
-                    description=item.get("description"),
-                    unit_measurement=item.get("unit_measurement"),
-                    unit=float(item.get("unit", 1)),
-                    price=float(item.get("price", 0)),
-                    currency=item.get("currency"),
-                    quote_currency_equivalent=float(item.get("quote_currency_equivalent", 0)),
-                    tax_percentage=float(item.get("tax_percentage", 0)),
-                    amount=float(item.get("amount", 0))
+                    title=item["title"],
+                    description=item["description"],
+                    unit=item["unit"],
+                    price=item["price"],
+                    currency=item["currency"],
+                    tax=item["tax"]
                 )
 
-            # Extract Exchange Rate
-            exchange_rates = data.get("exchange_rates", [])
-            for rate in exchange_rates:
-                ExchangeRate.objects.update_or_create(
-                    base_currency=rate.get("base_currency"),
-                    target_currency=rate.get("target_currency"),
-                    defaults={"rate": float(rate.get("rate", 1))}
-                )
+            return JsonResponse({"success": True, "message": "Invoice created!", "redirect_url": "/invoices/"})
 
-            return JsonResponse({"message": "Invoice created successfully!", "invoice_id": invoice.id}, status=201)
-
+        except Contact.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Selected contact does not exist."})
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        
-    business_name = 'G-Line Logistics'
-    business_type = 'Shipment'
-    contact_email = 'example@email.com'
-    website_link = 'www.g-linelogistics.com'
-    company_logo_url = config('COMPANY_LOGO_URL')
+            return JsonResponse({"success": False, "message": str(e)})
 
-    # Extract Invoice Data
-    business_id = data.get("business_settings_id")
-    assign_to_id = data.get("assign_to_id")
-    due_date = data.get("due_date")
-    unit_measurement = data.get("unit_measurement")
-    quote_currency = data.get("quote_currency")
-    subtotal = float(data.get("subtotal", 0))
-    total_vat = float(data.get("total_vat", 0))
-    grand_total = float(data.get("grand_total", 0))
-    status = data.get("status")
-
-    # Retrieve BusinessSettings and Contact
-    business_settings = get_object_or_404(BusinessSettings, id=business_id)
-    assign_to = get_object_or_404(Contact, id=assign_to_id)
-
+    # Data for rendering the template
     context = {
-        'unit_measurement_choices': InvoiceItem.UNIT_MEASUREMENT_CHOICES,
-        'currency_choices': InvoiceItem.CURRENCY_CHOICES,
-        'quote_currency_choices': Invoice.QUOTE_CURRENCY_CHOICES,
-        'status_choices': Invoice.STATUS_CHOICES,
-        'business_name': business_name,
-        'business_type': business_type,
-        'contact_email': contact_email,
-        'website_link': website_link,
-        'company_logo_url' : company_logo_url
+        # 'unit_measurement_choices': UNIT_MEASUREMENT_CHOICES,
+        # 'currency_choices': CURRENCY_CHOICES,
+        # 'quote_currency_choices': QUOTE_CURRENCY_CHOICES,
+        # 'status_choices': STATUS_CHOICES,
+        'unit_measurement_choices': InvoiceItem._meta.get_field('unit_measurement').choices,
+        'currency_choices': InvoiceItem._meta.get_field('currency').choices,
+        'quote_currency_choices': Invoice._meta.get_field('quote_currency').choices,
+        'status_choices': Invoice._meta.get_field('status').choices,
+        'business_name': 'G-Line Logistics',
+        'business_type': 'Shipment',
+        'contact_email': 'example@email.com',
+        'website_link': 'www.g-linelogistics.com',
+        'company_logo_url': config('COMPANY_LOGO_URL')
     }
+    
     return render(request, 'invoice/create_invoice.html', context=context)
-
-    # return JsonResponse({"error": "Invalid request method"}, status=405)
-

@@ -339,7 +339,7 @@ Work Flow to change brand for now
 - Swap base.htmla
 - Swap fly.toml
 
-- Email sending deactivated in login vies
+- Email sending deactivated in login views
 - flyctl auth login to flyibat account
 - flyctl deploy
 

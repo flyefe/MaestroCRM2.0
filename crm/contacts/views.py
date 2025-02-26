@@ -147,46 +147,6 @@ def update_log(request, log_id):
 
     return render(request, 'contact/update_log.html', context)
 
-@login_required
-def contact_detail(request, contact_id, log_id=None):
-    contact = get_object_or_404(Contact, id=contact_id)
-
-    # Fetch recent activities (assuming Log model has a ForeignKey to Contact)
-    recent_activities = contact.log.all().order_by('-created_at')[:3]
-    logs = Log.objects.filter(contact=contact).order_by('-created_at')
-
-    # If log_id is provided, get the specific log and populate the form for editing
-    form = LogForm()
-    if log_id:
-        log = get_object_or_404(Log, id=log_id)
-        form = LogForm(instance=log)  # Populate the form with the current log details
-
-    # Handle form submission for new logs
-    if request.method == 'POST' and not log_id:
-        form = LogForm(request.POST)
-        if form.is_valid():
-            log = form.save(commit=False)
-            log.contact = contact
-            log.created_by = request.user
-            log.save()
-            messages.success(request, "Log added successfully.")
-            return redirect('contact_detail', contact_id=contact_id)
-    elif request.method == 'POST' and log_id:
-        # Update the existing log
-        form = LogForm(request.POST, instance=log)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Log updated successfully.")
-            return redirect('contact_detail', contact_id=contact_id)
-
-    context = {
-        'contact': contact,
-        'recent_activities': recent_activities,
-        'logs': logs,
-        'form': form,
-        'log_id': log_id,  # Pass the log_id to identify the form in the template
-    }
-    return render(request, 'contact/contact_detail.html', context)
 
 @login_required
 def delete_contact(request, contact_id):
@@ -259,43 +219,6 @@ def my_assigned_contacts(request):
     }
     return render(request, 'contact/contact_list.html', context)
 
-@login_required
-def contact_list(request):
-    # Subquery to get the most recent log (type = 'feedback') title
-    recent_feedback_log_title = Log.objects.filter(
-        contact=OuterRef('pk'),  # Match the Log with the Contact
-        log_type='feedback'      # Filter only feedback logs
-    ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
-
-    # Subquery to get the most recent log (type = 'feedback') description
-    recent_feedback_log_description = Log.objects.filter(
-        contact=OuterRef('pk'),
-        log_type='feedback'
-    ).order_by('-created_at').values('log_description')[:1]  # Get the most recent log description
-
-    # Add annotations for recent log title and description to Contact
-    contacts = Contact.objects.select_related('user').annotate(
-        recent_feedback_log_title=Coalesce(Subquery(recent_feedback_log_title, output_field=CharField()), Value('No Feedback')),
-        recent_feedback_log_description=Coalesce(Subquery(recent_feedback_log_description, output_field=CharField()), Value('No Description'))
-    ).order_by('-modified_at')
-
-    # Pagination
-    paginator = Paginator(contacts, 200)  # Show 10 contacts per page
-    page_number = request.GET.get('page')
-    page_contacts = paginator.get_page(page_number)
-
-    # Forms
-    form = ContactCreationForm()
-    filter_form = ContactFilterForm()
-    search_form = ContactSearchForm()
-
-    context = {
-        'contacts': page_contacts,
-        'form': form,
-        'filter_form': filter_form,
-        'search_form': search_form,
-    }
-    return render(request, 'contact/contact_list.html', context)
 
 
 @login_required
@@ -381,10 +304,12 @@ def filter_contact(request):
                 (Q(phone_number__isnull=True) | Q(phone_number="")) & 
                 (Q(email__isnull=True) | Q(email=""))
             )
+        if filter_form.cleaned_data.get('no_date_of_birth'):
+            contacts = contacts.filter(Q(date_of_birth__isnull=True))
 
 
     # Pagination
-    paginator = Paginator(contacts, 200)  # Show 5 contacts per page
+    paginator = Paginator(contacts, 1000)  # Show 1000 contacts per page
     page_number = request.GET.get('page')
     page_contacts = paginator.get_page(page_number)
 
@@ -495,6 +420,44 @@ def contacts_bulk_action(request):
 
     return redirect("contact_list")
 
+@login_required
+def contact_list(request):
+    # Subquery to get the most recent log (type = 'feedback') title
+    recent_feedback_log_title = Log.objects.filter(
+        contact=OuterRef('pk'),  # Match the Log with the Contact
+        log_type='feedback'      # Filter only feedback logs
+    ).order_by('-created_at').values('log_title')[:1]  # Get the most recent log title
+
+    # Subquery to get the most recent log (type = 'feedback') description
+    recent_feedback_log_description = Log.objects.filter(
+        contact=OuterRef('pk'),
+        log_type='feedback'
+    ).order_by('-created_at').values('log_description')[:1]  # Get the most recent log description
+
+    # Add annotations for recent log title and description to Contact
+    contacts = Contact.objects.select_related('user').annotate(
+        recent_feedback_log_title=Coalesce(Subquery(recent_feedback_log_title, output_field=CharField()), Value('No Feedback')),
+        recent_feedback_log_description=Coalesce(Subquery(recent_feedback_log_description, output_field=CharField()), Value('No Description'))
+    ).order_by('-modified_at')
+
+    # Pagination
+    paginator = Paginator(contacts, 200)  # Show 10 contacts per page
+    page_number = request.GET.get('page')
+    page_contacts = paginator.get_page(page_number)
+
+    # Forms
+    form = ContactCreationForm()
+    filter_form = ContactFilterForm()
+    search_form = ContactSearchForm()
+
+    context = {
+        'contacts': page_contacts,
+        'form': form,
+        'filter_form': filter_form,
+        'search_form': search_form,
+    }
+    return render(request, 'contact/contact_list.html', context)
+
 
 @login_required
 def create_user_account_for_contact(request, contact_id):
@@ -604,6 +567,49 @@ def update_contact(request, contact_id):
         form = ContactCreationForm(instance=contact, initial=form_initial)
 
     return render(request, 'contact/update_contact_detail.html', {'form': form})
+
+
+
+@login_required
+def contact_detail(request, contact_id, log_id=None):
+    contact = get_object_or_404(Contact, id=contact_id)
+
+    # Fetch recent activities (assuming Log model has a ForeignKey to Contact)
+    recent_activities = contact.log.all().order_by('-created_at')[:3]
+    logs = Log.objects.filter(contact=contact).order_by('-created_at')
+
+    # If log_id is provided, get the specific log and populate the form for editing
+    form = LogForm()
+    if log_id:
+        log = get_object_or_404(Log, id=log_id)
+        form = LogForm(instance=log)  # Populate the form with the current log details
+
+    # Handle form submission for new logs
+    if request.method == 'POST' and not log_id:
+        form = LogForm(request.POST)
+        if form.is_valid():
+            log = form.save(commit=False)
+            log.contact = contact
+            log.created_by = request.user
+            log.save()
+            messages.success(request, "Log added successfully.")
+            return redirect('contact_detail', contact_id=contact_id)
+    elif request.method == 'POST' and log_id:
+        # Update the existing log
+        form = LogForm(request.POST, instance=log)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Log updated successfully.")
+            return redirect('contact_detail', contact_id=contact_id)
+
+    context = {
+        'contact': contact,
+        'recent_activities': recent_activities,
+        'logs': logs,
+        'form': form,
+        'log_id': log_id,  # Pass the log_id to identify the form in the template
+    }
+    return render(request, 'contact/contact_detail.html', context)
 
 
 @login_required

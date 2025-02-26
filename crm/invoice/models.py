@@ -69,7 +69,7 @@ class ExchangeRate(models.Model):
     base_currency = models.CharField(max_length=10, choices=QUOTE_CURRENCY_CHOICES, default="NGN")
     target_currency = models.CharField(max_length=10, choices=QUOTE_CURRENCY_CHOICES)
     rate = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    updated_at = models.DateTimeField(auto_now=True)
+    # updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('base_currency', 'target_currency')
@@ -78,7 +78,7 @@ class ExchangeRate(models.Model):
         return f"{self.base_currency} to {self.target_currency}: {self.rate}"
 
 class Invoice(models.Model):
-    Assign_to = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, related_name="invoices")
+    assigned_to = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, related_name="invoices")
     business_settings = models.ForeignKey(BusinessSettings, on_delete=models.SET_NULL, null=True, related_name="invoices")
     invoice_number = models.CharField(max_length=20, unique=True, editable=False, db_index=True)
     invoice_date = models.DateField(auto_now_add=True, db_index=True)
