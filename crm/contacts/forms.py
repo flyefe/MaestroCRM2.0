@@ -352,6 +352,12 @@ class ContactCreationForm(forms.ModelForm):
             'referred_by'].label_from_instance = lambda obj: f"{obj.first_name} {obj.last_name}"
 
 class LogForm(forms.ModelForm):
+
+    # logged_for = forms.ModelMultipleChoiceField(
+    # queryset=User.objects.all(),
+    # widget=forms.SelectMultiple,
+    # required=False
+    # )
     class Meta:
         model = Log
         fields = [ 'log_type', 'log_title', 'log_description']

@@ -14,6 +14,8 @@ urlpatterns = [
     path('contacts-trafick-source/<int:traffic_source_id>/', views.contacts_by_traffic_source, name='contacts_by_traffic_source'),
     path('contact/', views.filter_contact, name='filter_contact'),
     path('contact-query/', views.search_contact, name='search_contact'),
+    path('search_users/', views.search_users, name='search_users'),
+
 
 
 

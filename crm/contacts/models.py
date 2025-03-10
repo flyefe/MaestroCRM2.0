@@ -60,9 +60,7 @@ class Contact(models.Model):
 
 class Log(models.Model):
     LOG_TYPE_CHOICES = [
-        # ('call', 'Call'),
-        # ('whatsapp', 'WhatsApp'),
-        ('email', 'Email'),
+        ('instruction', 'Instruction'),
         ('feedback', 'Feedback'),
     ]
     contact = models.ForeignKey(Contact, related_name='log', on_delete=models.CASCADE)
@@ -70,7 +68,7 @@ class Log(models.Model):
     log_title = models.CharField(max_length=255)  # Added this field
     log_description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='created_log', on_delete=models.CASCADE)
-    logged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    send_to = models.ManyToManyField(User, related_name='sent_logs', blank=True)  # Allow multiple users
     created_at = models.DateTimeField(auto_now_add=True)  # Set at creation
     modified_at = models.DateTimeField(auto_now=True)      # Updated on save
 

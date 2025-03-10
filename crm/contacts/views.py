@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 import random, string
 from django.urls import reverse
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
 from .forms import ContactCreationForm, LogForm, ContactFilterForm, ContactSearchForm
 from .models import Contact, Log
@@ -18,6 +19,14 @@ from django.core.paginator import Paginator
 
 from segments.utils import reevaluate_segments_for_contacts  # Import the helper function
 
+from django.http import JsonResponse
+from .utils import get_filtered_users  # Import the utility function
+
+def search_users(request):
+    query = request.GET.get("q", "")
+    users = get_filtered_users(query)
+    user_data = [{"id": user.id, "full_name": user.get_full_name(), "email": user.email} for user in users]
+    return JsonResponse(user_data, safe=False)
 
 
 @login_required
@@ -586,12 +595,20 @@ def contact_detail(request, contact_id, log_id=None):
 
     # Handle form submission for new logs
     if request.method == 'POST' and not log_id:
-        form = LogForm(request.POST)
+
+        # send_to_users = request.POST.getlist('send_to[]')  # Ensure correct field name
+        # print("SEND_TO USERS:", send_to_users)  # Debugging
         if form.is_valid():
             log = form.save(commit=False)
             log.contact = contact
             log.created_by = request.user
             log.save()
+
+             # Save ManyToMany send_to field
+            send_to_users = request.POST.getlist('send_to[]')  # Ensure correct field nam
+            log.send_to.set(send_to_users)  # Save selected users in ManyToManyField
+            
+            # form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Log added successfully.")
             return redirect('contact_detail', contact_id=contact_id)
     elif request.method == 'POST' and log_id:

@@ -1,4 +1,18 @@
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.db.models import Q
+
+def get_filtered_users(query):
+    """
+    Utility function to filter users by username, email, or name.
+    """
+    return User.objects.filter(
+        Q(username__icontains=query) | 
+        Q(email__icontains=query) | 
+        Q(first_name__icontains=query) | 
+        Q(last_name__icontains=query)
+    )
+
 
 def parse_date(value):
     """Try parsing a date from multiple formats."""
