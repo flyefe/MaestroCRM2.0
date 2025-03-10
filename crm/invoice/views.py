@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from core.decorators import role_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from emails.email_utils import send_custom_email
+from emails.utils import send_email
 from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.models import User, Group

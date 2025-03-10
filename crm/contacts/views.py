@@ -18,6 +18,7 @@ from django.db import transaction
 from django.core.paginator import Paginator
 
 from segments.utils import reevaluate_segments_for_contacts  # Import the helper function
+from emails.utils import send_email #import email functio
 
 from django.http import JsonResponse
 from .utils import get_filtered_users  # Import the utility function
@@ -595,20 +596,33 @@ def contact_detail(request, contact_id, log_id=None):
 
     # Handle form submission for new logs
     if request.method == 'POST' and not log_id:
-
-        # send_to_users = request.POST.getlist('send_to[]')  # Ensure correct field name
-        # print("SEND_TO USERS:", send_to_users)  # Debugging
+        form = LogForm(request.POST)
         if form.is_valid():
             log = form.save(commit=False)
             log.contact = contact
             log.created_by = request.user
             log.save()
 
-             # Save ManyToMany send_to field
-            send_to_users = request.POST.getlist('send_to[]')  # Ensure correct field nam
-            log.send_to.set(send_to_users)  # Save selected users in ManyToManyField
-            
-            # form.save_m2m()  # Save many-to-many relationships
+            # Save ManyToMany send_to field
+            send_to_users = request.POST.getlist('send_to[]')  # Ensure correct field name
+            send_to_users = User.objects.filter(id__in=send_to_users)  # Get actual User objects
+            log.send_to.set(send_to_users)  # Save selected users in ManyToManyField    
+            form.save_m2m
+
+            # Send email to each user
+            for user in send_to_users:
+                send_email(
+                    subject=f"A new Log by {log.created_by.first_name}",
+                    recipient_list=[user.email],
+                    template_name="log_email.html",
+                    context={
+                        "user" : user,
+                        "log" : log,
+                        "contact" : contact,
+                    },
+                )
+
+
             messages.success(request, "Log added successfully.")
             return redirect('contact_detail', contact_id=contact_id)
     elif request.method == 'POST' and log_id:
@@ -695,3 +709,19 @@ def create_contact(request):
     else:
         form = ContactCreationForm()
     return render(request, 'contact/create_contact.html', {'form': form})
+
+
+# # Send email notifications
+            # for user in send_to_users:
+            #     try:
+            #         send_email_notification(
+            #             recipient_email=user.email,
+            #             subject="New Log Assigned to You",
+            #             message=f"Hello {user.first_name},\n\nYou have been assigned a new log: '{log.log_title}'.\n\nDescription:\n{log.log_description}\n\nBest regards,\nYour Team"
+            #         )
+            #     except Exception as e:
+            #         print(f"Failed to send email to {user.email}: {e}")
+            
+            # form.save_m2m()  # Save many-to-many relationships
+
+             

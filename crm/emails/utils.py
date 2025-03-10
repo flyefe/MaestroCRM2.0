@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 
-def send_custom_email(subject, recipient_list, template_name, context):
+def send_email(subject, recipient_list, template_name, context):
     """
     Sends an email using a specified template and context.
 
@@ -17,4 +17,5 @@ def send_custom_email(subject, recipient_list, template_name, context):
     plain_message = strip_tags(html_message)  # Strip HTML tags for plain text version
     from_email = settings.DEFAULT_FROM_EMAIL
 
-    send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
+    send_mail(subject, plain_message, from_email, recipient_list,
+               html_message=html_message)

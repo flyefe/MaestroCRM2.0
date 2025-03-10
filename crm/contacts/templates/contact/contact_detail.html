@@ -161,6 +161,18 @@
                         By <span class="font-semibold">{{ log.created_by.get_full_name }}</span> @
                         <span class="text-gray-500 text-xs">{{ log.created_at|date:"Y-m-d h:i a" }}</span>
                     </p>
+                    
+                    {% if log.send_to.all %}
+                    <p><span class="font-semibold">Sent to:</span></p>
+                        {% for user in log.send_to.all %}
+                        <p class="px-10">
+                            <span class="text-gray-500">{{ user.first_name}} <span class="text-xs">({{user}})</span> </span><br>
+                        </p>
+                        {% empty %}
+                        <span class="text-gray-500"></span>
+                        {% endfor %}
+                    {% endif %}
+
                     <p class="font-normal text-black"><strong>{{ log.log_title }}</strong> <br>
                         {{ log.log_description }}
                     </p>

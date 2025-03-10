@@ -15,7 +15,7 @@ from django.contrib import messages
 from contacts.models import Contact
 
 from users.forms import SignUpForm
-from emails.email_utils import send_custom_email
+from emails.utils import send_email
 
 from .decorators import role_required
 
